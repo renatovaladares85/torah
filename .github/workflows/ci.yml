@@ -1,0 +1,116 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  quality:
+    name: Quality and privacy
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out source
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+
+      - name: Configure PHP
+        uses: shivammathur/setup-php@f3e473d116dcccaddc5834248c87452386958240 # v2
+        with:
+          php-version: '8.2'
+          extensions: json, mbstring, mysqli, intl, xml
+          tools: composer:v2
+          coverage: none
+
+      - name: Install validation tools
+        run: sudo apt-get update && sudo apt-get install --yes gettext libxml2-utils
+
+      - name: Install dependencies
+        run: composer install --no-interaction --prefer-dist
+
+      - name: Validate metadata and source
+        run: |
+          composer validate --strict --no-check-lock
+          xmllint --noout plugin.xml
+          find . -type f -name '*.php' -not -path './vendor/*' -print0 | xargs -0 -n1 php -l
+          msgfmt --check --check-compatibility --output-file=/dev/null locales/pt_BR.po
+          composer qa
+
+      - name: Build release package
+        run: tools/package.sh
+
+      - name: Upload release package
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: torah-package
+          path: dist/torah-*.tar.gz
+          if-no-files-found: error
+
+  glpi-smoke:
+    name: GLPI ${{ matrix.glpi }} smoke
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        glpi: ['10.0.10', '10.0.25']
+    services:
+      mariadb:
+        image: mariadb:10.11
+        env:
+          MARIADB_DATABASE: glpi
+          MARIADB_USER: glpi
+          MARIADB_PASSWORD: glpi_test_password
+          MARIADB_ROOT_PASSWORD: root_test_password
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="healthcheck.sh --connect --innodb_initialized"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=10
+
+    steps:
+      - name: Check out Torah
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+
+      - name: Configure PHP
+        uses: shivammathur/setup-php@f3e473d116dcccaddc5834248c87452386958240 # v2
+        with:
+          php-version: '8.2'
+          extensions: apcu, bz2, curl, gd, intl, json, ldap, mbstring, mysqli, sodium, xml, zip
+          tools: composer:v2
+          coverage: none
+
+      - name: Install Torah dependencies
+        run: composer install --no-interaction --prefer-dist
+
+      - name: Prepare GLPI
+        env:
+          GLPI_VERSION: ${{ matrix.glpi }}
+        run: |
+          curl --fail --location --silent --show-error \
+            "https://github.com/glpi-project/glpi/releases/download/${GLPI_VERSION}/glpi-${GLPI_VERSION}.tgz" \
+            --output "$RUNNER_TEMP/glpi.tgz"
+          tar --extract --gzip --file="$RUNNER_TEMP/glpi.tgz" --directory="$RUNNER_TEMP"
+          ln -s "$GITHUB_WORKSPACE" "$RUNNER_TEMP/glpi/plugins/torah"
+          php "$RUNNER_TEMP/glpi/bin/console" database:install --no-interaction \
+            --db-host=127.0.0.1 --db-name=glpi --db-user=glpi \
+            --db-password=glpi_test_password --default-language=en_GB --no-telemetry
+
+      - name: Exercise plugin lifecycle
+        run: |
+          php "$RUNNER_TEMP/glpi/bin/console" plugin:install --no-interaction --username=glpi torah
+          php "$RUNNER_TEMP/glpi/bin/console" plugin:activate --no-interaction torah
+          php "$RUNNER_TEMP/glpi/bin/console" plugin:deactivate --no-interaction torah
+          php "$RUNNER_TEMP/glpi/bin/console" plugin:activate --no-interaction torah
+          php "$RUNNER_TEMP/glpi/bin/console" plugin:uninstall --no-interaction torah
+
+      - name: Run GLPI integration tests
+        env:
+          GLPI_ROOT: ${{ runner.temp }}/glpi
+        run: vendor/bin/phpunit --group glpi-integration

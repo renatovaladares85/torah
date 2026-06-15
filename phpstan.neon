@@ -1,0 +1,15 @@
+parameters:
+    level: 8
+    paths:
+        - src/Domain
+        - src/Application/ActorPayloadInspector.php
+        - src/Application/AuditLogger.php
+        - src/Application/CapabilityDefinition.php
+        - src/Application/CapabilityRegistry.php
+        - src/Application/FieldMutationDetector.php
+        - src/Application/PolicyCatalog.php
+        - src/Application/PolicyResolver.php
+        - src/Application/Admin/PolicySetInput.php
+    bootstrapFiles:
+        - tests/phpstan-bootstrap.php
+    treatPhpDocTypesAsCertain: false
