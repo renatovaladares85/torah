@@ -1,0 +1,77 @@
+<div class="container-fluid">
+   <div class="alert alert-info" role="status">
+      {{ __('Checked means blocked.', 'torah') }}
+      {{ __('Unchecked rules do not change GLPI behavior.', 'torah') }}
+   </div>
+
+   <div class="card mb-4">
+      <div class="card-header">
+         <h2 class="card-title">{{ __('New policy set', 'torah') }}</h2>
+      </div>
+      <div class="card-body">
+         <form method="post" action="{{ action }}" data-submit-once>
+            <input type="hidden" name="_glpi_csrf_token" value="{{ csrf_token() }}">
+            <div class="row g-3 mb-3">
+               <div class="col-md-5">
+                  <label class="form-label">{{ __('Profile', 'torah') }}</label>
+                  {{ new_profile|raw }}
+               </div>
+               <div class="col-md-5">
+                  <label class="form-label">{{ __('Entity', 'torah') }}</label>
+                  {{ new_entity|raw }}
+               </div>
+               <div class="col-md-2 d-flex align-items-end">
+                  <label class="form-check">
+                     <input class="form-check-input" type="checkbox" name="is_recursive" value="1">
+                     <span class="form-check-label">{{ __('Recursive', 'torah') }}</span>
+                  </label>
+               </div>
+            </div>
+            {% include '@torah/admin/rule_matrix.html.twig' with {'groups': groups, 'blocked_rules': {}} only %}
+            <button class="btn btn-primary mt-3" type="submit" name="save" value="1">
+               {{ _x('button', 'Add') }}
+            </button>
+         </form>
+      </div>
+   </div>
+
+   {% for set in sets %}
+      <div class="card mb-4">
+         <div class="card-header">
+            <h2 class="card-title">{{ set.profile_name }} / {{ set.entity_name }}</h2>
+         </div>
+         <div class="card-body">
+            <form method="post" action="{{ action }}" data-submit-once>
+               <input type="hidden" name="_glpi_csrf_token" value="{{ csrf_token() }}">
+               <input type="hidden" name="id" value="{{ set.id }}">
+               <input type="hidden" name="profiles_id" value="{{ set.profile_id }}">
+               <input type="hidden" name="entities_id" value="{{ set.entity_id }}">
+               <div class="row g-3 mb-3">
+                  <div class="col-md-5">
+                     <strong>{{ __('Profile', 'torah') }}:</strong> {{ set.profile_name }}
+                  </div>
+                  <div class="col-md-5">
+                     <strong>{{ __('Entity', 'torah') }}:</strong> {{ set.entity_name }}
+                  </div>
+                  <div class="col-md-2">
+                     <label class="form-check">
+                        <input class="form-check-input" type="checkbox" name="is_recursive" value="1" {{ set.recursive ? 'checked' : '' }}>
+                        <span class="form-check-label">{{ __('Recursive', 'torah') }}</span>
+                     </label>
+                  </div>
+               </div>
+               {% include '@torah/admin/rule_matrix.html.twig' with {'groups': set.groups, 'blocked_rules': set.blocked_rules} only %}
+               <div class="d-flex gap-2 mt-3">
+                  <button class="btn btn-primary" type="submit" name="save" value="1">{{ _x('button', 'Save') }}</button>
+                  <button class="btn btn-outline-danger" type="submit" name="delete" value="1"
+                          onclick="return confirm('{{ __('Remove this policy set?', 'torah')|e('js') }}');">
+                     {{ _x('button', 'Delete permanently') }}
+                  </button>
+               </div>
+            </form>
+         </div>
+      </div>
+   {% else %}
+      <div class="alert alert-secondary">{{ __('No policy set is configured.', 'torah') }}</div>
+   {% endfor %}
+</div>

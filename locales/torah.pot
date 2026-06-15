@@ -1,0 +1,125 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: Torah 0.1.0\n"
+"Report-Msgid-Bugs-To: https://github.com/renatovaladares85/torah/issues\n"
+"POT-Creation-Date: 2026-06-15 00:00+0000\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+msgid "Actors"
+msgstr ""
+
+msgid "Assigned technician, group, or supplier"
+msgstr ""
+
+msgid "Blocked by the active Torah policy."
+msgstr ""
+
+msgid "Category"
+msgstr ""
+
+msgid "Checked means blocked."
+msgstr ""
+
+msgid "Closing date"
+msgstr ""
+
+msgid "Contract"
+msgstr ""
+
+msgid "Entity"
+msgstr ""
+
+msgid "External actions"
+msgstr ""
+
+msgid "Impact"
+msgstr ""
+
+msgid "Location"
+msgstr ""
+
+msgid "New policy set"
+msgstr ""
+
+msgid "No policy set is configured."
+msgstr ""
+
+msgid "OLA for time to own"
+msgstr ""
+
+msgid "OLA for time to resolve"
+msgstr ""
+
+msgid "Observer"
+msgstr ""
+
+msgid "Opening date"
+msgstr ""
+
+msgid "Policy set removed."
+msgstr ""
+
+msgid "Policy set saved."
+msgstr ""
+
+msgid "Priority"
+msgstr ""
+
+msgid "Profile"
+msgstr ""
+
+msgid "Properties"
+msgstr ""
+
+msgid "Recursive"
+msgstr ""
+
+msgid "Remove this policy set?"
+msgstr ""
+
+msgid "Request source"
+msgstr ""
+
+msgid "Requester"
+msgstr ""
+
+msgid "SLA for time to own"
+msgstr ""
+
+msgid "SLA for time to resolve"
+msgstr ""
+
+msgid "Solution date"
+msgstr ""
+
+msgid "Status"
+msgstr ""
+
+msgid "The policy set could not be saved. Review the selected scope and rules."
+msgstr ""
+
+msgid "Time to own"
+msgstr ""
+
+msgid "Time to resolve"
+msgstr ""
+
+msgid "Torah blocked this change according to the active profile and entity policy."
+msgstr ""
+
+msgid "Torah policies"
+msgstr ""
+
+msgid "Total duration"
+msgstr ""
+
+msgid "Type"
+msgstr ""
+
+msgid "Unchecked rules do not change GLPI behavior."
+msgstr ""
+
+msgid "Urgency"
+msgstr ""
