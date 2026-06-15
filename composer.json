@@ -1,0 +1,51 @@
+{
+    "name": "renatovaladares85/torah",
+    "description": "Complementary ticket mutation restrictions for GLPI 10.",
+    "type": "glpi-plugin",
+    "license": "GPL-3.0-or-later",
+    "require": {
+        "ext-json": "*",
+        "php": ">=8.2"
+    },
+    "require-dev": {
+        "glpi-project/coding-standard": "^0.9.0",
+        "phpstan/phpstan": "^1.12",
+        "phpunit/phpunit": "^10.5"
+    },
+    "autoload": {
+        "psr-4": {
+            "GlpiPlugin\\Torah\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "GlpiPlugin\\Torah\\Tests\\": "tests/"
+        }
+    },
+    "config": {
+        "allow-plugins": {
+            "dealerdirect/phpcodesniffer-composer-installer": true
+        },
+        "optimize-autoloader": true,
+        "platform": {
+            "php": "8.2.0"
+        },
+        "sort-packages": true
+    },
+    "scripts": {
+        "test": "phpunit",
+        "analyse": "phpstan analyse --memory-limit=1G",
+        "cs": "phpcs -p --standard=vendor/glpi-project/coding-standard/GlpiStandard --ignore=vendor,var .",
+        "validate:privacy": "bash tools/check-public-repo.sh",
+        "validate:translations": "python3 tools/check-translations.py",
+        "validate:version": "bash tools/check-version.sh",
+        "qa": [
+            "@validate:privacy",
+            "@validate:translations",
+            "@validate:version",
+            "@cs",
+            "@analyse",
+            "@test"
+        ]
+    }
+}

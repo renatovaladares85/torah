@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+   <name>Torah</name>
+   <key>torah</key>
+   <state>development</state>
+   <description>
+      <short>
+         <en>Complementary ticket mutation restrictions for GLPI.</en>
+         <pt_BR>Restrições complementares para alterações em chamados do GLPI.</pt_BR>
+      </short>
+      <long>
+         <en>Configure restrictive-only ticket policies by active profile and entity.</en>
+         <pt_BR>Configure políticas somente restritivas por perfil ativo e entidade.</pt_BR>
+      </long>
+   </description>
+   <homepage>https://github.com/renatovaladares85/torah</homepage>
+   <download>https://github.com/renatovaladares85/torah/releases</download>
+   <issues>https://github.com/renatovaladares85/torah/issues</issues>
+   <readme>https://github.com/renatovaladares85/torah/blob/main/README.md</readme>
+   <authors>
+      <author>Torah contributors</author>
+   </authors>
+   <versions>
+      <version>
+         <num>0.1.0</num>
+         <compatibility>~10.0.10</compatibility>
+      </version>
+   </versions>
+   <langs>
+      <lang>en_GB</lang>
+      <lang>pt_BR</lang>
+   </langs>
+   <license>GPL-3.0-or-later</license>
+</root>
