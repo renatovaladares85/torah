@@ -31,4 +31,28 @@ final class ActorMutationDetector
            $ticket->getActorsForType(self::ROLES[$role]),
        );
    }
+
+    /**
+     * @param array<string, mixed> $input
+     * @return list<string>
+     */
+   public function addedItemtypes(Ticket $ticket, array $input, string $role): array {
+      if (!isset(self::ROLES[$role])) {
+          return [];
+      }
+
+       return $this->inspector->addedItemtypes(
+           $input,
+           $role,
+           $ticket->getActorsForType(self::ROLES[$role]),
+       );
+   }
+
+    /**
+     * @param array<string, mixed> $input
+     * @return list<string>
+     */
+   public function addedItemtypesForNewTicket(array $input, string $role): array {
+       return $this->inspector->addedItemtypes($input, $role, []);
+   }
 }

@@ -16,11 +16,17 @@ final class HookBridge
           return;
       }
 
-       ServiceFactory::guard()->guardRelationMutation($item);
+       ServiceFactory::guard()->guardRelationMutation($item, 'relation_update');
    }
 
    public static function preItemAdd(CommonDBTM $item): void {
-       ServiceFactory::guard()->guardRelationMutation($item);
+      if ($item instanceof Ticket) {
+          ServiceFactory::guard()->guardTicketAdd($item);
+
+          return;
+      }
+
+       ServiceFactory::guard()->guardRelationMutation($item, 'relation_add');
    }
 
    public static function preItemDelete(CommonDBTM $item): void {
@@ -30,11 +36,16 @@ final class HookBridge
           return;
       }
 
-       ServiceFactory::guard()->guardRelationMutation($item);
+       ServiceFactory::guard()->guardRelationMutation($item, 'relation_delete');
    }
 
     /** @param array<string, mixed> $params */
    public static function postItemForm(array $params): void {
        TicketPolicyPresenter::render($params);
+   }
+
+    /** @param array<string, mixed> $params */
+   public static function filterActors(array $params): array {
+       return (new ActorListFilter())->filter($params);
    }
 }

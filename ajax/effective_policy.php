@@ -2,6 +2,7 @@
 
 include('../../../inc/includes.php');
 
+use GlpiPlugin\Torah\Application\ActorItemtypePolicy;
 use GlpiPlugin\Torah\Infrastructure\Glpi\AuthorizationContextFactory;
 use GlpiPlugin\Torah\Infrastructure\Glpi\ServiceFactory;
 
@@ -23,8 +24,15 @@ if ($ticketId <= 0 || !$ticket->getFromDB($ticketId) || !$ticket->can($ticketId,
 
 $context = (new AuthorizationContextFactory())->fromTicket($ticket);
 $policy = $context === null ? null : ServiceFactory::resolver()->resolve($context);
+$actorItemtypes = [];
+if ($policy !== null) {
+   foreach (array_keys(ActorItemtypePolicy::roleLabels()) as $role) {
+       $actorItemtypes[$role] = ActorItemtypePolicy::allowedFor($policy, $role);
+   }
+}
 
 header('Content-Type: application/json; charset=UTF-8');
 echo json_encode([
-    'blocked_rules' => $policy?->blockedRuleKeys() ?? [],
+    'blocked_rules'   => $policy?->blockedRuleKeys() ?? [],
+    'actor_itemtypes' => $actorItemtypes,
 ], JSON_THROW_ON_ERROR);

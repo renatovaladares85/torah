@@ -32,12 +32,13 @@ function plugin_init_torah(): void {
     $PLUGIN_HOOKS['config_page']['torah'] = 'front/config.php';
     $PLUGIN_HOOKS[Hooks::ADD_JAVASCRIPT]['torah'][] = 'js/ticket-policy.js';
     $PLUGIN_HOOKS[Hooks::POST_ITEM_FORM]['torah'] = [HookBridge::class, 'postItemForm'];
+    $PLUGIN_HOOKS[Hooks::FILTER_ACTORS]['torah'] = [HookBridge::class, 'filterActors'];
 
    foreach ([Ticket::class, Ticket_User::class, Group_Ticket::class, Supplier_Ticket::class, Ticket_Contract::class] as $itemtype) {
        $PLUGIN_HOOKS[Hooks::PRE_ITEM_UPDATE]['torah'][$itemtype] = [HookBridge::class, 'preItemUpdate'];
    }
 
-   foreach ([Ticket_User::class, Group_Ticket::class, Supplier_Ticket::class, Ticket_Contract::class] as $itemtype) {
+   foreach ([Ticket::class, Ticket_User::class, Group_Ticket::class, Supplier_Ticket::class, Ticket_Contract::class] as $itemtype) {
        $PLUGIN_HOOKS[Hooks::PRE_ITEM_ADD]['torah'][$itemtype] = [HookBridge::class, 'preItemAdd'];
    }
 

@@ -39,26 +39,54 @@ final class TicketMutationGuard
           return true;
       }
 
-      foreach (['requester', 'observer', 'assign'] as $role) {
-         if ($this->actorDetector->hasMutation($ticket, $input, $role)) {
-             $key = 'ticket.actor.' . ($role === 'assign' ? 'assignee' : $role);
-            if (!$this->allow($context, $key, 'ticket_update')) {
-               return $this->cancel($ticket);
-            }
-         }
+      if (!$this->guardActorInput($ticket, $context, $input, 'ticket_update', false)) {
+          return $this->cancel($ticket);
       }
 
+       return $this->guardFieldInput($ticket, $context, $ticket->fields, $input, 'update', 'ticket_update');
+   }
+
+   public function guardTicketAdd(Ticket $ticket): bool {
+      if (!is_array($ticket->input)) {
+          return true;
+      }
+
+       $input = $ticket->input;
+       $context = $this->contextFactory->fromTicketInput($ticket, $input);
+      if ($context === null) {
+          return true;
+      }
+
+      if (!$this->guardActorInput($ticket, $context, $input, 'ticket_add', true)) {
+          return $this->cancel($ticket);
+      }
+
+       return $this->guardFieldInput($ticket, $context, [], $input, 'add', 'ticket_add');
+   }
+
+    /**
+     * @param array<string, mixed> $existing
+     * @param array<string, mixed> $input
+     */
+   private function guardFieldInput(
+      Ticket $ticket,
+      AuthorizationContext $context,
+      array $existing,
+      array $input,
+      string $action,
+      string $source,
+   ): bool {
       foreach ($this->catalog->all() as $rule) {
-         if ($rule->group !== 'properties') {
+         if ($rule->group !== 'properties' || $rule->object !== 'ticket' || $rule->action !== $action) {
              continue;
          }
 
          foreach ($rule->inputKeys as $inputKey) {
-            if (!$this->fieldDetector->changes($ticket->fields, $input, $inputKey)) {
+            if (!$this->fieldDetector->changes($existing, $input, $inputKey)) {
                 continue;
             }
 
-            if (!$this->allow($context, $rule->key, 'ticket_update')) {
+            if (!$this->allow($context, $rule->key, $source)) {
                 return $this->cancel($ticket);
             }
          }
@@ -67,7 +95,7 @@ final class TicketMutationGuard
        return true;
    }
 
-   public function guardRelationMutation(CommonDBTM $item): bool {
+   public function guardRelationMutation(CommonDBTM $item, string $source = 'relation_mutation'): bool {
        $ticketId = (int) ($item->input['tickets_id'] ?? $item->fields['tickets_id'] ?? 0);
       if ($ticketId <= 0) {
           return true;
@@ -80,11 +108,21 @@ final class TicketMutationGuard
 
        $context = $this->contextFactory->fromTicket($ticket);
       if ($context === null) {
-          return true;
+         return true;
+      }
+
+       $role = $this->relationRole($item);
+      if ($source === 'relation_add' && $role !== null && !$this->allowsActorItemtypes(
+          $context,
+          $role,
+          [$this->relationItemtype($item)],
+          $source,
+      )) {
+          return $this->cancel($item);
       }
 
        $ruleKey = $this->relationRuleKey($item);
-      if ($ruleKey === null || $this->allow($context, $ruleKey, 'relation_mutation')) {
+      if ($ruleKey === null || $this->allow($context, $ruleKey, $source)) {
           return true;
       }
 
@@ -119,11 +157,11 @@ final class TicketMutationGuard
       }
 
        $suffix = $type === \SLM::TTO ? 'tto' : 'ttr';
-       $ruleKeys = [sprintf('ticket.field.%s_%s', $isSla ? 'sla' : 'ola', $suffix)];
+       $ruleKeys = [sprintf('ticket.field.%s_%s.update', $isSla ? 'sla' : 'ola', $suffix)];
       if ($isSla && !empty($_POST['delete_date'])) {
           $ruleKeys[] = $type === \SLM::TTO
-              ? 'ticket.field.time_to_own'
-              : 'ticket.field.solution_deadline';
+              ? 'ticket.field.time_to_own.update'
+              : 'ticket.field.solution_deadline.update';
       }
 
       foreach ($ruleKeys as $ruleKey) {
@@ -146,11 +184,86 @@ final class TicketMutationGuard
        return false;
    }
 
-   private function relationRuleKey(CommonDBTM $item): ?string {
-      if ($item instanceof Ticket_Contract) {
-          return 'ticket.field.contract';
+    /** @param array<string, mixed> $input */
+   private function guardActorInput(
+       Ticket $ticket,
+       AuthorizationContext $context,
+       array $input,
+       string $source,
+       bool $newTicket,
+   ): bool {
+      foreach (['requester', 'observer', 'assign'] as $role) {
+          $addedItemtypes = $newTicket
+              ? $this->actorDetector->addedItemtypesForNewTicket($input, $role)
+              : $this->actorDetector->addedItemtypes($ticket, $input, $role);
+         if (!$this->allowsActorItemtypes($context, $role, $addedItemtypes, $source)) {
+             return false;
+         }
+
+          $hasMutation = $newTicket
+              ? $addedItemtypes !== []
+              : $this->actorDetector->hasMutation($ticket, $input, $role);
+         if (!$hasMutation) {
+             continue;
+         }
+
+          $key = 'ticket.actor.' . ($role === 'assign' ? 'assignee' : $role);
+         if (!$this->allow($context, $key, $source)) {
+             return false;
+         }
       }
 
+       return true;
+   }
+
+    /** @param list<string> $itemtypes */
+   private function allowsActorItemtypes(AuthorizationContext $context, string $role, array $itemtypes, string $source): bool {
+      if ($itemtypes === []) {
+          return true;
+      }
+
+       $policy = $this->resolver->resolve($context);
+      if ($policy === null) {
+          return true;
+      }
+
+       $allowed = array_fill_keys(ActorItemtypePolicy::allowedFor($policy, $role), true);
+      foreach ($itemtypes as $itemtype) {
+         if (!isset($allowed[$itemtype])) {
+             $this->auditLogger->denied(
+                 $context,
+                 ActorItemtypePolicy::optionKey($role),
+                 $policy->id,
+                 $source,
+             );
+
+             return false;
+         }
+      }
+
+       return true;
+   }
+
+   private function relationRuleKey(CommonDBTM $item): ?string {
+      if ($item instanceof Ticket_Contract) {
+          return 'ticket.field.contract.update';
+      }
+
+      if (!$item instanceof Ticket_User && !$item instanceof Group_Ticket && !$item instanceof Supplier_Ticket) {
+          return null;
+      }
+
+       $role = $this->relationRole($item);
+
+       return match ($role) {
+           'requester' => 'ticket.actor.requester',
+           'observer'  => 'ticket.actor.observer',
+           'assign'    => 'ticket.actor.assignee',
+           default     => null,
+       };
+   }
+
+   private function relationRole(CommonDBTM $item): ?string {
       if (!$item instanceof Ticket_User && !$item instanceof Group_Ticket && !$item instanceof Supplier_Ticket) {
           return null;
       }
@@ -158,11 +271,23 @@ final class TicketMutationGuard
        $type = (int) ($item->input['type'] ?? $item->fields['type'] ?? 0);
 
        return match ($type) {
-           CommonITILActor::REQUESTER => 'ticket.actor.requester',
-           CommonITILActor::OBSERVER  => 'ticket.actor.observer',
-           CommonITILActor::ASSIGN    => 'ticket.actor.assignee',
+           CommonITILActor::REQUESTER => 'requester',
+           CommonITILActor::OBSERVER  => 'observer',
+           CommonITILActor::ASSIGN    => 'assign',
            default                    => null,
        };
+   }
+
+   private function relationItemtype(CommonDBTM $item): string {
+      if ($item instanceof Group_Ticket) {
+          return 'Group';
+      }
+
+      if ($item instanceof Supplier_Ticket) {
+          return 'Supplier';
+      }
+
+       return 'User';
    }
 
    private function cancel(CommonDBTM $item): false {
