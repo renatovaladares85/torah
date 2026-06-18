@@ -27,7 +27,11 @@
                   </label>
                </div>
             </div>
-            {% include '@torah/admin/rule_matrix.html.twig' with {'groups': groups, 'blocked_rules': {}} only %}
+            {% include '@torah/admin/rule_matrix.html.twig' with {
+               'policy_model': policy_model,
+               'blocked_rules': {},
+               'actor_itemtypes': new_actor_itemtypes
+            } only %}
             <button class="btn btn-primary mt-3" type="submit" name="save" value="1">
                {{ _x('button', 'Add') }}
             </button>
@@ -60,7 +64,11 @@
                      </label>
                   </div>
                </div>
-               {% include '@torah/admin/rule_matrix.html.twig' with {'groups': set.groups, 'blocked_rules': set.blocked_rules} only %}
+               {% include '@torah/admin/rule_matrix.html.twig' with {
+                  'policy_model': policy_model,
+                  'blocked_rules': set.blocked_rules,
+                  'actor_itemtypes': set.actor_itemtypes
+               } only %}
                <div class="d-flex gap-2 mt-3">
                   <button class="btn btn-primary" type="submit" name="save" value="1">{{ _x('button', 'Save') }}</button>
                   <button class="btn btn-outline-danger" type="submit" name="delete" value="1"

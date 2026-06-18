@@ -1,15 +1,76 @@
 <div class="row g-3">
-   {% for group in groups %}
-      {% if group.rules is not empty %}
-         <section class="col-lg-4">
+   {% for domain in policy_model.domains %}
+      {% if domain.objects is not empty %}
+         <section class="col-12">
             <fieldset class="border rounded p-3 h-100">
-               <legend class="fs-4">{{ group.label }}</legend>
-               {% for rule in group.rules %}
-                  <label class="form-check mb-2">
-                     <input class="form-check-input" type="checkbox" name="blocked_rules[]" value="{{ rule.key }}"
-                            {{ blocked_rules[rule.key] is defined ? 'checked' : '' }}>
-                     <span class="form-check-label">{{ rule.label }}</span>
-                  </label>
+               <legend class="fs-4">{{ domain.label }}</legend>
+               {% for object in domain.objects %}
+                  <div class="mb-4">
+                     <h3 class="fs-5 mb-3">{{ object.label }}</h3>
+
+                     {% if object.field_rules is not empty %}
+                        <div class="table-responsive mb-4">
+                           <table class="table table-sm align-middle">
+                              <thead>
+                                 <tr>
+                                    <th scope="col">{{ __('Properties', 'torah') }}</th>
+                                    <th scope="col" class="text-center">{{ __('Add', 'torah') }}</th>
+                                    <th scope="col" class="text-center">{{ __('Update', 'torah') }}</th>
+                                 </tr>
+                              </thead>
+                              <tbody>
+                                 {% for field in object.field_rules %}
+                                    <tr>
+                                       <th scope="row">{{ field.label }}</th>
+                                       <td class="text-center">
+                                          <input class="form-check-input" type="checkbox" name="blocked_rules[]" value="{{ field.add_key }}"
+                                                 {{ blocked_rules[field.add_key] is defined ? 'checked' : '' }}>
+                                       </td>
+                                       <td class="text-center">
+                                          <input class="form-check-input" type="checkbox" name="blocked_rules[]" value="{{ field.update_key }}"
+                                                 {{ blocked_rules[field.update_key] is defined ? 'checked' : '' }}>
+                                       </td>
+                                    </tr>
+                                 {% endfor %}
+                              </tbody>
+                           </table>
+                        </div>
+                     {% endif %}
+
+                     {% if object.actor_itemtype_roles is not empty %}
+                        <h4 class="fs-6">{{ __('Actor lists', 'torah') }}</h4>
+                        <div class="row g-3 mb-4">
+                           {% for role in object.actor_itemtype_roles %}
+                              <section class="col-md-4">
+                                 <fieldset class="border rounded p-3 h-100">
+                                    <legend class="fs-6">{{ role.label }}</legend>
+                                    <input type="hidden" name="actor_itemtypes_present[{{ role.key }}]" value="1">
+                                    {% for itemtype in role.itemtypes %}
+                                       <label class="form-check mb-2">
+                                          <input class="form-check-input" type="checkbox" name="actor_itemtypes[{{ role.key }}][]" value="{{ itemtype.key }}"
+                                                 {{ actor_itemtypes[role.key][itemtype.key] is defined ? 'checked' : '' }}>
+                                          <span class="form-check-label">{{ itemtype.label }}</span>
+                                       </label>
+                                    {% endfor %}
+                                 </fieldset>
+                              </section>
+                           {% endfor %}
+                        </div>
+                     {% endif %}
+
+                     {% if object.actor_rules is not empty %}
+                        <h4 class="fs-6">{{ __('Actor changes', 'torah') }}</h4>
+                        <div class="row g-2">
+                           {% for rule in object.actor_rules %}
+                              <label class="form-check col-md-4">
+                                 <input class="form-check-input" type="checkbox" name="blocked_rules[]" value="{{ rule.key }}"
+                                        {{ blocked_rules[rule.key] is defined ? 'checked' : '' }}>
+                                 <span class="form-check-label">{{ rule.label }}</span>
+                              </label>
+                           {% endfor %}
+                        </div>
+                     {% endif %}
+                  </div>
                {% endfor %}
             </fieldset>
          </section>
