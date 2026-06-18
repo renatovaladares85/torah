@@ -3,6 +3,7 @@
 namespace GlpiPlugin\Torah\Application\Admin;
 
 use Entity;
+use GlpiPlugin\Torah\Application\ActorItemtypePolicy;
 use GlpiPlugin\Torah\Application\PolicyCatalog;
 use GlpiPlugin\Torah\Infrastructure\Glpi\GlpiPolicyStore;
 use Profile;
@@ -44,12 +45,22 @@ final class SavePolicySet
          }
       }
 
+       $options = $input->options;
+      if ($input->id !== null) {
+         foreach ($existing->options() as $key => $value) {
+            if (!ActorItemtypePolicy::isOptionKey($key)) {
+                $options[$key] = $value;
+            }
+         }
+      }
+
        return $this->store->save(
            $input->id,
            $input->profileId,
            $input->entityId,
            $input->recursive,
            array_values(array_unique($blockedRules)),
+           $options,
        );
    }
 }

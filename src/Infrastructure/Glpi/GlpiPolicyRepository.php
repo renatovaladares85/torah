@@ -61,7 +61,18 @@ final class GlpiPolicyRepository implements PolicyRepository
            'ORDER'  => ['rule_key ASC'],
        ]);
       foreach ($iterator as $rule) {
-          $rules[] = (string) $rule['rule_key'];
+         $rules[] = (string) $rule['rule_key'];
+      }
+
+      $options = [];
+      $iterator = $DB->request([
+           'SELECT' => ['option_key', 'option_value'],
+           'FROM'   => DatabaseInstaller::POLICY_OPTION_TABLE,
+           'WHERE'  => ['plugin_torah_policysets_id' => (int) $row['id']],
+           'ORDER'  => ['option_key ASC'],
+       ]);
+      foreach ($iterator as $option) {
+         $options[(string) $option['option_key']] = (string) $option['option_value'];
       }
 
        return new PolicySet(
@@ -70,6 +81,7 @@ final class GlpiPolicyRepository implements PolicyRepository
            (int) $row['entities_id'],
            (bool) $row['is_recursive'],
            $rules,
+           $options,
        );
    }
 }

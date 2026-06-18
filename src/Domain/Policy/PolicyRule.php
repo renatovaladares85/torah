@@ -14,6 +14,9 @@ final class PolicyRule
         public readonly string $label,
         public readonly array $inputKeys = [],
         public readonly array $selectors = [],
+        public readonly string $domain = 'assistance',
+        public readonly string $object = 'ticket',
+        public readonly ?string $action = null,
     ) {
    }
 }

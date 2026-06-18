@@ -2,17 +2,22 @@
 
 namespace GlpiPlugin\Torah\Application\Admin;
 
+use GlpiPlugin\Torah\Application\ActorItemtypePolicy;
 use GlpiPlugin\Torah\Application\PolicyCatalog;
 
 final class PolicySetInput
 {
-    /** @param list<string> $blockedRules */
+    /**
+     * @param list<string> $blockedRules
+     * @param array<string, string> $options
+     */
    private function __construct(
         public readonly ?int $id,
         public readonly int $profileId,
         public readonly int $entityId,
         public readonly bool $recursive,
         public readonly array $blockedRules,
+        public readonly array $options,
     ) {
    }
 
@@ -32,7 +37,23 @@ final class PolicySetInput
          if (!is_string($ruleKey) || !$catalog->has($ruleKey)) {
              throw new \InvalidArgumentException('The request contains an unknown policy rule.');
          }
-          $validatedRules[] = $ruleKey;
+         $validatedRules[] = $ruleKey;
+      }
+
+       $options = [];
+       $actorItemtypes = is_array($data['actor_itemtypes'] ?? null) ? $data['actor_itemtypes'] : [];
+      $presentActorItemtypes = is_array($data['actor_itemtypes_present'] ?? null) ? $data['actor_itemtypes_present'] : [];
+      foreach (array_keys(ActorItemtypePolicy::roleLabels()) as $role) {
+         if (array_key_exists($role, $presentActorItemtypes)) {
+             $submitted = is_array($actorItemtypes[$role] ?? null) ? $actorItemtypes[$role] : [];
+         } else {
+             $submitted = is_array($actorItemtypes[$role] ?? null) ? $actorItemtypes[$role] : ActorItemtypePolicy::ITEMTYPES;
+         }
+          $selected = ActorItemtypePolicy::normalize($submitted);
+         if ($selected === []) {
+             throw new \InvalidArgumentException('At least one actor type must be selected.');
+         }
+          $options[ActorItemtypePolicy::optionKey($role)] = ActorItemtypePolicy::encode($selected);
       }
 
        return new self(
@@ -41,6 +62,7 @@ final class PolicySetInput
            $entityId,
            isset($data['is_recursive']) && (int) $data['is_recursive'] === 1,
            array_values(array_unique($validatedRules)),
+           $options,
        );
    }
 }

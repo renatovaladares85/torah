@@ -9,6 +9,7 @@ final class PolicySet
 
     /**
      * @param list<string> $blockedRules
+     * @param array<string, string> $options
      */
    public function __construct(
         public readonly ?int $id,
@@ -16,6 +17,7 @@ final class PolicySet
         public readonly int $entityId,
         public readonly bool $recursive,
         array $blockedRules,
+        private readonly array $options = [],
     ) {
        $this->blockedRules = array_fill_keys(array_values(array_unique($blockedRules)), true);
    }
@@ -27,5 +29,14 @@ final class PolicySet
     /** @return list<string> */
    public function blockedRuleKeys(): array {
        return array_keys($this->blockedRules);
+   }
+
+   public function option(string $key): ?string {
+       return $this->options[$key] ?? null;
+   }
+
+    /** @return array<string, string> */
+   public function options(): array {
+       return $this->options;
    }
 }
