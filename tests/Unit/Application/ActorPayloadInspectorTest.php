@@ -73,6 +73,42 @@ final class ActorPayloadInspectorTest extends TestCase
        self::assertFalse($this->inspector->hasMutation(['actortype' => 1], 'observer', []));
    }
 
+   public function testAddedItemtypesOnlyReportsNewActors(): void {
+       $existing = [$this->actor('User', 10)];
+
+       self::assertSame(
+           ['Group', 'Supplier'],
+           $this->inspector->addedItemtypes(
+               [
+                   '_actors' => [
+                       'assign' => [
+                           $this->actor('User', 10),
+                           $this->actor('Group', 20),
+                           $this->actor('Supplier', 30),
+                       ],
+                   ],
+               ],
+               'assign',
+               $existing,
+           ),
+       );
+   }
+
+   public function testLegacyPayloadReportsAddedItemtypes(): void {
+       self::assertSame(
+           ['User', 'Group', 'Supplier'],
+           $this->inspector->addedItemtypes(
+               [
+                   '_itil_requester'      => ['_type' => 'user', 'users_id' => 11],
+                   '_groups_id_requester' => [20],
+                   '_suppliers_id_requester' => [30],
+               ],
+               'requester',
+               [],
+           ),
+       );
+   }
+
     /** @return array<string, mixed> */
    private function actor(string $itemtype, int $itemsId, int $useNotification = 1): array {
        return [

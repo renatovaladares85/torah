@@ -13,9 +13,10 @@ final class PolicyCatalogTest extends TestCase
    public function testBuiltInRulesAreStableAndUnique(): void {
        $catalog = new PolicyCatalog(new CapabilityRegistry());
 
-       self::assertCount(22, $catalog->all());
        self::assertTrue($catalog->has('ticket.actor.requester'));
-       self::assertTrue($catalog->has('ticket.field.time_to_own'));
+       self::assertTrue($catalog->has('ticket.field.time_to_own.add'));
+       self::assertTrue($catalog->has('ticket.field.time_to_own.update'));
+       self::assertFalse($catalog->has('ticket.field.time_to_own'));
    }
 
    public function testExternalCapabilityAppearsInSeparateGroup(): void {

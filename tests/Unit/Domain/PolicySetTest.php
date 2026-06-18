@@ -13,10 +13,13 @@ final class PolicySetTest extends TestCase
        $set = new PolicySet(1, 2, 3, false, [
            'ticket.field.status',
            'ticket.field.status',
+       ], [
+           'ticket.actor.requester.allowed_itemtypes' => '["User"]',
        ]);
 
        self::assertSame(['ticket.field.status'], $set->blockedRuleKeys());
        self::assertTrue($set->blocks('ticket.field.status'));
        self::assertFalse($set->blocks('ticket.field.type'));
+       self::assertSame('["User"]', $set->option('ticket.actor.requester.allowed_itemtypes'));
    }
 }
