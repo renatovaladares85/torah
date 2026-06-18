@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: Torah 0.1.0\n"
+"Project-Id-Version: Torah 0.2.0\n"
 "Report-Msgid-Bugs-To: https://github.com/renatovaladares85/torah/issues\n"
-"PO-Revision-Date: 2026-06-15 00:00+0000\n"
+"PO-Revision-Date: 2026-06-18 00:00+0000\n"
 "Last-Translator: Torah contributors\n"
 "Language: pt_BR\n"
 "Language-Team: Brazilian Portuguese\n"
@@ -11,11 +11,35 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 
-msgid "Actors"
-msgstr "Atores"
+msgid "Actor changes"
+msgstr "Alterações de atores"
+
+msgid "Actor lists"
+msgstr "Listas de atores"
+
+msgid "Add"
+msgstr "Adicionar"
+
+msgid "Administration"
+msgstr "Administração"
+
+msgid "Approval status"
+msgstr "Status de aprovação"
 
 msgid "Assigned technician, group, or supplier"
 msgstr "Técnico, grupo ou fornecedor atribuído"
+
+msgid "Assignee"
+msgstr "Atribuído"
+
+msgid "Assistance"
+msgstr "Assistência"
+
+msgid "Associated item"
+msgstr "Item associado"
+
+msgid "Associated item type"
+msgstr "Tipo de item associado"
 
 msgid "Blocked by the active Torah policy."
 msgstr "Bloqueado pela política ativa do Torah."
@@ -29,17 +53,29 @@ msgstr "Marcado significa bloqueado."
 msgid "Closing date"
 msgstr "Data de fechamento"
 
+msgid "Configuration"
+msgstr "Configuração"
+
 msgid "Contract"
 msgstr "Contrato"
+
+msgid "Description"
+msgstr "Descrição"
 
 msgid "Entity"
 msgstr "Entidade"
 
-msgid "External actions"
-msgstr "Ações externas"
+msgid "Groups"
+msgstr "Grupos"
 
 msgid "Impact"
 msgstr "Impacto"
+
+msgid "Internal time to own"
+msgstr "Tempo interno para atendimento"
+
+msgid "Internal time to resolve"
+msgstr "Prazo interno para solução"
 
 msgid "Location"
 msgstr "Localização"
@@ -61,6 +97,9 @@ msgstr "Observador"
 
 msgid "Opening date"
 msgstr "Data de abertura"
+
+msgid "Other"
+msgstr "Outros"
 
 msgid "Policy set removed."
 msgstr "Conjunto de políticas removido."
@@ -101,14 +140,23 @@ msgstr "Data da solução"
 msgid "Status"
 msgstr "Status"
 
+msgid "Suppliers"
+msgstr "Fornecedores"
+
 msgid "The policy set could not be saved. Review the selected scope and rules."
 msgstr "Não foi possível salvar o conjunto de políticas. Revise o escopo e as regras selecionadas."
+
+msgid "Tickets"
+msgstr "Chamados"
 
 msgid "Time to own"
 msgstr "Tempo para atendimento"
 
 msgid "Time to resolve"
 msgstr "Prazo para solução"
+
+msgid "Title"
+msgstr "Título"
 
 msgid "Torah blocked this change according to the active profile and entity policy."
 msgstr "O Torah bloqueou esta alteração conforme a política do perfil e da entidade ativos."
@@ -125,5 +173,11 @@ msgstr "Tipo"
 msgid "Unchecked rules do not change GLPI behavior."
 msgstr "Regras desmarcadas não alteram o comportamento do GLPI."
 
+msgid "Update"
+msgstr "Atualizar"
+
 msgid "Urgency"
 msgstr "Urgência"
+
+msgid "Users"
+msgstr "Usuários"

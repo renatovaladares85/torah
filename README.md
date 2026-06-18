@@ -12,6 +12,7 @@ blocked.
 
 | Torah | GLPI | PHP |
 |---|---|---|
+| 0.2.x | >= 10.0.10 and < 10.0.99 | >= 8.2 |
 | 0.1.x | >= 10.0.10 and < 10.0.99 | >= 8.2 |
 
 The initial validation targets GLPI 10.0.10 and 10.0.25. Compatibility outside
@@ -21,7 +22,9 @@ this matrix is not declared.
 
 - Policy sets scoped by active GLPI profile and ticket entity.
 - Exact-entity policy precedence, followed by the nearest recursive ancestor.
-- Independent restrictions for ticket actors and properties.
+- Ticket rules grouped under assistance settings.
+- Independent add and update restrictions for editable ticket properties.
+- Per-actor control over user, group, and supplier lists.
 - Backend enforcement for ticket, actor, contract, SLA, and OLA mutation paths.
 - Optional external capabilities without mandatory plugin dependencies.
 - Safe audit logging without ticket content or personal data.
@@ -42,15 +45,18 @@ Do not rename the `torah` directory.
 
 ## Configuration
 
-Each policy set selects one profile, one entity, a recursive flag, and the
-rules to block. For a ticket, Torah uses exactly one policy set:
+Each policy set selects one profile, one entity, a recursive flag, actor list
+options, and the rules to block. Built-in rules currently affect tickets only.
+For a ticket, Torah uses exactly one policy set:
 
 1. The policy set for the exact ticket entity.
 2. Otherwise, the nearest recursive policy set on an ancestor entity.
 3. Otherwise, no interference.
 
 Rules from multiple policy sets are never merged. A policy set with no checked
-rules intentionally stops inheritance and applies no restrictions.
+rules intentionally stops inheritance and applies no property restrictions.
+Actor list options default to users, groups, and suppliers when they are not
+explicitly configured.
 
 ## Upgrade And Uninstall
 

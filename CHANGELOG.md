@@ -3,6 +3,23 @@
 All notable changes to this project are documented in this file. The format is
 based on Keep a Changelog and the project follows Semantic Versioning.
 
+## [0.2.0] - 2026-06-18
+
+### Added
+
+- Grouped policy administration around assistance ticket rules.
+- Add and update blocking for editable ticket properties.
+- Per-profile and per-entity actor list options for users, groups, and
+  suppliers.
+- Backend ticket creation guards and policy option persistence.
+
+## [0.1.1] - 2026-06-15
+
+### Fixed
+
+- Aligned the database uniqueness constraint with the effective policy model so
+  each profile and entity can have only one policy set.
+
 ## [0.1.0] - 2026-06-15
 
 ### Added
@@ -22,5 +39,6 @@ based on Keep a Changelog and the project follows Semantic Versioning.
 - Backend hooks reject manual bypass attempts independently of JavaScript.
 - Repository and package validation reject common secrets and private artifacts.
 
+[0.2.0]: https://github.com/renatovaladares85/torah/releases/tag/0.2.0
+[0.1.1]: https://github.com/renatovaladares85/torah/releases/tag/0.1.1
 [0.1.0]: https://github.com/renatovaladares85/torah/releases/tag/0.1.0
-

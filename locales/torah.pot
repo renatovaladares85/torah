@@ -1,16 +1,40 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: Torah 0.1.0\n"
+"Project-Id-Version: Torah 0.2.0\n"
 "Report-Msgid-Bugs-To: https://github.com/renatovaladares85/torah/issues\n"
-"POT-Creation-Date: 2026-06-15 00:00+0000\n"
+"POT-Creation-Date: 2026-06-18 00:00+0000\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-msgid "Actors"
+msgid "Actor changes"
+msgstr ""
+
+msgid "Actor lists"
+msgstr ""
+
+msgid "Add"
+msgstr ""
+
+msgid "Administration"
+msgstr ""
+
+msgid "Approval status"
 msgstr ""
 
 msgid "Assigned technician, group, or supplier"
+msgstr ""
+
+msgid "Assignee"
+msgstr ""
+
+msgid "Assistance"
+msgstr ""
+
+msgid "Associated item"
+msgstr ""
+
+msgid "Associated item type"
 msgstr ""
 
 msgid "Blocked by the active Torah policy."
@@ -25,16 +49,28 @@ msgstr ""
 msgid "Closing date"
 msgstr ""
 
+msgid "Configuration"
+msgstr ""
+
 msgid "Contract"
+msgstr ""
+
+msgid "Description"
 msgstr ""
 
 msgid "Entity"
 msgstr ""
 
-msgid "External actions"
+msgid "Groups"
 msgstr ""
 
 msgid "Impact"
+msgstr ""
+
+msgid "Internal time to own"
+msgstr ""
+
+msgid "Internal time to resolve"
 msgstr ""
 
 msgid "Location"
@@ -56,6 +92,9 @@ msgid "Observer"
 msgstr ""
 
 msgid "Opening date"
+msgstr ""
+
+msgid "Other"
 msgstr ""
 
 msgid "Policy set removed."
@@ -97,13 +136,22 @@ msgstr ""
 msgid "Status"
 msgstr ""
 
+msgid "Suppliers"
+msgstr ""
+
 msgid "The policy set could not be saved. Review the selected scope and rules."
+msgstr ""
+
+msgid "Tickets"
 msgstr ""
 
 msgid "Time to own"
 msgstr ""
 
 msgid "Time to resolve"
+msgstr ""
+
+msgid "Title"
 msgstr ""
 
 msgid "Torah blocked this change according to the active profile and entity policy."
@@ -121,5 +169,11 @@ msgstr ""
 msgid "Unchecked rules do not change GLPI behavior."
 msgstr ""
 
+msgid "Update"
+msgstr ""
+
 msgid "Urgency"
+msgstr ""
+
+msgid "Users"
 msgstr ""

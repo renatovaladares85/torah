@@ -67,3 +67,5 @@ These instructions apply to the entire repository.
 - Use DTOs and interfaces only for concrete boundaries.
 - Store plugin data only in plugin-owned tables and use idempotent GLPI
   migrations.
+- Built-in policy rules currently target GLPI tickets only. Expanding built-in
+  rules to other GLPI objects requires explicit approval and documentation.

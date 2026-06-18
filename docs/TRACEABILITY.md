@@ -4,8 +4,12 @@
 |---|---|---|
 | Restrictive-only authorization | `PolicyResolver`, `TicketMutationGuard` | Policy and guard tests |
 | Profile/entity isolation | `AuthorizationContext`, repository scope queries | Resolver tests |
+| Unique policy scope | `DatabaseInstaller`, `GlpiPolicyStore` | GLPI lifecycle matrix |
 | Exact then nearest recursive policy | `PolicyResolver` | Ancestor precedence tests |
 | No default blocking | Empty rule persistence | Installation and save tests |
+| Ticket-only built-in rules | Policy catalog metadata | Catalog tests |
+| Add/update property blocking | `TicketFieldCatalog`, `TicketMutationGuard` | Field catalog and guard tests |
+| Actor itemtype options | `ActorItemtypePolicy`, `ActorListFilter`, `GlpiPolicyStore` | Input and actor payload tests |
 | Backend actor enforcement | `ActorPayloadInspector`, ticket and relation hooks | Actor payload unit tests |
 | Backend property enforcement | `FieldMutationDetector`, ticket update hook | Property catalog tests |
 | External capability support | `CapabilityRegistry`, `PolicyApi` | Capability tests |
