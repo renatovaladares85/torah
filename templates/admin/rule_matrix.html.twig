@@ -1,79 +1,124 @@
-<div class="row g-3">
-   {% for domain in policy_model.domains %}
-      {% if domain.objects is not empty %}
-         <section class="col-12">
-            <fieldset class="border rounded p-3 h-100">
-               <legend class="fs-4">{{ domain.label }}</legend>
-               {% for object in domain.objects %}
-                  <div class="mb-4">
-                     <h3 class="fs-5 mb-3">{{ object.label }}</h3>
+<section class="mt-4" data-torah-policy-matrix>
+   <fieldset class="border rounded p-3">
+      <legend class="fs-4 px-2">{{ __('Assistance', 'torah') }}</legend>
+      <h3 class="fs-5 mb-3">{{ __('Tickets', 'torah') }}</h3>
 
-                     {% if object.field_rules is not empty %}
-                        <div class="table-responsive mb-4">
-                           <table class="table table-sm align-middle">
-                              <thead>
-                                 <tr>
-                                    <th scope="col">{{ __('Properties', 'torah') }}</th>
-                                    <th scope="col" class="text-center">{{ __('Add', 'torah') }}</th>
-                                    <th scope="col" class="text-center">{{ __('Update', 'torah') }}</th>
-                                 </tr>
-                              </thead>
-                              <tbody>
-                                 {% for field in object.field_rules %}
-                                    <tr>
-                                       <th scope="row">{{ field.label }}</th>
-                                       <td class="text-center">
-                                          <input class="form-check-input" type="checkbox" name="blocked_rules[]" value="{{ field.add_key }}"
-                                                 {{ blocked_rules[field.add_key] is defined ? 'checked' : '' }}>
-                                       </td>
-                                       <td class="text-center">
-                                          <input class="form-check-input" type="checkbox" name="blocked_rules[]" value="{{ field.update_key }}"
-                                                 {{ blocked_rules[field.update_key] is defined ? 'checked' : '' }}>
-                                       </td>
-                                    </tr>
-                                 {% endfor %}
-                              </tbody>
-                           </table>
-                        </div>
-                     {% endif %}
+      <section class="mb-4" aria-labelledby="{{ matrix_id }}-properties-title">
+         <h4 class="fs-6 mb-3" id="{{ matrix_id }}-properties-title">{{ __('Properties', 'torah') }}</h4>
+         <div class="row g-2 align-items-end mb-3">
+            <div class="col-md-4">
+               <label class="form-label" for="{{ matrix_id }}-field-search">{{ __('Search fields', 'torah') }}</label>
+               <input class="form-control" type="search" id="{{ matrix_id }}-field-search" data-torah-field-search>
+            </div>
+            <div class="col-md-3">
+               <label class="form-check mb-2">
+                  <input class="form-check-input" type="checkbox" data-torah-configured-filter>
+                  <span class="form-check-label">{{ __('Show configured fields only', 'torah') }}</span>
+               </label>
+            </div>
+            <div class="col-md-5 d-flex flex-wrap gap-2">
+               <button class="btn btn-outline-secondary btn-sm" type="button" data-torah-bulk="select" data-torah-action="opening" aria-label="{{ __('Select visible fields', 'torah') }}: {{ __('Opening', 'torah') }}">{{ __('Select visible fields', 'torah') }} — {{ __('Opening', 'torah') }}</button>
+               <button class="btn btn-outline-secondary btn-sm" type="button" data-torah-bulk="clear" data-torah-action="opening" aria-label="{{ __('Clear visible fields', 'torah') }}: {{ __('Opening', 'torah') }}">{{ __('Clear visible fields', 'torah') }} — {{ __('Opening', 'torah') }}</button>
+               <button class="btn btn-outline-secondary btn-sm" type="button" data-torah-bulk="select" data-torah-action="update" aria-label="{{ __('Select visible fields', 'torah') }}: {{ __('Update', 'torah') }}">{{ __('Select visible fields', 'torah') }} — {{ __('Update', 'torah') }}</button>
+               <button class="btn btn-outline-secondary btn-sm" type="button" data-torah-bulk="clear" data-torah-action="update" aria-label="{{ __('Clear visible fields', 'torah') }}: {{ __('Update', 'torah') }}">{{ __('Clear visible fields', 'torah') }} — {{ __('Update', 'torah') }}</button>
+               <button class="btn btn-outline-secondary btn-sm" type="button" data-torah-bulk="select" data-torah-action="backend" aria-label="{{ __('Select visible fields', 'torah') }}: {{ __('Backend', 'torah') }}">{{ __('Select visible fields', 'torah') }} — {{ __('Backend', 'torah') }}</button>
+               <button class="btn btn-outline-secondary btn-sm" type="button" data-torah-bulk="clear" data-torah-action="backend" aria-label="{{ __('Clear visible fields', 'torah') }}: {{ __('Backend', 'torah') }}">{{ __('Clear visible fields', 'torah') }} — {{ __('Backend', 'torah') }}</button>
+            </div>
+         </div>
 
-                     {% if object.actor_itemtype_roles is not empty %}
-                        <h4 class="fs-6">{{ __('Actor lists', 'torah') }}</h4>
-                        <div class="row g-3 mb-4">
-                           {% for role in object.actor_itemtype_roles %}
-                              <section class="col-md-4">
-                                 <fieldset class="border rounded p-3 h-100">
-                                    <legend class="fs-6">{{ role.label }}</legend>
-                                    <input type="hidden" name="actor_itemtypes_present[{{ role.key }}]" value="1">
-                                    {% for itemtype in role.itemtypes %}
-                                       <label class="form-check mb-2">
-                                          <input class="form-check-input" type="checkbox" name="actor_itemtypes[{{ role.key }}][]" value="{{ itemtype.key }}"
-                                                 {{ actor_itemtypes[role.key][itemtype.key] is defined ? 'checked' : '' }}>
-                                          <span class="form-check-label">{{ itemtype.label }}</span>
-                                       </label>
-                                    {% endfor %}
-                                 </fieldset>
-                              </section>
-                           {% endfor %}
-                        </div>
-                     {% endif %}
+         <div class="table-responsive">
+            <table class="table table-sm table-hover card-table align-middle mb-0">
+               <thead>
+                  <tr>
+                     <th scope="col">{{ __('Field', 'torah') }}</th>
+                     <th scope="col" class="text-center text-nowrap">
+                        {{ __('Opening', 'torah') }}
+                        <button class="btn btn-sm p-0 border-0" type="button" data-bs-toggle="tooltip" title="{{ __('When selected, this field is read-only while a ticket is being created in the GLPI interface.', 'torah') }}" aria-label="{{ __('Opening', 'torah') }}">
+                           <i class="ti ti-info-circle" aria-hidden="true"></i>
+                        </button>
+                     </th>
+                     <th scope="col" class="text-center text-nowrap">
+                        {{ __('Update', 'torah') }}
+                        <button class="btn btn-sm p-0 border-0" type="button" data-bs-toggle="tooltip" title="{{ __('When selected, this field is read-only while an existing ticket is being edited in the GLPI interface.', 'torah') }}" aria-label="{{ __('Update', 'torah') }}">
+                           <i class="ti ti-info-circle" aria-hidden="true"></i>
+                        </button>
+                     </th>
+                     <th scope="col" class="text-center text-nowrap">
+                        {{ __('Backend', 'torah') }}
+                        <button class="btn btn-sm p-0 border-0" type="button" data-bs-toggle="tooltip" title="{{ __('When selected, the restriction will also apply to changes made through API, cron, automation, integrations, plugins, or backend code.', 'torah') }}" aria-label="{{ __('Backend', 'torah') }}">
+                           <i class="ti ti-info-circle" aria-hidden="true"></i>
+                        </button>
+                     </th>
+                  </tr>
+               </thead>
+               <tbody>
+                  {% for field in policy_model.field_rules %}
+                     {% set opening_checked = field.add_key and blocked_rules[field.add_key] is defined %}
+                     {% set update_checked = field.update_key and blocked_rules[field.update_key] is defined %}
+                     <tr data-torah-field-row data-torah-field-label="{{ field.label|lower|e('html_attr') }}" data-torah-ui-only="{{ field.ui_only ? '1' : '0' }}">
+                        <th scope="row">
+                           <span>{{ field.label }}</span>
+                           {% if field.sensitive %}
+                              <button class="btn btn-sm p-0 border-0 ms-1" type="button" data-bs-toggle="tooltip" title="{{ __('This field may be updated automatically by GLPI processes.', 'torah') }}" aria-label="{{ field.label }}">
+                                 <i class="ti ti-info-circle" aria-hidden="true"></i>
+                              </button>
+                           {% endif %}
+                        </th>
+                        <td class="text-center">
+                           <label class="visually-hidden" for="{{ matrix_id }}-{{ field.key }}-opening">{{ __('Opening', 'torah') }}: {{ field.label }}</label>
+                           <input class="form-check-input" type="checkbox" id="{{ matrix_id }}-{{ field.key }}-opening" data-torah-action="opening"
+                                  {% if field.add_key %}name="blocked_rules[]" value="{{ field.add_key }}"{% endif %}
+                                  {{ opening_checked ? 'checked' : '' }}>
+                        </td>
+                        <td class="text-center">
+                           <label class="visually-hidden" for="{{ matrix_id }}-{{ field.key }}-update">{{ __('Update', 'torah') }}: {{ field.label }}</label>
+                           <input class="form-check-input" type="checkbox" id="{{ matrix_id }}-{{ field.key }}-update" data-torah-action="update"
+                                  {% if field.update_key %}name="blocked_rules[]" value="{{ field.update_key }}"{% endif %}
+                                  {{ update_checked ? 'checked' : '' }}>
+                        </td>
+                        <td class="text-center">
+                           <label class="visually-hidden" for="{{ matrix_id }}-{{ field.key }}-backend">{{ __('Backend', 'torah') }}: {{ field.label }}</label>
+                           <input class="form-check-input" type="checkbox" id="{{ matrix_id }}-{{ field.key }}-backend" data-torah-action="backend"
+                                  {{ (opening_checked or update_checked) ? '' : 'disabled' }}>
+                        </td>
+                     </tr>
+                  {% endfor %}
+               </tbody>
+            </table>
+         </div>
+         <p class="form-text mb-0 mt-2">{{ __('Backend enforcement will be connected in a later implementation step.', 'torah') }}</p>
+      </section>
 
-                     {% if object.actor_rules is not empty %}
-                        <h4 class="fs-6">{{ __('Actor changes', 'torah') }}</h4>
-                        <div class="row g-2">
-                           {% for rule in object.actor_rules %}
-                              <label class="form-check col-md-4">
-                                 <input class="form-check-input" type="checkbox" name="blocked_rules[]" value="{{ rule.key }}"
-                                        {{ blocked_rules[rule.key] is defined ? 'checked' : '' }}>
-                                 <span class="form-check-label">{{ rule.label }}</span>
-                              </label>
-                           {% endfor %}
-                        </div>
-                     {% endif %}
-                  </div>
-               {% endfor %}
-            </fieldset>
-         </section>
-      {% endif %}
-   {% endfor %}
-</div>
+      <section aria-labelledby="{{ matrix_id }}-actors-title">
+         <h4 class="fs-6 mb-3" id="{{ matrix_id }}-actors-title">{{ __('Actors', 'torah') }}</h4>
+         <div class="row g-3 mb-3">
+            {% for role in policy_model.actor_itemtype_roles %}
+               <section class="col-md-4">
+                  <fieldset class="border rounded p-3 h-100">
+                     <legend class="fs-6 px-2">{{ role.label }}</legend>
+                     <input type="hidden" name="actor_itemtypes_present[{{ role.key }}]" value="1">
+                     {% for itemtype in role.itemtypes %}
+                        <label class="form-check mb-2">
+                           <input class="form-check-input" type="checkbox" name="actor_itemtypes[{{ role.key }}][]" value="{{ itemtype.key }}"
+                                  {{ actor_itemtypes[role.key][itemtype.key] is defined ? 'checked' : '' }}>
+                           <span class="form-check-label">{{ itemtype.label }}</span>
+                        </label>
+                     {% endfor %}
+                  </fieldset>
+               </section>
+            {% endfor %}
+         </div>
+
+         <h5 class="fs-6 mb-2">{{ __('Actor changes', 'torah') }}</h5>
+         <div class="row g-2">
+            {% for rule in policy_model.actor_rules %}
+               <label class="form-check col-md-4">
+                  <input class="form-check-input" type="checkbox" name="blocked_rules[]" value="{{ rule.key }}"
+                         {{ blocked_rules[rule.key] is defined ? 'checked' : '' }}>
+                  <span class="form-check-label">{{ rule.label }}</span>
+               </label>
+            {% endfor %}
+         </div>
+      </section>
+   </fieldset>
+</section>

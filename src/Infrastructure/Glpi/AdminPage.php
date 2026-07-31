@@ -6,7 +6,9 @@ use Dropdown;
 use Entity;
 use Glpi\Application\View\TemplateRenderer;
 use GlpiPlugin\Torah\Application\ActorItemtypePolicy;
+use GlpiPlugin\Torah\Application\PolicyCatalog;
 use GlpiPlugin\Torah\Domain\Policy\PolicySet;
+use Html;
 use Plugin;
 use Profile;
 
@@ -15,10 +17,11 @@ final class AdminPage
    public static function render(): void {
        $catalog = ServiceFactory::catalog();
        $policyModel = self::policyModel($catalog);
+       Html::requireJs(Plugin::getWebDir('torah') . '/js/admin-policy-matrix.js');
 
        $sets = [];
       foreach ((new GlpiPolicyStore())->all() as $set) {
-          $sets[] = self::viewModel($set);
+          $sets[] = self::viewModel($set, $catalog, $policyModel);
       }
 
        TemplateRenderer::getInstance()->display('@torah/admin/policies.html.twig', [
@@ -42,7 +45,15 @@ final class AdminPage
     /**
      * @return array<string, mixed>
      */
-   private static function viewModel(PolicySet $set): array {
+   private static function viewModel(PolicySet $set, PolicyCatalog $catalog, array $policyModel): array {
+       $blockedRules = array_fill_keys($set->blockedRuleKeys(), true);
+       $preservedBlockedRules = [];
+      foreach ($set->blockedRuleKeys() as $ruleKey) {
+         if ($catalog->has($ruleKey) && !in_array($ruleKey, $policyModel['rendered_rule_keys'], true)) {
+             $preservedBlockedRules[] = $ruleKey;
+         }
+      }
+
        return [
            'id'              => $set->id,
            'profile_id'      => $set->profileId,
@@ -50,13 +61,14 @@ final class AdminPage
            'profile_name'    => Dropdown::getDropdownName('glpi_profiles', $set->profileId),
            'entity_name'     => Dropdown::getDropdownName('glpi_entities', $set->entityId),
            'recursive'       => $set->recursive,
-           'blocked_rules'   => array_fill_keys($set->blockedRuleKeys(), true),
+           'blocked_rules'   => $blockedRules,
+           'preserved_blocked_rules' => $preservedBlockedRules,
            'actor_itemtypes' => self::actorItemtypes($set),
        ];
    }
 
     /** @return array<string, mixed> */
-   private static function policyModel(\GlpiPlugin\Torah\Application\PolicyCatalog $catalog): array {
+   private static function policyModel(PolicyCatalog $catalog): array {
        $actorRules = [];
       foreach ($catalog->all() as $rule) {
          if ($rule->domain === 'assistance' && $rule->object === 'ticket' && $rule->group === 'actors') {
@@ -64,35 +76,66 @@ final class AdminPage
          }
       }
 
-       $fieldRules = [];
-      foreach ($catalog->ticketFields() as $field) {
-          $fieldRules[] = [
-              'label'      => $field->label,
-              'add_key'    => sprintf('ticket.field.%s.add', $field->key),
-              'update_key' => sprintf('ticket.field.%s.update', $field->key),
-          ];
+       $fieldRules = self::fieldRules($catalog);
+       $renderedRuleKeys = [];
+      foreach ($fieldRules as $fieldRule) {
+         foreach (['add_key', 'update_key'] as $ruleKeyName) {
+            if ($fieldRule[$ruleKeyName] !== null) {
+                $renderedRuleKeys[] = $fieldRule[$ruleKeyName];
+            }
+         }
+      }
+      foreach ($actorRules as $actorRule) {
+          $renderedRuleKeys[] = $actorRule->key;
       }
 
        return [
-           'domains' => [
-               [
-                   'key'     => 'assistance',
-                   'label'   => __('Assistance', 'torah'),
-                   'objects' => [
-                       [
-                           'key'                  => 'ticket',
-                           'label'                => __('Tickets', 'torah'),
-                           'actor_rules'          => $actorRules,
-                           'actor_itemtype_roles' => self::actorItemtypeRoles(),
-                           'field_rules'          => $fieldRules,
-                       ],
-                   ],
-               ],
-               ['key' => 'configuration', 'label' => __('Configuration', 'torah'), 'objects' => []],
-               ['key' => 'administration', 'label' => __('Administration', 'torah'), 'objects' => []],
-               ['key' => 'other', 'label' => __('Other', 'torah'), 'objects' => []],
-           ],
+           'field_rules'          => $fieldRules,
+           'actor_rules'          => $actorRules,
+           'actor_itemtype_roles' => self::actorItemtypeRoles(),
+           'rendered_rule_keys'   => array_values(array_unique($renderedRuleKeys)),
        ];
+   }
+
+    /** @return list<array<string, mixed>> */
+   private static function fieldRules(PolicyCatalog $catalog): array {
+       $definitions = [
+           ['key' => 'opening_date', 'label' => __('Opening date', 'torah')],
+           ['key' => 'type', 'label' => __('Type', 'torah')],
+           ['key' => 'category', 'label' => __('Category', 'torah')],
+           ['key' => 'status', 'label' => __('Status', 'torah'), 'sensitive' => true],
+           ['key' => 'request_source', 'label' => __('Request source', 'torah')],
+           ['key' => 'urgency', 'label' => __('Urgency', 'torah')],
+           ['key' => 'impact', 'label' => __('Impact', 'torah')],
+           ['key' => 'priority', 'label' => __('Priority', 'torah'), 'sensitive' => true],
+           ['key' => 'total_duration', 'label' => __('Total duration', 'torah')],
+           ['key' => 'approval_status', 'label' => __('Approval request', 'torah')],
+           ['key' => 'requester', 'label' => __('Requester', 'torah'), 'ui_only' => true],
+           ['key' => 'observer', 'label' => __('Observer', 'torah'), 'ui_only' => true],
+           ['key' => 'assigned_to', 'label' => __('Assigned to', 'torah'), 'ui_only' => true],
+           ['key' => 'associated_item', 'label' => __('Associated items', 'torah')],
+           ['key' => 'sla_tto', 'label' => __('TTO', 'torah'), 'sensitive' => true],
+           ['key' => 'sla_ttr', 'label' => __('TTR', 'torah'), 'sensitive' => true],
+           ['key' => 'ola_tto', 'label' => __('Internal TTO', 'torah'), 'sensitive' => true],
+           ['key' => 'ola_ttr', 'label' => __('Internal TTR', 'torah'), 'sensitive' => true],
+           ['key' => 'linked_tickets', 'label' => __('Linked tickets', 'torah'), 'ui_only' => true],
+       ];
+
+       $rules = [];
+       foreach ($definitions as $definition) {
+          $addKey = sprintf('ticket.field.%s.add', $definition['key']);
+          $updateKey = sprintf('ticket.field.%s.update', $definition['key']);
+          $rules[] = [
+              'key'        => $definition['key'],
+              'label'      => $definition['label'],
+              'add_key'    => $catalog->has($addKey) ? $addKey : null,
+              'update_key' => $catalog->has($updateKey) ? $updateKey : null,
+              'ui_only'    => $definition['ui_only'] ?? false,
+              'sensitive'  => $definition['sensitive'] ?? false,
+          ];
+       }
+
+       return $rules;
    }
 
     /** @return list<array<string, mixed>> */

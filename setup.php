@@ -17,7 +17,7 @@
 use Glpi\Plugin\Hooks;
 use GlpiPlugin\Torah\Infrastructure\Glpi\HookBridge;
 
-define('PLUGIN_TORAH_VERSION', '0.2.0');
+define('PLUGIN_TORAH_VERSION', '0.2.1');
 define('PLUGIN_TORAH_MIN_GLPI_VERSION', '10.0.10');
 define('PLUGIN_TORAH_MAX_GLPI_VERSION', '10.0.99');
 define('PLUGIN_TORAH_MIN_PHP_VERSION', '8.2.0');

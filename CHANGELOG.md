@@ -3,6 +3,16 @@
 All notable changes to this project are documented in this file. The format is
 based on Keep a Changelog and the project follows Semantic Versioning.
 
+## [0.2.1] - 2026-07-31
+
+### Changed
+
+- Reworked the real policy administration page into a compact GLPI-style
+  assistance ticket matrix with opening, update, and visual-only backend
+  controls.
+- Preserved known stored rules outside the reduced matrix when editing a
+  policy, preventing configuration loss during this interface-only delivery.
+
 ## [0.2.0] - 2026-06-18
 
 ### Added
@@ -39,6 +49,7 @@ based on Keep a Changelog and the project follows Semantic Versioning.
 - Backend hooks reject manual bypass attempts independently of JavaScript.
 - Repository and package validation reject common secrets and private artifacts.
 
+[0.2.1]: https://github.com/renatovaladares85/torah/releases/tag/0.2.1
 [0.2.0]: https://github.com/renatovaladares85/torah/releases/tag/0.2.0
 [0.1.1]: https://github.com/renatovaladares85/torah/releases/tag/0.1.1
 [0.1.0]: https://github.com/renatovaladares85/torah/releases/tag/0.1.0

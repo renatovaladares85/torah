@@ -1,33 +1,33 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: Torah 0.2.0\n"
-"Report-Msgid-Bugs-To: https://github.com/renatovaladares85/torah/issues\n"
-"PO-Revision-Date: 2026-06-18 00:00+0000\n"
-"Last-Translator: Torah contributors\n"
-"Language: pt_BR\n"
-"Language-Team: Brazilian Portuguese\n"
-"MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=UTF-8\n"
-"Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+"Project-Id-Version: Torah 0.2.1\\n"
+"Report-Msgid-Bugs-To: https://github.com/renatovaladares85/torah/issues\\n"
+"PO-Revision-Date: 2026-07-31 00:00+0000\\n"
+"Last-Translator: Torah contributors\\n"
+"Language: pt_BR\\n"
+"Language-Team: Brazilian Portuguese\\n"
+"MIME-Version: 1.0\\n"
+"Content-Type: text/plain; charset=UTF-8\\n"
+"Content-Transfer-Encoding: 8bit\\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\\n"
 
 msgid "Actor changes"
 msgstr "Alterações de atores"
 
-msgid "Actor lists"
-msgstr "Listas de atores"
+msgid "Actors"
+msgstr "Atores"
 
-msgid "Add"
-msgstr "Adicionar"
-
-msgid "Administration"
-msgstr "Administração"
+msgid "Approval request"
+msgstr "Solicitação de aprovação"
 
 msgid "Approval status"
 msgstr "Status de aprovação"
 
 msgid "Assigned technician, group, or supplier"
 msgstr "Técnico, grupo ou fornecedor atribuído"
+
+msgid "Assigned to"
+msgstr "Atribuído a"
 
 msgid "Assignee"
 msgstr "Atribuído"
@@ -41,6 +41,15 @@ msgstr "Item associado"
 msgid "Associated item type"
 msgstr "Tipo de item associado"
 
+msgid "Associated items"
+msgstr "Itens associados"
+
+msgid "Backend"
+msgstr "Backend"
+
+msgid "Backend enforcement will be connected in a later implementation step."
+msgstr "O bloqueio de backend será conectado em uma etapa posterior da implementação."
+
 msgid "Blocked by the active Torah policy."
 msgstr "Bloqueado pela política ativa do Torah."
 
@@ -50,11 +59,11 @@ msgstr "Categoria"
 msgid "Checked means blocked."
 msgstr "Marcado significa bloqueado."
 
+msgid "Clear visible fields"
+msgstr "Limpar campos visíveis"
+
 msgid "Closing date"
 msgstr "Data de fechamento"
-
-msgid "Configuration"
-msgstr "Configuração"
 
 msgid "Contract"
 msgstr "Contrato"
@@ -65,17 +74,29 @@ msgstr "Descrição"
 msgid "Entity"
 msgstr "Entidade"
 
+msgid "Field"
+msgstr "Campo"
+
 msgid "Groups"
 msgstr "Grupos"
 
 msgid "Impact"
 msgstr "Impacto"
 
+msgid "Internal TTO"
+msgstr "TTO interno"
+
+msgid "Internal TTR"
+msgstr "TTR interno"
+
 msgid "Internal time to own"
 msgstr "Tempo interno para atendimento"
 
 msgid "Internal time to resolve"
 msgstr "Prazo interno para solução"
+
+msgid "Linked tickets"
+msgstr "Chamados vinculados"
 
 msgid "Location"
 msgstr "Localização"
@@ -95,11 +116,14 @@ msgstr "OLA para solução"
 msgid "Observer"
 msgstr "Observador"
 
+msgid "Opening"
+msgstr "Abertura"
+
 msgid "Opening date"
 msgstr "Data de abertura"
 
-msgid "Other"
-msgstr "Outros"
+msgid "Policy scope"
+msgstr "Escopo da política"
 
 msgid "Policy set removed."
 msgstr "Conjunto de políticas removido."
@@ -126,13 +150,22 @@ msgid "Request source"
 msgstr "Origem da requisição"
 
 msgid "Requester"
-msgstr "Requerente"
+msgstr "Solicitante"
 
 msgid "SLA for time to own"
 msgstr "SLA para atendimento"
 
 msgid "SLA for time to resolve"
 msgstr "SLA para solução"
+
+msgid "Search fields"
+msgstr "Pesquisar campos"
+
+msgid "Select visible fields"
+msgstr "Selecionar campos visíveis"
+
+msgid "Show configured fields only"
+msgstr "Mostrar somente campos configurados"
 
 msgid "Solution date"
 msgstr "Data da solução"
@@ -143,8 +176,20 @@ msgstr "Status"
 msgid "Suppliers"
 msgstr "Fornecedores"
 
+msgid "TTO"
+msgstr "TTO"
+
+msgid "TTR"
+msgstr "TTR"
+
+msgid "The policy applies to the selected profile and entity. When recursive is enabled, it may also apply to descendant entities."
+msgstr "A política se aplica ao perfil e à entidade selecionados. Quando a recursividade estiver habilitada, ela também poderá se aplicar às entidades descendentes."
+
 msgid "The policy set could not be saved. Review the selected scope and rules."
 msgstr "Não foi possível salvar o conjunto de políticas. Revise o escopo e as regras selecionadas."
+
+msgid "This field may be updated automatically by GLPI processes."
+msgstr "Este campo pode ser atualizado automaticamente pelos processos do GLPI."
 
 msgid "Tickets"
 msgstr "Chamados"
@@ -158,11 +203,11 @@ msgstr "Prazo para solução"
 msgid "Title"
 msgstr "Título"
 
-msgid "Torah blocked this change according to the active profile and entity policy."
-msgstr "O Torah bloqueou esta alteração conforme a política do perfil e da entidade ativos."
-
 msgid "Torah policies"
 msgstr "Políticas do Torah"
+
+msgid "Torah blocked this change according to the active profile and entity policy."
+msgstr "O Torah bloqueou esta alteração conforme a política do perfil e da entidade ativos."
 
 msgid "Total duration"
 msgstr "Duração total"
@@ -174,10 +219,19 @@ msgid "Unchecked rules do not change GLPI behavior."
 msgstr "Regras desmarcadas não alteram o comportamento do GLPI."
 
 msgid "Update"
-msgstr "Atualizar"
+msgstr "Atualização"
 
 msgid "Urgency"
 msgstr "Urgência"
 
 msgid "Users"
 msgstr "Usuários"
+
+msgid "When selected, the restriction will also apply to changes made through API, cron, automation, integrations, plugins, or backend code."
+msgstr "Quando selecionado, o bloqueio também será aplicado às alterações realizadas por API, cron, automações, integrações, plugins ou código de backend."
+
+msgid "When selected, this field is read-only while a ticket is being created in the GLPI interface."
+msgstr "Quando selecionado, este campo fica somente leitura durante a abertura de um chamado na interface do GLPI."
+
+msgid "When selected, this field is read-only while an existing ticket is being edited in the GLPI interface."
+msgstr "Quando selecionado, este campo fica somente leitura durante a atualização de um chamado existente na interface do GLPI."
