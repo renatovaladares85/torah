@@ -27,6 +27,31 @@
       (action) => actionInputs(row, action).some((input) => input.checked),
    );
 
+   const visibleActionInputs = (form, action) => Array.from(form.querySelectorAll(rowSelector)).flatMap((row) => {
+      if (!isVisible(row)) {
+         return [];
+      }
+
+      return actionInputs(row, action).filter((input) => !input.disabled);
+   });
+
+   const syncColumnToggle = (form, action) => {
+      const toggle = form.querySelector(`[data-torah-column-toggle][data-torah-action="${action}"]`);
+      if (!toggle) {
+         return;
+      }
+
+      const inputs = visibleActionInputs(form, action);
+      const checkedCount = inputs.filter((input) => input.checked).length;
+      toggle.disabled = inputs.length === 0;
+      toggle.checked = inputs.length > 0 && checkedCount === inputs.length;
+      toggle.indeterminate = checkedCount > 0 && checkedCount < inputs.length;
+   };
+
+   const syncColumnToggles = (form) => {
+      ['opening', 'update', 'backend'].forEach((action) => syncColumnToggle(form, action));
+   };
+
    const applyFilters = (form) => {
       const search = form.querySelector('[data-torah-field-search]');
       const configuredOnly = form.querySelector('[data-torah-configured-filter]');
@@ -38,6 +63,7 @@
          const matchesConfigured = !configuredOnly?.checked || isConfigured(row);
          row.hidden = !matchesSearch || !matchesConfigured;
       });
+      syncColumnToggles(form);
    };
 
    const changeVisibleInputs = (form, action, checked) => {
@@ -76,6 +102,7 @@
 
       form.querySelectorAll(rowSelector).forEach(syncBackend);
       initializeTooltips(form);
+      applyFilters(form);
 
       form.querySelector('[data-torah-field-search]')?.addEventListener('input', () => applyFilters(form));
       form.querySelector('[data-torah-configured-filter]')?.addEventListener('change', () => applyFilters(form));
@@ -102,13 +129,13 @@
          applyFilters(form);
       });
 
-      form.querySelectorAll('[data-torah-bulk]').forEach((button) => {
-         button.addEventListener('click', () => {
-            const action = button.dataset.torahAction;
+      form.querySelectorAll('[data-torah-column-toggle]').forEach((toggle) => {
+         toggle.addEventListener('change', () => {
+            const action = toggle.dataset.torahAction;
             if (!action) {
                return;
             }
-            changeVisibleInputs(form, action, button.dataset.torahBulk === 'select');
+            changeVisibleInputs(form, action, toggle.checked);
          });
       });
    };

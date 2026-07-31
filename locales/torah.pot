@@ -1,11 +1,11 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: Torah 0.2.1\\n"
-"Report-Msgid-Bugs-To: https://github.com/renatovaladares85/torah/issues\\n"
-"POT-Creation-Date: 2026-07-31 00:00+0000\\n"
-"MIME-Version: 1.0\\n"
-"Content-Type: text/plain; charset=UTF-8\\n"
-"Content-Transfer-Encoding: 8bit\\n"
+"Project-Id-Version: Torah 0.2.2\n"
+"Report-Msgid-Bugs-To: https://github.com/renatovaladares85/torah/issues\n"
+"POT-Creation-Date: 2026-07-31 00:00+0000\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
 
 msgid "Actor changes"
 msgstr ""
@@ -53,9 +53,6 @@ msgid "Category"
 msgstr ""
 
 msgid "Checked means blocked."
-msgstr ""
-
-msgid "Clear visible fields"
 msgstr ""
 
 msgid "Closing date"
@@ -157,9 +154,6 @@ msgstr ""
 msgid "Search fields"
 msgstr ""
 
-msgid "Select visible fields"
-msgstr ""
-
 msgid "Show configured fields only"
 msgstr ""
 
@@ -197,6 +191,9 @@ msgid "Time to resolve"
 msgstr ""
 
 msgid "Title"
+msgstr ""
+
+msgid "Toggle visible fields"
 msgstr ""
 
 msgid "Torah policies"

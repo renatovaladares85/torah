@@ -3,6 +3,15 @@
 All notable changes to this project are documented in this file. The format is
 based on Keep a Changelog and the project follows Semantic Versioning.
 
+## [0.2.2] - 2026-07-31
+
+### Changed
+
+- Grouped existing policy rules by profile in initially collapsed GLPI-style
+  accordions, so rules are shown only after expanding their profile.
+- Moved visible-field selection to compact column controls in the policy
+  matrix and removed the repetitive bulk-action button bar.
+
 ## [0.2.1] - 2026-07-31
 
 ### Changed
@@ -49,6 +58,7 @@ based on Keep a Changelog and the project follows Semantic Versioning.
 - Backend hooks reject manual bypass attempts independently of JavaScript.
 - Repository and package validation reject common secrets and private artifacts.
 
+[0.2.2]: https://github.com/renatovaladares85/torah/releases/tag/0.2.2
 [0.2.1]: https://github.com/renatovaladares85/torah/releases/tag/0.2.1
 [0.2.0]: https://github.com/renatovaladares85/torah/releases/tag/0.2.0
 [0.1.1]: https://github.com/renatovaladares85/torah/releases/tag/0.1.1

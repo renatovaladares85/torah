@@ -19,16 +19,24 @@ final class AdminPage
        $policyModel = self::policyModel($catalog);
        Html::requireJs(Plugin::getWebDir('torah') . '/js/admin-policy-matrix.js');
 
-       $sets = [];
+       $profileGroups = [];
       foreach ((new GlpiPolicyStore())->all() as $set) {
-          $sets[] = self::viewModel($set, $catalog, $policyModel);
+          $viewModel = self::viewModel($set, $catalog, $policyModel);
+          $profileId = $viewModel['profile_id'];
+         if (!isset($profileGroups[$profileId])) {
+             $profileGroups[$profileId] = [
+                 'id'   => $profileId,
+                 'name' => $viewModel['profile_name'],
+                 'sets' => [],
+             ];
+         }
+          $profileGroups[$profileId]['sets'][] = $viewModel;
       }
 
        TemplateRenderer::getInstance()->display('@torah/admin/policies.html.twig', [
            'action'              => Plugin::getWebDir('torah') . '/front/policy.form.php',
            'policy_model'        => $policyModel,
-           'new_actor_itemtypes' => self::actorItemtypes(null),
-           'sets'                => $sets,
+           'profile_groups'      => array_values($profileGroups),
            'new_profile'         => Profile::dropdown([
                'name'    => 'profiles_id',
                'value'   => (int) ($_SESSION['glpiactiveprofile']['id'] ?? 0),

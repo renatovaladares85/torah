@@ -1,15 +1,15 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: Torah 0.2.1\\n"
-"Report-Msgid-Bugs-To: https://github.com/renatovaladares85/torah/issues\\n"
-"PO-Revision-Date: 2026-07-31 00:00+0000\\n"
-"Last-Translator: Torah contributors\\n"
-"Language: pt_BR\\n"
-"Language-Team: Brazilian Portuguese\\n"
-"MIME-Version: 1.0\\n"
-"Content-Type: text/plain; charset=UTF-8\\n"
-"Content-Transfer-Encoding: 8bit\\n"
-"Plural-Forms: nplurals=2; plural=(n > 1);\\n"
+"Project-Id-Version: Torah 0.2.2\n"
+"Report-Msgid-Bugs-To: https://github.com/renatovaladares85/torah/issues\n"
+"PO-Revision-Date: 2026-07-31 00:00+0000\n"
+"Last-Translator: Torah contributors\n"
+"Language: pt_BR\n"
+"Language-Team: Brazilian Portuguese\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
 
 msgid "Actor changes"
 msgstr "Alterações de atores"
@@ -58,9 +58,6 @@ msgstr "Categoria"
 
 msgid "Checked means blocked."
 msgstr "Marcado significa bloqueado."
-
-msgid "Clear visible fields"
-msgstr "Limpar campos visíveis"
 
 msgid "Closing date"
 msgstr "Data de fechamento"
@@ -161,9 +158,6 @@ msgstr "SLA para solução"
 msgid "Search fields"
 msgstr "Pesquisar campos"
 
-msgid "Select visible fields"
-msgstr "Selecionar campos visíveis"
-
 msgid "Show configured fields only"
 msgstr "Mostrar somente campos configurados"
 
@@ -202,6 +196,9 @@ msgstr "Prazo para solução"
 
 msgid "Title"
 msgstr "Título"
+
+msgid "Toggle visible fields"
+msgstr "Alternar campos visíveis"
 
 msgid "Torah policies"
 msgstr "Políticas do Torah"
