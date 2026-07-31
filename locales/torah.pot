@@ -1,6 +1,6 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: Torah 0.3.1\n"
+"Project-Id-Version: Torah 0.3.2\n"
 "Report-Msgid-Bugs-To: https://github.com/renatovaladares85/torah/issues\n"
 "POT-Creation-Date: 2026-07-31 00:00+0000\n"
 "MIME-Version: 1.0\n"
@@ -40,25 +40,13 @@ msgstr ""
 msgid "Backend"
 msgstr ""
 
-msgid "Backend applies selected restrictions to API, cron, automation, integrations, plugins, and backend code."
-msgstr ""
-
-msgid "Backend execution context"
-msgstr ""
-
-msgid "Backend execution profile saved."
-msgstr ""
-
-msgid "Backend restrictions cannot be evaluated for profileless processes until a profile is configured."
-msgstr ""
-
 msgid "Blocked by the active Torah policy."
 msgstr ""
 
 msgid "Category"
 msgstr ""
 
-msgid "Checked means blocked."
+msgid "Clear all"
 msgstr ""
 
 msgid "Closing date"
@@ -100,9 +88,6 @@ msgstr ""
 msgid "Location"
 msgstr ""
 
-msgid "New policy set"
-msgstr ""
-
 msgid "No policy set is configured."
 msgstr ""
 
@@ -121,9 +106,6 @@ msgstr ""
 msgid "Opening date"
 msgstr ""
 
-msgid "Policy scope"
-msgstr ""
-
 msgid "Policy set removed."
 msgstr ""
 
@@ -136,13 +118,13 @@ msgstr ""
 msgid "Profile"
 msgstr ""
 
-msgid "Properties"
-msgstr ""
-
 msgid "Recursive"
 msgstr ""
 
-msgid "Remove this policy set?"
+msgid "Remove"
+msgstr ""
+
+msgid "Remove this entity configuration?"
 msgstr ""
 
 msgid "Request source"
@@ -155,12 +137,6 @@ msgid "SLA for time to own"
 msgstr ""
 
 msgid "SLA for time to resolve"
-msgstr ""
-
-msgid "Search fields"
-msgstr ""
-
-msgid "Show configured fields only"
 msgstr ""
 
 msgid "Solution date"
@@ -178,22 +154,13 @@ msgstr ""
 msgid "TTR"
 msgstr ""
 
-msgid "The policy applies to the selected profile and entity. When recursive is enabled, it may also apply to descendant entities."
+msgid "Not recursive"
 msgstr ""
 
 msgid "The policy set could not be saved. Review the selected scope and rules."
 msgstr ""
 
-msgid "Profile for backend processes without a user session"
-msgstr ""
-
 msgid "This field may be updated automatically by GLPI. Backend enforcement can affect API, cron, rules and internal processes."
-msgstr ""
-
-msgid "This profile is used only to resolve Torah policies for cron, CLI and other processes that do not have an active user profile."
-msgstr ""
-
-msgid "Tickets"
 msgstr ""
 
 msgid "Time to own"
@@ -203,9 +170,6 @@ msgid "Time to resolve"
 msgstr ""
 
 msgid "Title"
-msgstr ""
-
-msgid "Toggle visible fields"
 msgstr ""
 
 msgid "Torah policies"
@@ -220,9 +184,6 @@ msgstr ""
 msgid "Type"
 msgstr ""
 
-msgid "Unchecked rules do not change GLPI behavior."
-msgstr ""
-
 msgid "Update"
 msgstr ""
 
@@ -230,6 +191,9 @@ msgid "Urgency"
 msgstr ""
 
 msgid "Users"
+msgstr ""
+
+msgid "Select all"
 msgstr ""
 
 msgid "When selected, the restriction will also apply to changes made through API, cron, automation, integrations, plugins, or backend code."

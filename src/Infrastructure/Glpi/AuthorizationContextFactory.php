@@ -8,8 +8,6 @@ use Ticket;
 
 final class AuthorizationContextFactory
 {
-   public function __construct(private readonly ?BackendExecutionProfile $backendProfile = null) {
-   }
    public function fromTicket(Ticket $ticket): ?AuthorizationContext {
        $context = $this->fromTicketInput($ticket, []);
       if ($context === null || $context->ticketId <= 0) {
@@ -34,10 +32,6 @@ final class AuthorizationContextFactory
          } catch (\Throwable) {
             $impersonatorId = null;
          }
-      }
-
-      if ($profileId <= 0) {
-         $profileId = ($this->backendProfile ?? new BackendExecutionProfile())->get() ?? 0;
       }
 
       if ($profileId <= 0 || $entityId < 0) {

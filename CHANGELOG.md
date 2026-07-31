@@ -3,6 +3,20 @@
 All notable changes to this project are documented in this file. The format is
 based on Keep a Changelog and the project follows Semantic Versioning.
 
+## [0.3.2] - 2026-07-31
+
+### Changed
+
+- Simplified policy administration to entity, profile and recursion scope
+  creation, with per-policy select-all and clear-all actions.
+- Removed the global backend profile fallback. Processes without an active
+  profile are no longer restricted by Torah.
+
+### Removed
+
+- Backend execution context configuration and its persisted profile resolver.
+- Matrix search, configured-only filter and redundant administration headings.
+
 ## [0.3.1] - 2026-07-31
 
 ### Fixed
@@ -93,6 +107,7 @@ based on Keep a Changelog and the project follows Semantic Versioning.
 
 [0.2.2]: https://github.com/renatovaladares85/torah/releases/tag/0.2.2
 [0.3.1]: https://github.com/renatovaladares85/torah/releases/tag/0.3.1
+[0.3.2]: https://github.com/renatovaladares85/torah/releases/tag/0.3.2
 [0.3.0]: https://github.com/renatovaladares85/torah/releases/tag/0.3.0
 [0.2.1]: https://github.com/renatovaladares85/torah/releases/tag/0.2.1
 [0.2.0]: https://github.com/renatovaladares85/torah/releases/tag/0.2.0

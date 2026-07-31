@@ -51,13 +51,6 @@ final class AdminPage
                'value'   => (int) ($_SESSION['glpiactive_entity'] ?? 0),
                'display' => false,
            ]),
-           'new_actor_itemtypes' => self::actorItemtypes(null),
-           'backend_profile' => (new BackendExecutionProfile())->get(),
-           'backend_profile_dropdown' => Profile::dropdown([
-               'name' => 'backend_profile_id',
-               'value' => (new BackendExecutionProfile())->get() ?? 0,
-               'display' => false,
-           ]),
        ]);
    }
 

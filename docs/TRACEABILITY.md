@@ -16,7 +16,8 @@
 | External capability support | `CapabilityRegistry`, `PolicyApi` | Capability tests |
 | Plugin-owned persistence | `DatabaseInstaller`, `GlpiPolicyStore` | GLPI lifecycle matrix |
 | Secure administration | Admin endpoints and use cases | ACL/CSRF tests |
-| Profile-grouped administrative policy matrix UI | `AdminPage`, admin Twig templates, scoped JavaScript | Manual GLPI profile accordion and matrix validation |
+| Profile-grouped administrative policy matrix UI | `AdminPage`, admin Twig templates, scoped JavaScript | Administrative view-model and matrix action tests |
+| Profileless backend behavior | `AuthorizationContextFactory` | Context fallback regression test |
 | Safe audit data | `AuditLogger` | Audit payload tests |
 | English source, pt_BR translation | `locales/torah.pot`, `pt_BR.po`, `pt_BR.mo` | Locale and `msgfmt` checks |
 | Public repository privacy | Scanner and packaging workflow | CI privacy job |

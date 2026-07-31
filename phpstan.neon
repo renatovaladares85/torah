@@ -16,7 +16,6 @@ parameters:
         - src/Application/Admin/PolicySetInput.php
         - src/Infrastructure/Glpi/AdminPage.php
         - src/Infrastructure/Glpi/AdminPolicyModelBuilder.php
-        - src/Infrastructure/Glpi/BackendExecutionProfile.php
         - src/Infrastructure/Glpi/ServiceFactory.php
         - src/Infrastructure/Glpi/TicketPolicyPresenter.php
     bootstrapFiles:

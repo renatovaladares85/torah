@@ -62,10 +62,10 @@ rules intentionally stops inheritance and applies no property restrictions.
 Actor list options default to users, groups, and suppliers when they are not
 explicitly configured.
 
-For cron, CLI and other profileless processes, configure **Profile for backend
-processes without a user session**. It is used only to find a Torah policy; it
-does not give GLPI permissions. Without it, Torah leaves profileless processes
-unchanged. Backend enforcement can intentionally affect automatic GLPI work.
+Torah evaluates backend restrictions only when the current execution has an
+active GLPI profile. Cron, CLI and other profileless processes remain outside
+Torah restrictions; an effective human or API session profile is never
+replaced by a global fallback.
 
 ## Upgrade And Uninstall
 

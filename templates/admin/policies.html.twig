@@ -1,55 +1,26 @@
 <div class="container-fluid">
-   <div class="alert alert-info" role="status">
-      {{ __('Checked means blocked.', 'torah') }}
-      {{ __('Unchecked rules do not change GLPI behavior.', 'torah') }}
-   </div>
-
    <section class="mb-4">
-      <h2 class="h3 mb-3">{{ __('Backend execution context', 'torah') }}</h2>
-      <form method="post" action="{{ action }}" data-submit-once>
-         <input type="hidden" name="_glpi_csrf_token" value="{{ csrf_token() }}">
-         <label class="form-label">{{ __('Profile for backend processes without a user session', 'torah') }}</label>
-         {{ backend_profile_dropdown|raw }}
-         <p class="form-text">{{ __('This profile is used only to resolve Torah policies for cron, CLI and other processes that do not have an active user profile.', 'torah') }}</p>
-         {% if not backend_profile %}<div class="alert alert-warning">{{ __('Backend restrictions cannot be evaluated for profileless processes until a profile is configured.', 'torah') }}</div>{% endif %}
-         <button class="btn btn-outline-primary" type="submit" name="save_backend_profile" value="1">{{ _x('button', 'Save') }}</button>
-      </form>
-   </section>
-
-   <section class="mb-4">
-      <h2 class="h3 mb-3">{{ __('New policy set', 'torah') }}</h2>
       <form method="post" action="{{ action }}" data-submit-once data-torah-policy-form>
          <input type="hidden" name="_glpi_csrf_token" value="{{ csrf_token() }}">
-         <fieldset class="border rounded p-3">
-            <legend class="fs-5 px-2">{{ __('Policy scope', 'torah') }}</legend>
-            <div class="row g-3">
-               <div class="col-md-5">
-                  <label class="form-label">{{ __('Profile', 'torah') }}</label>
-                  {{ new_profile|raw }}
-               </div>
-               <div class="col-md-5">
+         <div class="row g-3 align-items-end">
+               <div class="col-md-4">
                   <label class="form-label">{{ __('Entity', 'torah') }}</label>
                   {{ new_entity|raw }}
                </div>
-               <div class="col-md-2 d-flex align-items-end">
+               <div class="col-md-4">
+                  <label class="form-label">{{ __('Profile', 'torah') }}</label>
+                  {{ new_profile|raw }}
+               </div>
+               <div class="col-md-2">
                   <label class="form-check">
                      <input class="form-check-input" type="checkbox" name="is_recursive" value="1">
                      <span class="form-check-label">{{ __('Recursive', 'torah') }}</span>
                   </label>
                </div>
-            </div>
-            <p class="form-text mb-0 mt-3">{{ __('The policy applies to the selected profile and entity. When recursive is enabled, it may also apply to descendant entities.', 'torah') }}</p>
-         </fieldset>
-         {% include '@torah/admin/rule_matrix.html.twig' with {
-            'policy_model': policy_model,
-            'blocked_rules': {},
-            'backend_rule_keys': {},
-            'actor_itemtypes': new_actor_itemtypes,
-            'matrix_id': 'new-policy'
-         } only %}
-         <button class="btn btn-primary mt-3" type="submit" name="save" value="1">
-            {{ _x('button', 'Add') }}
-         </button>
+               <div class="col-md-2">
+                  <button class="btn btn-primary w-100" type="submit" name="save" value="1">{{ _x('button', 'Add') }}</button>
+               </div>
+         </div>
       </form>
    </section>
 
@@ -70,7 +41,7 @@
                <div class="accordion-body px-0 pt-3">
                   {% for set in profile_group.sets %}
                      <section class="mb-4">
-                        <h3 class="h5 mb-3">{{ set.entity_name }}</h3>
+                        <h3 class="h5 mb-3">{{ set.entity_name }} — {{ set.recursive ? __('Recursive', 'torah') : __('Not recursive', 'torah') }}</h3>
                         <form method="post" action="{{ action }}" data-submit-once data-torah-policy-form>
                            <input type="hidden" name="_glpi_csrf_token" value="{{ csrf_token() }}">
                            <input type="hidden" name="id" value="{{ set.id }}">
@@ -79,21 +50,7 @@
                            {% for rule_key in set.preserved_blocked_rules %}
                               <input type="hidden" name="blocked_rules[]" value="{{ rule_key }}">
                            {% endfor %}
-                           <fieldset class="border rounded p-3">
-                              <legend class="fs-6 px-2">{{ __('Policy scope', 'torah') }}</legend>
-                              <div class="row g-3">
-                                 <div class="col-md-8">
-                                    <strong>{{ __('Entity', 'torah') }}:</strong> {{ set.entity_name }}
-                                 </div>
-                                 <div class="col-md-4">
-                                    <label class="form-check">
-                                       <input class="form-check-input" type="checkbox" name="is_recursive" value="1" {{ set.recursive ? 'checked' : '' }}>
-                                       <span class="form-check-label">{{ __('Recursive', 'torah') }}</span>
-                                    </label>
-                                 </div>
-                              </div>
-                              <p class="form-text mb-0 mt-3">{{ __('The policy applies to the selected profile and entity. When recursive is enabled, it may also apply to descendant entities.', 'torah') }}</p>
-                           </fieldset>
+                           <input type="hidden" name="is_recursive" value="{{ set.recursive ? '1' : '0' }}">
                            {% include '@torah/admin/rule_matrix.html.twig' with {
                               'policy_model': policy_model,
                               'blocked_rules': set.blocked_rules,
@@ -102,10 +59,12 @@
                               'matrix_id': 'policy-' ~ set.id
                            } only %}
                            <div class="d-flex gap-2 mt-3">
+                              <button class="btn btn-outline-secondary" type="button" data-torah-select-all>{{ __('Select all', 'torah') }}</button>
+                              <button class="btn btn-outline-secondary" type="button" data-torah-clear-all>{{ __('Clear all', 'torah') }}</button>
                               <button class="btn btn-primary" type="submit" name="save" value="1">{{ _x('button', 'Save') }}</button>
                               <button class="btn btn-outline-danger" type="submit" name="delete" value="1"
-                                      onclick="return confirm('{{ __('Remove this policy set?', 'torah')|e('js') }}');">
-                                 {{ _x('button', 'Delete permanently') }}
+                                      onclick="return confirm('{{ __('Remove this entity configuration?', 'torah')|e('js') }}');">
+                                 {{ __('Remove', 'torah') }}
                               </button>
                            </div>
                         </form>

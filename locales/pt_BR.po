@@ -1,6 +1,6 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: Torah 0.3.1\n"
+"Project-Id-Version: Torah 0.3.2\n"
 "Report-Msgid-Bugs-To: https://github.com/renatovaladares85/torah/issues\n"
 "PO-Revision-Date: 2026-07-31 00:00+0000\n"
 "Last-Translator: Torah contributors\n"
@@ -44,26 +44,14 @@ msgstr "Itens associados"
 msgid "Backend"
 msgstr "Backend"
 
-msgid "Backend applies selected restrictions to API, cron, automation, integrations, plugins, and backend code."
-msgstr "O backend aplica as restrições selecionadas à API, cron, automações, integrações, plugins e código de backend."
-
-msgid "Backend execution context"
-msgstr "Contexto de execução de backend"
-
-msgid "Backend execution profile saved."
-msgstr "Perfil de execução de backend salvo."
-
-msgid "Backend restrictions cannot be evaluated for profileless processes until a profile is configured."
-msgstr "As restrições de backend não podem ser avaliadas para processos sem perfil até que um perfil seja configurado."
-
 msgid "Blocked by the active Torah policy."
 msgstr "Bloqueado pela política ativa do Torah."
 
 msgid "Category"
 msgstr "Categoria"
 
-msgid "Checked means blocked."
-msgstr "Marcado significa bloqueado."
+msgid "Clear all"
+msgstr "Desmarcar tudo"
 
 msgid "Closing date"
 msgstr "Data de fechamento"
@@ -104,9 +92,6 @@ msgstr "Chamados vinculados"
 msgid "Location"
 msgstr "Localização"
 
-msgid "New policy set"
-msgstr "Novo conjunto de políticas"
-
 msgid "No policy set is configured."
 msgstr "Nenhum conjunto de políticas está configurado."
 
@@ -125,9 +110,6 @@ msgstr "Abertura"
 msgid "Opening date"
 msgstr "Data de abertura"
 
-msgid "Policy scope"
-msgstr "Escopo da política"
-
 msgid "Policy set removed."
 msgstr "Conjunto de políticas removido."
 
@@ -140,14 +122,14 @@ msgstr "Prioridade"
 msgid "Profile"
 msgstr "Perfil"
 
-msgid "Properties"
-msgstr "Propriedades"
-
 msgid "Recursive"
 msgstr "Recursivo"
 
-msgid "Remove this policy set?"
-msgstr "Remover este conjunto de políticas?"
+msgid "Remove"
+msgstr "Remover"
+
+msgid "Remove this entity configuration?"
+msgstr "Remover esta configuração da entidade?"
 
 msgid "Request source"
 msgstr "Origem da requisição"
@@ -160,12 +142,6 @@ msgstr "SLA para atendimento"
 
 msgid "SLA for time to resolve"
 msgstr "SLA para solução"
-
-msgid "Search fields"
-msgstr "Pesquisar campos"
-
-msgid "Show configured fields only"
-msgstr "Mostrar somente campos configurados"
 
 msgid "Solution date"
 msgstr "Data da solução"
@@ -182,23 +158,14 @@ msgstr "TTO"
 msgid "TTR"
 msgstr "TTR"
 
-msgid "The policy applies to the selected profile and entity. When recursive is enabled, it may also apply to descendant entities."
-msgstr "A política se aplica ao perfil e à entidade selecionados. Quando a recursividade estiver habilitada, ela também poderá se aplicar às entidades descendentes."
+msgid "Not recursive"
+msgstr "Não recursivo"
 
 msgid "The policy set could not be saved. Review the selected scope and rules."
 msgstr "Não foi possível salvar o conjunto de políticas. Revise o escopo e as regras selecionadas."
 
-msgid "Profile for backend processes without a user session"
-msgstr "Perfil para processos de backend sem sessão de usuário"
-
 msgid "This field may be updated automatically by GLPI. Backend enforcement can affect API, cron, rules and internal processes."
 msgstr "Este campo pode ser atualizado automaticamente pelo GLPI. O bloqueio de backend pode afetar API, cron, regras e processos internos."
-
-msgid "This profile is used only to resolve Torah policies for cron, CLI and other processes that do not have an active user profile."
-msgstr "Este perfil é usado somente para resolver políticas do Torah em cron, CLI e outros processos sem um perfil de usuário ativo."
-
-msgid "Tickets"
-msgstr "Chamados"
 
 msgid "Time to own"
 msgstr "Tempo para atendimento"
@@ -208,9 +175,6 @@ msgstr "Prazo para solução"
 
 msgid "Title"
 msgstr "Título"
-
-msgid "Toggle visible fields"
-msgstr "Alternar campos visíveis"
 
 msgid "Torah policies"
 msgstr "Políticas do Torah"
@@ -224,9 +188,6 @@ msgstr "Duração total"
 msgid "Type"
 msgstr "Tipo"
 
-msgid "Unchecked rules do not change GLPI behavior."
-msgstr "Regras desmarcadas não alteram o comportamento do GLPI."
-
 msgid "Update"
 msgstr "Atualização"
 
@@ -235,6 +196,9 @@ msgstr "Urgência"
 
 msgid "Users"
 msgstr "Usuários"
+
+msgid "Select all"
+msgstr "Selecionar tudo"
 
 msgid "When selected, the restriction will also apply to changes made through API, cron, automation, integrations, plugins, or backend code."
 msgstr "Quando selecionado, o bloqueio também será aplicado às alterações realizadas por API, cron, automações, integrações, plugins ou código de backend."
