@@ -8,33 +8,34 @@ use PHPUnit\Framework\TestCase;
 
 final class AdminPolicySimplificationTest extends TestCase
 {
-   public function testNewPolicyFormContainsOnlyEntityProfileRecursionAndAdd(): void {
-      $root = dirname(__DIR__, 4);
-      $template = (string) file_get_contents($root . '/templates/admin/policies.html.twig');
+   public function testGlobalActorSettingsPrecedeTheNewPolicyForm(): void {
+       $root = dirname(__DIR__, 4);
+       $template = (string) file_get_contents($root . '/templates/admin/policies.html.twig');
+       $matrix = (string) file_get_contents($root . '/templates/admin/rule_matrix.html.twig');
 
-      self::assertLessThan(strpos($template, 'new_profile'), strpos($template, 'new_entity'));
-      self::assertStringNotContainsString('backend_profile', $template);
-      self::assertStringNotContainsString("@torah/admin/rule_matrix.html.twig' with {\n            'policy_model': policy_model,\n            'blocked_rules': {}", $template);
-      self::assertStringContainsString('name="save" value="1">{{ _x(\'button\', \'Add\') }}', $template);
+       self::assertLessThan(strpos($template, 'new_entity'), strpos($template, 'global_actor_settings'));
+       self::assertStringNotContainsString('actor_itemtypes_present', $matrix);
+       self::assertStringNotContainsString('name="actor_itemtypes[', $matrix);
+       self::assertStringNotContainsString('data-torah-select-all', $template);
+       self::assertStringNotContainsString('data-torah-clear-all', $template);
    }
 
-   public function testExistingPolicyActionsAreScopedToItsForm(): void {
-      $root = dirname(__DIR__, 4);
-      $template = (string) file_get_contents($root . '/templates/admin/policies.html.twig');
-      $script = (string) file_get_contents($root . '/js/admin-policy-matrix.js');
+   public function testMatrixHasScopedRowAndColumnHelpers(): void {
+       $root = dirname(__DIR__, 4);
+       $matrix = (string) file_get_contents($root . '/templates/admin/rule_matrix.html.twig');
+       $script = (string) file_get_contents($root . '/js/admin-policy-matrix.js');
 
-      self::assertStringContainsString('data-torah-select-all', $template);
-      self::assertStringContainsString('data-torah-clear-all', $template);
-      self::assertStringContainsString('Remove this entity configuration?', $template);
-      self::assertStringContainsString("form.querySelector('[data-torah-select-all]')", $script);
-      self::assertStringContainsString("form.querySelector('[data-torah-clear-all]')", $script);
+       self::assertStringContainsString('data-torah-row-all', $matrix);
+       self::assertStringContainsString('data-torah-column-all', $matrix);
+       self::assertStringContainsString('indeterminate', $script);
+       self::assertStringNotContainsString('data-torah-select-all', $script);
    }
 
    public function testProfilelessProcessesHaveNoBackendProfileFallback(): void {
-      $root = dirname(__DIR__, 4);
-      $factory = (string) file_get_contents($root . '/src/Infrastructure/Glpi/AuthorizationContextFactory.php');
+       $root = dirname(__DIR__, 4);
+       $factory = (string) file_get_contents($root . '/src/Infrastructure/Glpi/AuthorizationContextFactory.php');
 
-      self::assertStringNotContainsString('BackendExecutionProfile', $factory);
-      self::assertFileDoesNotExist($root . '/src/Infrastructure/Glpi/BackendExecutionProfile.php');
+       self::assertStringNotContainsString('BackendExecutionProfile', $factory);
+       self::assertFileDoesNotExist($root . '/src/Infrastructure/Glpi/BackendExecutionProfile.php');
    }
 }

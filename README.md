@@ -12,7 +12,7 @@ blocked.
 
 | Torah | GLPI | PHP |
 |---|---|---|
-| 0.3.x | >= 10.0.20 and < 10.0.99 | >= 8.2 |
+| 0.4.x | >= 10.0.20 and < 10.0.99 | >= 8.2 |
 | 0.1.x | >= 10.0.20 and < 10.0.99 | >= 8.2 |
 
 The initial validation targets GLPI 10.0.20 and 10.0.25. Compatibility outside
@@ -24,7 +24,7 @@ this matrix is not declared.
 - Exact-entity policy precedence, followed by the nearest recursive ancestor.
 - Ticket rules grouped under assistance settings.
 - Opening and Update interface restrictions for 19 ticket controls.
-- Per-actor control over user, group, and supplier lists.
+- Global control over user, group, and supplier actor types for each role.
 - Optional Backend enforcement for selected opening/update restrictions.
 - Optional external capabilities without mandatory plugin dependencies.
 - Safe audit logging without ticket content or personal data.
@@ -49,8 +49,13 @@ Do not rename the `torah` directory.
 
 ## Configuration
 
-Each policy set selects one profile, one entity, a recursive flag, actor list
-options, and the rules to block. Built-in rules currently affect tickets only.
+Actor types are a global configuration, independent of profiles, entities and
+policies. They determine which new requesters, observers and assignees can be
+added in the UI and backend. Existing actors are never removed automatically;
+they remain visible and can be removed while the actor field is editable.
+
+Each policy set selects one profile, one entity, a recursive flag and the rules
+to block. Built-in rules currently affect tickets only.
 For a ticket, Torah uses exactly one policy set:
 
 1. The policy set for the exact ticket entity.
@@ -59,8 +64,16 @@ For a ticket, Torah uses exactly one policy set:
 
 Rules from multiple policy sets are never merged. A policy set with no checked
 rules intentionally stops inheritance and applies no property restrictions.
-Actor list options default to users, groups, and suppliers when they are not
-explicitly configured.
+Global actor types default to users, groups, and suppliers when no global
+configuration exists. During the 0.4.0 upgrade, legacy per-policy actor options
+are backed up in GLPI configuration key
+`plugin:torah/legacy_actor_itemtypes_backup_v1`, then removed from active
+policy options. The backup is technical-only and never affects runtime.
+
+Opening, Update and Backend block the entire field according to a policy.
+Global actor types only constrain the kinds of actors that can be added while
+the field is otherwise editable. Matrix row and column All checkboxes are UI
+helpers and are not persisted.
 
 Torah evaluates backend restrictions only when the current execution has an
 active GLPI profile. Cron, CLI and other profileless processes remain outside

@@ -3,51 +3,54 @@
 
    const formSelector = '[data-torah-policy-form]';
    const rowSelector = '[data-torah-field-row]';
+   const actions = ['opening', 'update', 'backend'];
 
-   const actionInputs = (row, action) => Array.from(
-      row.querySelectorAll(`[data-torah-action="${action}"]`),
-   );
+   const actionInput = (row, action) => row.querySelector(`[data-torah-action="${action}"]`);
+   const rows = (form) => Array.from(form.querySelectorAll(rowSelector));
+
+   const setState = (input, applicable) => {
+      if (!input) {
+         return;
+      }
+      const selected = applicable.filter((item) => item.checked).length;
+      input.checked = applicable.length > 0 && selected === applicable.length;
+      input.indeterminate = selected > 0 && selected < applicable.length;
+   };
 
    const syncBackend = (row) => {
-      const backend = actionInputs(row, 'backend')[0];
+      const backend = actionInput(row, 'backend');
+      const enabled = ['opening', 'update'].some((action) => actionInput(row, action)?.checked);
       if (!backend) {
          return;
       }
-      const enabled = ['opening', 'update'].some((action) => actionInputs(row, action).some((input) => input.checked));
       backend.disabled = !enabled;
       if (!enabled) {
          backend.checked = false;
       }
    };
 
-   const selectAll = (form) => {
-      form.querySelectorAll(rowSelector).forEach((row) => {
-         ['opening', 'update'].forEach((action) => actionInputs(row, action).forEach((input) => {
-            input.checked = true;
-         }));
-         syncBackend(row);
-         actionInputs(row, 'backend').forEach((input) => {
-            input.checked = !input.disabled;
-         });
+   const syncRow = (row) => {
+      syncBackend(row);
+      setState(row.querySelector('[data-torah-row-all]'), actions.map((action) => actionInput(row, action)).filter(Boolean));
+   };
+
+   const syncColumns = (form) => {
+      actions.forEach((action) => {
+         const applicable = rows(form).map((row) => actionInput(row, action)).filter((input) => input && !input.disabled);
+         setState(form.querySelector(`[data-torah-column-all="${action}"]`), applicable);
       });
    };
 
-   const clearAll = (form) => {
-      form.querySelectorAll(rowSelector).forEach((row) => {
-         ['opening', 'update', 'backend'].forEach((action) => actionInputs(row, action).forEach((input) => {
-            input.checked = false;
-         }));
-         syncBackend(row);
-      });
+   const sync = (form) => {
+      rows(form).forEach(syncRow);
+      syncColumns(form);
    };
 
    const initializeTooltips = (form) => {
       if (typeof bootstrap === 'undefined' || !bootstrap.Tooltip) {
          return;
       }
-      form.querySelectorAll('[data-bs-toggle="tooltip"]').forEach((element) => {
-         bootstrap.Tooltip.getOrCreateInstance(element);
-      });
+      form.querySelectorAll('[data-bs-toggle="tooltip"]').forEach((element) => bootstrap.Tooltip.getOrCreateInstance(element));
    };
 
    const initializeForm = (form) => {
@@ -55,21 +58,41 @@
          return;
       }
       form.dataset.torahPolicyMatrixInitialized = '1';
-      form.querySelectorAll(rowSelector).forEach(syncBackend);
       initializeTooltips(form);
+      sync(form);
 
       form.addEventListener('change', (event) => {
          const input = event.target;
-         if (!(input instanceof HTMLInputElement) || !['opening', 'update'].includes(input.dataset.torahAction || '')) {
+         if (!(input instanceof HTMLInputElement)) {
             return;
          }
          const row = input.closest(rowSelector);
-         if (row) {
-            syncBackend(row);
+         if (row && input.dataset.torahAction) {
+            sync(form);
+            return;
+         }
+         if (row && input.matches('[data-torah-row-all]')) {
+            actions.forEach((action) => {
+               const current = actionInput(row, action);
+               if (current) {
+                  current.disabled = false;
+                  current.checked = input.checked;
+               }
+            });
+            sync(form);
+            return;
+         }
+         const action = input.dataset.torahColumnAll;
+         if (action) {
+            rows(form).forEach((targetRow) => {
+               const current = actionInput(targetRow, action);
+               if (current && !current.disabled) {
+                  current.checked = input.checked;
+               }
+            });
+            sync(form);
          }
       });
-      form.querySelector('[data-torah-select-all]')?.addEventListener('click', () => selectAll(form));
-      form.querySelector('[data-torah-clear-all]')?.addEventListener('click', () => clearAll(form));
    };
 
    const initialize = () => document.querySelectorAll(formSelector).forEach(initializeForm);

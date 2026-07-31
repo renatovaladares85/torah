@@ -3,6 +3,7 @@
 namespace GlpiPlugin\Torah\Application;
 
 use GlpiPlugin\Torah\Infrastructure\Glpi\AuthorizationContextFactory;
+use GlpiPlugin\Torah\Infrastructure\Glpi\GlpiGlobalActorSettingsStore;
 use Ticket;
 
 final class TicketPolicyPayload
@@ -11,6 +12,7 @@ final class TicketPolicyPayload
       private readonly PolicyResolver $resolver,
       private readonly PolicyCatalog $catalog,
       private readonly AuthorizationContextFactory $contextFactory,
+      private readonly GlpiGlobalActorSettingsStore $globalActorSettings,
    ) {
    }
 
@@ -20,12 +22,13 @@ final class TicketPolicyPayload
     */
    public function forTicket(Ticket $ticket, array $input, string $action): array {
       $context = $this->contextFactory->fromTicketInput($ticket, $input);
+      $actorItemtypes = $this->globalActorSettings->all();
       if ($context === null || !in_array($action, ['add', 'update'], true)) {
-         return ['rules' => [], 'actor_itemtypes' => []];
+         return ['rules' => [], 'actor_itemtypes' => $actorItemtypes];
       }
       $policy = $this->resolver->resolve($context);
       if ($policy === null) {
-         return ['rules' => [], 'actor_itemtypes' => []];
+         return ['rules' => [], 'actor_itemtypes' => $actorItemtypes];
       }
 
       $rules = [];
@@ -35,11 +38,6 @@ final class TicketPolicyPayload
             $rules[] = ['key' => $rule->key, 'selectors' => $rule->selectors];
          }
       }
-      $actorItemtypes = [];
-      foreach (array_keys(ActorItemtypePolicy::roleLabels()) as $role) {
-         $actorItemtypes[$role] = ActorItemtypePolicy::allowedFor($policy, $role);
-      }
-
       return [
           'rules' => $rules,
           'actor_itemtypes' => $actorItemtypes,

@@ -2,119 +2,188 @@
    'use strict';
 
    const marker = 'data-torah-locked';
+   const validRoles = ['requester', 'observer', 'assign'];
 
-   const restore = (form) => {
-      form.querySelectorAll(`[${marker}]`).forEach((element) => {
-         if (element.dataset.torahReadonly === '1') {
-            element.readOnly = true;
-         } else {
-            element.removeAttribute('readonly');
-         }
-         if (element.dataset.torahAriaDisabled) {
-            element.setAttribute('aria-disabled', element.dataset.torahAriaDisabled);
-         } else {
-            element.removeAttribute('aria-disabled');
-         }
-         element.removeAttribute(marker);
-         delete element.dataset.torahReadonly;
-         delete element.dataset.torahAriaDisabled;
-         delete element.dataset.torahValue;
-         element.classList.remove('pe-none', 'opacity-75');
-      });
+   const warn = (message) => console.warn(`[Torah] ${message}`);
+   const findForm = (container) => {
+      const local = container.closest('form');
+      if (local?.matches('form[name="form_ticket"]')) {
+         return local;
+      }
+      const selector = container.dataset.torahFormSelector;
+      return selector ? document.querySelector(selector) : null;
    };
+
+   const restore = (form) => form.querySelectorAll(`[${marker}]`).forEach((element) => {
+      const state = element._torahLockState;
+      if (state) {
+         element.readOnly = state.readOnly;
+         if (state.ariaDisabled === null) {
+            element.removeAttribute('aria-disabled');
+         } else {
+            element.setAttribute('aria-disabled', state.ariaDisabled);
+         }
+         if (state.title === null) {
+            element.removeAttribute('title');
+         } else {
+            element.setAttribute('title', state.title);
+         }
+         state.handlers.forEach(([eventName, handler]) => element.removeEventListener(eventName, handler, true));
+      }
+      element.classList.remove('pe-none', 'opacity-75');
+      if (window.jQuery && window.jQuery(element).data('select2')) {
+         window.jQuery(element).next('.select2-container').removeClass('pe-none opacity-75');
+      }
+      element.removeAttribute(marker);
+      delete element._torahLockState;
+   });
 
    const lock = (element, message) => {
       if (element.hasAttribute(marker)) {
          return;
       }
+      const state = { readOnly: Boolean(element.readOnly), ariaDisabled: element.getAttribute('aria-disabled'), title: element.getAttribute('title'), value: element.value, handlers: [] };
+      const prevent = (event) => event.preventDefault();
+      const restoreValue = () => { if (element.value !== state.value) {
+            element.value = state.value;
+      } };
+      ['click', 'keydown', 'mousedown', 'select2:opening'].forEach((eventName) => {
+         element.addEventListener(eventName, prevent, true);
+         state.handlers.push([eventName, prevent]);
+      });
+      element.addEventListener('change', restoreValue, true);
+      state.handlers.push(['change', restoreValue]);
+      element._torahLockState = state;
       element.setAttribute(marker, '1');
-      element.dataset.torahReadonly = element.readOnly ? '1' : '0';
-      element.dataset.torahAriaDisabled = element.getAttribute('aria-disabled') || '';
-      element.dataset.torahValue = element.value ?? '';
       element.setAttribute('aria-disabled', 'true');
       element.setAttribute('title', message);
-      if (element.matches('input[type="text"], input[type="date"], input[type="number"], textarea')) {
-         element.readOnly = true;
-      } else {
-         element.classList.add('pe-none', 'opacity-75');
-         ['click', 'keydown', 'mousedown'].forEach((eventName) => element.addEventListener(eventName, (event) => event.preventDefault(), true));
-         element.addEventListener('change', () => {
-            if (element.dataset.torahValue !== undefined) {
-               element.value = element.dataset.torahValue;
-            }
-         });
+   if (element.matches('input[type="text"], input[type="date"], input[type="number"], textarea')) {
+      element.readOnly = true;
+   } else {
+      element.classList.add('pe-none', 'opacity-75');
+   }
+   if (window.jQuery && window.jQuery(element).data('select2')) {
+      window.jQuery(element).next('.select2-container').addClass('pe-none opacity-75');
+   }
+   };
+
+   const validPayload = (value) => {
+      if (!value || typeof value !== 'object' || !Array.isArray(value.rules) || !value.actor_itemtypes || typeof value.actor_itemtypes !== 'object') {
+         return false;
       }
+      return validRoles.every((role) => Array.isArray(value.actor_itemtypes[role]));
    };
 
    const payload = (container) => {
       try {
-         return JSON.parse(container.dataset.torahTicketPolicy || '{}'); } catch (_) {
-         return {}; }
+         const value = JSON.parse(container.dataset.torahTicketPolicy || '{}');
+         if (!validPayload(value)) {
+            throw new Error('invalid payload structure');
+         }
+         return value;
+      } catch (error) {
+         warn('The ticket policy payload is invalid; keeping the form unchanged.');
+         return null;
+      }
    };
 
-   const apply = () => {
-      document.querySelectorAll('[data-torah-ticket-policy]').forEach((container) => {
-         const form = container.closest('form') || document.querySelector('form[name="form_ticket"]') || document.querySelector('form');
-         if (!form) {
-            return;
-         }
-         restore(form);
-         const policy = payload(container);
-         (policy.rules || []).forEach((rule) => (rule.selectors || []).forEach((selector) => {
-            try {
-               form.querySelectorAll(selector).forEach((element) => lock(element, policy.message || 'Blocked by Torah policy.')); } catch (_) {
-               /* selector is compatibility data */ }
-         }));
+   const actorType = (value) => {
+      if (typeof value !== 'string') {
+         return null;
+      }
+      const normalized = value.replace(/^.*\\/, '');
+      return ['User', 'Group', 'Supplier'].includes(normalized) ? normalized : null;
+   };
+
+   const applyActorTypes = (form, allowedByRole) => {
+      validRoles.forEach((role) => {
+         const allowed = new Set(allowedByRole[role]);
+         form.querySelectorAll(`[data-actor-type="${role}"], [data-torah-actor-role="${role}"]`).forEach((area) => {
+            area.querySelectorAll('[data-itemtype], option[value]').forEach((option) => {
+               const type = actorType(option.dataset.itemtype || option.value);
+               if (!type) {
+                  return;
+               }
+               if (option.selected) {
+                  return;
+               }
+               option.hidden = !allowed.has(type);
+               option.disabled = !allowed.has(type);
+            });
+         });
       });
    };
 
-   let refreshPending = false;
-   const requestPolicies = () => {
-      if (refreshPending) {
+   const applyContainer = (container) => {
+      const form = findForm(container);
+      const policy = payload(container);
+      if (!form || !policy) {
          return;
       }
-      refreshPending = true;
-      window.setTimeout(() => {
-         refreshPending = false;
-         document.querySelectorAll('[data-torah-ticket-policy]').forEach((container) => {
-            const url = container.dataset.torahPolicyUrl;
-            if (!url) {
-               return;
-            }
-            const form = container.closest('form');
-            const entity = form?.querySelector('[name="entities_id"]')?.value || container.dataset.torahEntityId || '0';
-            const params = new URLSearchParams({
-               action: container.dataset.torahAction || 'update',
-               tickets_id: container.dataset.torahTicketId || '0',
-               entities_id: entity,
-            });
-            window.fetch(`${url}?${params.toString()}`, { credentials: 'same-origin' })
-               .then((response) => response.ok ? response.json() : null)
-               .then((next) => {
-                  if (next) {
-                     container.dataset.torahTicketPolicy = JSON.stringify(next);
-                     apply();
-                  }
-               })
-               .catch(() => { /* retain the last server-rendered policy */ });
-         });
-      }, 0);
+      restore(form);
+      policy.rules.forEach((rule) => (rule.selectors || []).forEach((selector) => {
+         try {
+            form.querySelectorAll(selector).forEach((element) => lock(element, policy.message || 'Blocked by Torah policy.')); } catch (_) {
+            warn('A compatibility selector could not be applied.'); }
+      }));
+      applyActorTypes(form, policy.actor_itemtypes);
    };
 
-   const refreshOnContextChange = () => requestPolicies();
-
-   if (window.jQuery) {
-      window.jQuery(document).on('select2:open select2:select change', 'form select, form input', refreshOnContextChange);
-   }
-   document.addEventListener('DOMContentLoaded', () => {
-      apply();
-      requestPolicies();
-   });
-   document.addEventListener('shown.bs.collapse', refreshOnContextChange);
-   window.addEventListener('focus', refreshOnContextChange);
-   document.addEventListener('visibilitychange', () => {
-      if (!document.hidden) {
-         refreshOnContextChange();
+   const apply = () => document.querySelectorAll('[data-torah-ticket-policy]').forEach(applyContainer);
+   const requestPolicy = (container) => {
+      const form = findForm(container);
+      const url = container.dataset.torahPolicyUrl;
+      if (!form || !url || container.dataset.torahRefreshing === '1') {
+         return;
       }
+      container.dataset.torahRefreshing = '1';
+      const entity = form.querySelector('[name="entities_id"]')?.value || container.dataset.torahEntityId || '0';
+      const params = new URLSearchParams({ action: container.dataset.torahAction || 'update', tickets_id: container.dataset.torahTicketId || '0', entities_id: entity });
+      window.fetch(`${url}?${params.toString()}`, { credentials: 'same-origin' })
+         .then((response) => {
+            if (!response.ok) {
+               throw new Error(`HTTP ${response.status}`);
+            }
+            return response.json();
+         })
+         .then((next) => {
+            if (!validPayload(next)) {
+               throw new Error('invalid payload structure');
+            }
+            container.dataset.torahTicketPolicy = JSON.stringify(next);
+            applyContainer(container);
+         })
+         .catch((error) => warn(`Unable to refresh ticket policy (${error.message}).`))
+         .finally(() => { delete container.dataset.torahRefreshing; });
+   };
+
+   const initialize = () => document.querySelectorAll('[data-torah-ticket-policy]').forEach((container) => {
+      const form = findForm(container);
+      if (!form || form.dataset.torahPolicyInitialized === '1') {
+         return;
+      }
+      form.dataset.torahPolicyInitialized = '1';
+      let timer = null;
+      const refresh = () => {
+         window.clearTimeout(timer);
+         timer = window.setTimeout(() => requestPolicy(container), 80);
+      };
+      form.addEventListener('change', refresh);
+      form.addEventListener('shown.bs.collapse', refresh);
+      form.addEventListener('submit', () => applyContainer(container));
+      const observer = new MutationObserver(refresh);
+      observer.observe(form, { childList: true, subtree: true });
+      applyContainer(container);
+      refresh();
    });
+
+if (document.readyState === 'loading') {
+   document.addEventListener('DOMContentLoaded', initialize, { once: true });
+} else {
+   initialize();
+}
+   window.addEventListener('focus', () => document.querySelectorAll('[data-torah-ticket-policy]').forEach(requestPolicy));
+   document.addEventListener('visibilitychange', () => { if (!document.hidden) {
+         document.querySelectorAll('[data-torah-ticket-policy]').forEach(requestPolicy);
+   } });
 })();

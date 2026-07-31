@@ -6,6 +6,7 @@ use CommonDBTM;
 use CommonITILActor;
 use GlpiPlugin\Torah\Domain\Authorization\AuthorizationContext;
 use GlpiPlugin\Torah\Infrastructure\Glpi\AuthorizationContextFactory;
+use GlpiPlugin\Torah\Infrastructure\Glpi\GlpiGlobalActorSettingsStore;
 use GlpiPlugin\Torah\Infrastructure\Glpi\TicketCreationContext;
 use Group_Ticket;
 use Item_Ticket;
@@ -28,6 +29,7 @@ final class TicketMutationGuard
         private readonly ActorMutationDetector $actorDetector,
         private readonly FieldMutationDetector $fieldDetector,
         private readonly AuditLogger $auditLogger,
+        private readonly GlpiGlobalActorSettingsStore $globalActorSettings,
     ) {
    }
 
@@ -227,20 +229,10 @@ final class TicketMutationGuard
           return true;
       }
 
-       $policy = $this->resolver->resolve($context);
-      if ($policy === null) {
-          return true;
-      }
-
-       $allowed = array_fill_keys(ActorItemtypePolicy::allowedFor($policy, $role), true);
+       $allowed = array_fill_keys($this->globalActorSettings->all()[$role] ?? GlobalActorItemtypePolicy::ITEMTYPES, true);
       foreach ($itemtypes as $itemtype) {
          if (!isset($allowed[$itemtype])) {
-             $this->auditLogger->denied(
-                 $context,
-                 ActorItemtypePolicy::optionKey($role),
-                 $policy->id,
-                 $source,
-             );
+             $this->auditLogger->actorItemtypeDenied($context, $role, $itemtype, $source);
 
              return false;
          }

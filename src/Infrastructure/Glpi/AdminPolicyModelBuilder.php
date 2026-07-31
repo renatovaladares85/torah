@@ -2,7 +2,7 @@
 
 namespace GlpiPlugin\Torah\Infrastructure\Glpi;
 
-use GlpiPlugin\Torah\Application\ActorItemtypePolicy;
+use GlpiPlugin\Torah\Application\GlobalActorItemtypePolicy;
 use GlpiPlugin\Torah\Application\TicketControlCatalog;
 
 /** Converts ticket control definitions to Twig-safe administrative data. */
@@ -23,9 +23,9 @@ final class AdminPolicyModelBuilder
          $renderedRuleKeys = [...$renderedRuleKeys, ...$definition->addRuleKeys, ...$definition->updateRuleKeys];
       }
 
-      $itemtypeLabels = ActorItemtypePolicy::itemtypeLabels();
+      $itemtypeLabels = GlobalActorItemtypePolicy::itemtypeLabels();
       $roles = [];
-      foreach (ActorItemtypePolicy::roleLabels() as $role => $label) {
+      foreach (GlobalActorItemtypePolicy::roleLabels() as $role => $label) {
          $itemtypes = [];
          foreach ($itemtypeLabels as $itemtype => $itemtypeLabel) {
             $itemtypes[] = ['key' => $itemtype, 'label' => $itemtypeLabel];

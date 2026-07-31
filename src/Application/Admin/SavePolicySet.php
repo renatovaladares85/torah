@@ -3,8 +3,8 @@
 namespace GlpiPlugin\Torah\Application\Admin;
 
 use Entity;
-use GlpiPlugin\Torah\Application\ActorItemtypePolicy;
 use GlpiPlugin\Torah\Application\BackendRulePolicy;
+use GlpiPlugin\Torah\Application\GlobalActorItemtypePolicy;
 use GlpiPlugin\Torah\Application\PolicyCatalog;
 use GlpiPlugin\Torah\Application\TicketControlCatalog;
 use GlpiPlugin\Torah\Infrastructure\Glpi\GlpiPolicyStore;
@@ -56,7 +56,7 @@ final class SavePolicySet
        $options = $input->options;
       if ($input->id !== null) {
          foreach ($existing->options() as $key => $value) {
-            if (!ActorItemtypePolicy::isOptionKey($key)) {
+            if (!GlobalActorItemtypePolicy::isLegacyOptionKey($key)) {
                 $options[$key] = $value;
             }
          }

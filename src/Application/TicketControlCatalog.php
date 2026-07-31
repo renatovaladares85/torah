@@ -8,15 +8,15 @@ final class TicketControlCatalog
    /** @return list<TicketControlDefinition> */
    public function all(): array {
       return [
-         $this->field('opening_date', __('Opening date', 'torah'), 'opening_date'),
-         $this->field('type', __('Type', 'torah'), 'type'),
-         $this->field('category', __('Category', 'torah'), 'category'),
-         $this->field('status', __('Status', 'torah'), 'status', true),
-         $this->field('request_source', __('Request source', 'torah'), 'request_source'),
-         $this->field('urgency', __('Urgency', 'torah'), 'urgency'),
-         $this->field('impact', __('Impact', 'torah'), 'impact'),
-         $this->field('priority', __('Priority', 'torah'), 'priority', true),
-         $this->field('total_duration', __('Total duration', 'torah'), 'total_duration'),
+         $this->field('opening_date', __('Opening date', 'torah'), 'opening_date', 'date'),
+         $this->field('type', __('Type', 'torah'), 'type', 'type'),
+         $this->field('category', __('Category', 'torah'), 'category', 'itilcategories_id'),
+         $this->field('status', __('Status', 'torah'), 'status', 'status', true),
+         $this->field('request_source', __('Request source', 'torah'), 'request_source', 'requesttypes_id'),
+         $this->field('urgency', __('Urgency', 'torah'), 'urgency', 'urgency'),
+         $this->field('impact', __('Impact', 'torah'), 'impact', 'impact'),
+         $this->field('priority', __('Priority', 'torah'), 'priority', 'priority', true),
+         $this->field('total_duration', __('Total duration', 'torah'), 'total_duration', 'actiontime'),
          new TicketControlDefinition('approval_request', __('Approval request', 'torah'), ['ticket.control.approval_request.add'], ['ticket.control.approval_request.update'], ['[name="_add_validation"]', '[name="users_id_validate"]']),
          $this->actor('requester', __('Requester', 'torah'), 'requester'),
          $this->actor('observer', __('Observer', 'torah'), 'observer'),
@@ -56,8 +56,8 @@ final class TicketControlCatalog
       return array_keys($rules);
    }
 
-   private function field(string $key, string $label, string $ruleKey, bool $sensitive = false): TicketControlDefinition {
-      return new TicketControlDefinition($key, $label, ["ticket.field.{$ruleKey}.add"], ["ticket.field.{$ruleKey}.update"], ["[name=\"{$key}\"]"], $sensitive);
+   private function field(string $key, string $label, string $ruleKey, string $inputName, bool $sensitive = false): TicketControlDefinition {
+      return new TicketControlDefinition($key, $label, ["ticket.field.{$ruleKey}.add"], ["ticket.field.{$ruleKey}.update"], ["[name=\"{$inputName}\"]"], $sensitive);
    }
 
    private function actor(string $key, string $label, string $selectorRole): TicketControlDefinition {

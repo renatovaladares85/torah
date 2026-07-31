@@ -25,6 +25,7 @@
                            <i class="ti ti-info-circle" aria-hidden="true"></i>
                         </button>
                      </th>
+                     <th scope="col" class="text-center text-nowrap">{{ __('All', 'torah') }}</th>
                   </tr>
                </thead>
                <tbody>
@@ -38,6 +39,11 @@
                      <tr data-torah-field-row data-torah-field-label="{{ field.label|lower|e('html_attr') }}">
                         <th scope="row">
                            <span>{{ field.label }}</span>
+                           {% if field.key in ['requester', 'observer', 'assignee'] %}
+                              <button class="btn btn-sm p-0 border-0 ms-1" type="button" data-bs-toggle="tooltip" title="{{ __('Opening, Update, and Backend control whether the actor field can be changed. The globally allowed actor types determine which kinds of actors can be added when the field is editable.', 'torah') }}" aria-label="{{ field.label }}">
+                                 <i class="ti ti-info-circle" aria-hidden="true"></i>
+                              </button>
+                           {% endif %}
                            {% if field.sensitive %}
                               <button class="btn btn-sm p-0 border-0 ms-1" type="button" data-bs-toggle="tooltip" title="{{ __('This field may be updated automatically by GLPI. Backend enforcement can affect API, cron, rules and internal processes.', 'torah') }}" aria-label="{{ field.label }}">
                                  <i class="ti ti-info-circle" aria-hidden="true"></i>
@@ -63,31 +69,12 @@
                                   {{ backend_checked ? 'checked' : '' }}
                                   {{ (opening_checked or update_checked) ? '' : 'disabled' }}>
                         </td>
+                        <td class="text-center"><label class="visually-hidden" for="{{ matrix_id }}-{{ field.key }}-all">{{ __('All', 'torah') }}: {{ field.label }}</label><input class="form-check-input" type="checkbox" id="{{ matrix_id }}-{{ field.key }}-all" data-torah-row-all></td>
                      </tr>
                   {% endfor %}
                </tbody>
+               <tfoot><tr data-torah-column-row><th scope="row">{{ __('All', 'torah') }}</th>{% for action in ['opening', 'update', 'backend'] %}<td class="text-center"><label class="visually-hidden" for="{{ matrix_id }}-{{ action }}-all">{{ __('All', 'torah') }}: {{ __(action|capitalize, 'torah') }}</label><input class="form-check-input" type="checkbox" id="{{ matrix_id }}-{{ action }}-all" data-torah-column-all="{{ action }}"></td>{% endfor %}<td></td></tr></tfoot>
             </table>
-         </div>
-      </section>
-
-      <section aria-labelledby="{{ matrix_id }}-actors-title">
-         <h4 class="fs-6 mb-3" id="{{ matrix_id }}-actors-title">{{ __('Actors', 'torah') }}</h4>
-         <div class="row g-3 mb-3">
-            {% for role in policy_model.actor_itemtype_roles %}
-               <section class="col-md-4">
-                  <fieldset class="border rounded p-3 h-100">
-                     <legend class="fs-6 px-2">{{ role.label }}</legend>
-                     <input type="hidden" name="actor_itemtypes_present[{{ role.key }}]" value="1">
-                     {% for itemtype in role.itemtypes %}
-                        <label class="form-check mb-2">
-                           <input class="form-check-input" type="checkbox" name="actor_itemtypes[{{ role.key }}][]" value="{{ itemtype.key }}"
-                                  {{ actor_itemtypes[role.key][itemtype.key] is defined ? 'checked' : '' }}>
-                           <span class="form-check-label">{{ itemtype.label }}</span>
-                        </label>
-                     {% endfor %}
-                  </fieldset>
-               </section>
-            {% endfor %}
          </div>
       </section>
    </fieldset>

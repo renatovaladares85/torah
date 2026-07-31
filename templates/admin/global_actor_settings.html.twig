@@ -1,0 +1,30 @@
+<section class="mb-4" aria-labelledby="torah-global-actors-title">
+   <form method="post" action="{{ action }}" data-submit-once data-torah-policy-form>
+      <input type="hidden" name="_glpi_csrf_token" value="{{ csrf_token() }}">
+      <div class="d-flex align-items-center gap-2 mb-2">
+         <h2 class="h5 mb-0" id="torah-global-actors-title">{{ __('Allowed actor types — global configuration', 'torah') }}</h2>
+         <button class="btn btn-sm p-0 border-0" type="button" data-bs-toggle="tooltip"
+                 title="{{ __('These settings apply globally to all Torah policies, profiles, and entities. Selected actor types can be added to the corresponding role. Unselected types are hidden from selectors and rejected by backend validation. Existing actors are not removed automatically.', 'torah') }}"
+                 aria-label="{{ __('Allowed actor types — global configuration', 'torah') }}">
+            <i class="ti ti-info-circle" aria-hidden="true"></i>
+         </button>
+      </div>
+      <div class="table-responsive">
+         <table class="table table-sm align-middle mb-2">
+            <thead><tr><th scope="col"></th>{% for itemtype in policy_model.actor_itemtypes %}<th scope="col" class="text-center">{{ itemtype.label }}</th>{% endfor %}</tr></thead>
+            <tbody>
+               {% for role in policy_model.actor_itemtype_roles %}
+                  <tr>
+                     <th scope="row">{{ role.label }}</th>
+                     {% for itemtype in role.itemtypes %}
+                        <td class="text-center"><label class="form-check d-inline-block mb-0"><input class="form-check-input" type="checkbox" name="actor_itemtypes[{{ role.key }}][]" value="{{ itemtype.key }}" {{ global_actor_itemtypes[role.key][itemtype.key] is defined ? 'checked' : '' }}><span class="visually-hidden">{{ role.label }}: {{ itemtype.label }}</span></label></td>
+                     {% endfor %}
+                  </tr>
+               {% endfor %}
+            </tbody>
+         </table>
+      </div>
+      <p class="text-muted small mb-2">{{ __('This configuration affects all profiles and entities.', 'torah') }}</p>
+      <button class="btn btn-primary" type="submit">{{ __('Save global configuration', 'torah') }}</button>
+   </form>
+</section>

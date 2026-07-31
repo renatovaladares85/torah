@@ -9,28 +9,75 @@ use Toolbox;
 
 final class ActorListFilter
 {
+   public function __construct(private readonly ?GlpiGlobalActorSettingsStore $settings = null) {
+   }
+
    /** @param array<string, mixed> $payload */
    public function filter(array $payload): array {
       $actors = is_array($payload['actors'] ?? null) ? $payload['actors'] : [];
       $params = is_array($payload['params'] ?? null) ? $payload['params'] : [];
       $actorType = (string) ($params['actortype'] ?? '');
       $returnedItemtypes = is_array($params['returned_itemtypes'] ?? null) ? $params['returned_itemtypes'] : [];
-
-      if (!in_array($actorType, ['requester', 'observer'], true) || !in_array(Supplier::class, $returnedItemtypes, true)) {
+      $role = $this->role($actorType);
+      if ($role === null) {
          $payload['actors'] = $actors;
 
          return $payload;
       }
+      $allowed = array_fill_keys(($this->settings ?? new GlpiGlobalActorSettingsStore())->all()[$role], true);
 
-      if ($this->supplierFieldIsHidden($params, $actorType)) {
-         $payload['actors'] = $actors;
-
-         return $payload;
+      if (isset($allowed['Supplier']) && in_array($actorType, ['requester', 'observer'], true) && in_array(Supplier::class, $returnedItemtypes, true) && !$this->supplierFieldIsHidden($params, $actorType)) {
+         $actors = $this->mergeSuppliers($actors, $this->supplierActors($params));
       }
 
-      $payload['actors'] = $this->mergeSuppliers($actors, $this->supplierActors($params));
+      $payload['actors'] = $this->filterItemtypes($actors, $allowed);
 
       return $payload;
+   }
+
+   private function role(string $actorType): ?string {
+      return match ($actorType) {
+         'requester' => 'requester',
+         'observer' => 'observer',
+         'assign', 'assignee' => 'assign',
+         default => null,
+      };
+   }
+
+   /** @param list<array<string, mixed>> $actors
+    *  @param array<string, true> $allowed
+    *  @return list<array<string, mixed>>
+    */
+   private function filterItemtypes(array $actors, array $allowed): array {
+      $filtered = [];
+      foreach ($actors as $actor) {
+         if (!is_array($actor)) {
+            continue;
+         }
+         if (isset($actor['children']) && is_array($actor['children'])) {
+            $actor['children'] = $this->filterItemtypes($actor['children'], $allowed);
+            if ($actor['children'] === [] && isset($actor['itemtype']) && $actor['itemtype'] !== 'Entity') {
+               continue;
+            }
+         }
+         $itemtype = $this->itemtype($actor['itemtype'] ?? null);
+         if ($itemtype !== null && !isset($allowed[$itemtype])) {
+            continue;
+         }
+         $filtered[] = $actor;
+      }
+
+      return $filtered;
+   }
+
+   private function itemtype(mixed $itemtype): ?string {
+      if (!is_string($itemtype)) {
+         return null;
+      }
+      $itemtype = ltrim($itemtype, '\\');
+      $itemtype = substr($itemtype, (int) strrpos('\\' . $itemtype, '\\') + 1);
+
+      return in_array($itemtype, ['User', 'Group', 'Supplier'], true) ? $itemtype : null;
    }
 
    /** @param array<string, mixed> $params */

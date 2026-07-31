@@ -14,6 +14,26 @@ based on Keep a Changelog and the project follows Semantic Versioning.
 
 - Declared GLPI 10.0.20 as the minimum supported GLPI version.
 
+## [0.4.0] - 2026-07-31
+
+### Added
+
+- Global actor itemtype configuration for requesters, observers and assignees.
+- Recoverable technical backup and idempotent upgrade migration for legacy
+  per-policy actor options.
+- Row and column matrix selection helpers with indeterminate state.
+
+### Changed
+
+- Actor itemtype filtering and backend validation now apply without a policy.
+- Ticket policy AJAX payloads always include global actor itemtypes.
+- Ticket policy JavaScript uses the explicit ticket form selector and reports
+  failed policy refreshes without interrupting the form.
+
+### Removed
+
+- Per-policy actor itemtype inputs and redundant Select all/Clear all buttons.
+
 ## [0.3.2] - 2026-07-31
 
 ### Changed
@@ -117,6 +137,7 @@ based on Keep a Changelog and the project follows Semantic Versioning.
 - Repository and package validation reject common secrets and private artifacts.
 
 [0.2.2]: https://github.com/renatovaladares85/torah/releases/tag/0.2.2
+[0.4.0]: https://github.com/renatovaladares85/torah/releases/tag/0.4.0
 [0.3.1]: https://github.com/renatovaladares85/torah/releases/tag/0.3.1
 [0.3.2]: https://github.com/renatovaladares85/torah/releases/tag/0.3.2
 [0.3.0]: https://github.com/renatovaladares85/torah/releases/tag/0.3.0

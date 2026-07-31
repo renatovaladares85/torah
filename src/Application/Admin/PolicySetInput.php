@@ -2,7 +2,6 @@
 
 namespace GlpiPlugin\Torah\Application\Admin;
 
-use GlpiPlugin\Torah\Application\ActorItemtypePolicy;
 use GlpiPlugin\Torah\Application\BackendRulePolicy;
 use GlpiPlugin\Torah\Application\PolicyCatalog;
 use GlpiPlugin\Torah\Application\TicketControlCatalog;
@@ -72,20 +71,6 @@ final class PolicySetInput
       }
 
        $options = [];
-       $actorItemtypes = is_array($data['actor_itemtypes'] ?? null) ? $data['actor_itemtypes'] : [];
-      $presentActorItemtypes = is_array($data['actor_itemtypes_present'] ?? null) ? $data['actor_itemtypes_present'] : [];
-      foreach (array_keys(ActorItemtypePolicy::roleLabels()) as $role) {
-         if (array_key_exists($role, $presentActorItemtypes)) {
-             $submitted = is_array($actorItemtypes[$role] ?? null) ? $actorItemtypes[$role] : [];
-         } else {
-             $submitted = is_array($actorItemtypes[$role] ?? null) ? $actorItemtypes[$role] : ActorItemtypePolicy::ITEMTYPES;
-         }
-         $selected = ActorItemtypePolicy::normalize($submitted);
-         if ($selected === []) {
-             throw new \InvalidArgumentException('At least one actor type must be selected.');
-         }
-         $options[ActorItemtypePolicy::optionKey($role)] = ActorItemtypePolicy::encode($selected);
-      }
 
        // Structured controls are authoritative for the matrix. Legacy callers may
        // still submit blocked_rules and retain the legacy backend interpretation.

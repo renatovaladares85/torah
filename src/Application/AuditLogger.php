@@ -16,4 +16,11 @@ interface AuditLogger
    public function contextUnresolved(int $entityId, int $ticketId, string $source): void;
 
    public function evaluationError(AuthorizationContext $context, string $source): void;
+
+   public function actorItemtypeDenied(
+        AuthorizationContext $context,
+        string $role,
+        string $itemtype,
+        string $source,
+    ): void;
 }

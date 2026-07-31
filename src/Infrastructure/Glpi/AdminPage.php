@@ -5,7 +5,6 @@ namespace GlpiPlugin\Torah\Infrastructure\Glpi;
 use Dropdown;
 use Entity;
 use Glpi\Application\View\TemplateRenderer;
-use GlpiPlugin\Torah\Application\ActorItemtypePolicy;
 use GlpiPlugin\Torah\Application\BackendRulePolicy;
 use GlpiPlugin\Torah\Application\PolicyCatalog;
 use GlpiPlugin\Torah\Domain\Policy\PolicySet;
@@ -39,6 +38,8 @@ final class AdminPage
 
        TemplateRenderer::getInstance()->display('@torah/admin/policies.html.twig', [
            'action'              => Plugin::getWebDir('torah') . '/front/policy.form.php',
+           'global_actor_action' => Plugin::getWebDir('torah') . '/front/global-actors.form.php',
+           'global_actor_itemtypes' => self::globalActorItemtypes(),
            'policy_model'        => $policyModel,
            'profile_groups'      => array_values($profileGroups),
            'new_profile'         => Profile::dropdown([
@@ -76,16 +77,14 @@ final class AdminPage
            'recursive'       => $set->recursive,
            'blocked_rules'   => $blockedRules,
            'preserved_blocked_rules' => $preservedBlockedRules,
-           'actor_itemtypes' => self::actorItemtypes($set),
            'backend_rule_keys' => self::backendRules($set, $catalog),
        ];
    }
 
     /** @return array<string, array<string, true>> */
-   private static function actorItemtypes(?PolicySet $set): array {
+   private static function globalActorItemtypes(): array {
        $actorItemtypes = [];
-      foreach (array_keys(ActorItemtypePolicy::roleLabels()) as $role) {
-          $allowed = $set === null ? ActorItemtypePolicy::ITEMTYPES : ActorItemtypePolicy::allowedFor($set, $role);
+      foreach (ServiceFactory::globalActorSettings()->all() as $role => $allowed) {
           $actorItemtypes[$role] = array_fill_keys($allowed, true);
       }
 

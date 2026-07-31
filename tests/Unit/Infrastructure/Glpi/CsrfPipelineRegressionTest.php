@@ -11,7 +11,7 @@ final class CsrfPipelineRegressionTest extends TestCase
    public function testPostEndpointsRelyOnTheGlpiCsrfPipeline(): void {
       $root = dirname(__DIR__, 4);
 
-      foreach (['front/policy.form.php', 'ajax/effective_policy.php'] as $endpoint) {
+      foreach (['front/policy.form.php', 'front/global-actors.form.php', 'ajax/effective_policy.php'] as $endpoint) {
          $source = (string) file_get_contents($root . '/' . $endpoint);
 
          self::assertStringContainsString("include('../../../inc/includes.php');", $source, $endpoint);
@@ -21,6 +21,8 @@ final class CsrfPipelineRegressionTest extends TestCase
 
       $policyEndpoint = (string) file_get_contents($root . '/front/policy.form.php');
       self::assertStringContainsString("Session::checkRight('config', UPDATE);", $policyEndpoint);
+      $globalEndpoint = (string) file_get_contents($root . '/front/global-actors.form.php');
+      self::assertStringContainsString("Session::checkRight('config', UPDATE);", $globalEndpoint);
    }
 
    public function testEveryAdministrativePostFormHasExactlyOneGlpiCsrfToken(): void {

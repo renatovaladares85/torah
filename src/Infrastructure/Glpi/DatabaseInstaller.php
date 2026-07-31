@@ -3,6 +3,7 @@
 namespace GlpiPlugin\Torah\Infrastructure\Glpi;
 
 use DBConnection;
+use GlpiPlugin\Torah\Application\GlobalActorItemtypePolicy;
 use Migration;
 
 final class DatabaseInstaller
@@ -75,6 +76,7 @@ final class DatabaseInstaller
 
        self::migrateLegacyFieldRules();
        self::migrateLegacyActorRules();
+       self::migrateLegacyActorItemtypes();
 
        $migration->executeMigration();
 
@@ -157,6 +159,74 @@ final class DatabaseInstaller
             }
          }
          $DB->delete(self::BLOCKED_RULE_TABLE, ['id' => (int) $row['id']]);
+      }
+   }
+
+   private static function migrateLegacyActorItemtypes(): void {
+      global $DB;
+
+      $settings = new GlpiGlobalActorSettingsStore();
+      $config = $settings->raw();
+      if (!empty($config[GlobalActorItemtypePolicy::MIGRATION_KEY])) {
+         return;
+      }
+
+      $legacyKeys = [];
+      foreach (array_keys(GlobalActorItemtypePolicy::roleLabels()) as $role) {
+         $legacyKeys[] = GlobalActorItemtypePolicy::legacyOptionKey($role);
+      }
+      $rows = [];
+      foreach ($DB->request([
+          'SELECT' => ['plugin_torah_policysets_id', 'option_key', 'option_value'],
+          'FROM' => self::POLICY_OPTION_TABLE,
+          'WHERE' => ['option_key' => $legacyKeys],
+      ]) as $row) {
+         $rows[] = $row;
+      }
+
+      $now = $_SESSION['glpi_currenttime'] ?? date('c');
+      $DB->beginTransaction();
+      try {
+         if (!$settings->hasActorConfiguration()) {
+            $settings->save(GlobalActorItemtypePolicy::defaults());
+         }
+
+         if ($rows !== [] && !array_key_exists(GlobalActorItemtypePolicy::BACKUP_KEY, $config)) {
+            $backup = [];
+            foreach ($rows as $row) {
+               $policySetId = (int) $row['plugin_torah_policysets_id'];
+               $policy = $DB->request([
+                   'SELECT' => ['profiles_id', 'entities_id'],
+                   'FROM' => self::POLICY_SET_TABLE,
+                   'WHERE' => ['id' => $policySetId],
+                   'LIMIT' => 1,
+               ]);
+               $scope = count($policy) === 1 ? $policy->current() : [];
+               $backup[] = [
+                   'policy_set_id' => $policySetId,
+                   'profile_id' => (int) ($scope['profiles_id'] ?? 0),
+                   'entity_id' => (int) ($scope['entities_id'] ?? 0),
+                   'option_key' => (string) $row['option_key'],
+                   'option_value' => (string) $row['option_value'],
+                   'migrated_at' => $now,
+                   'source_version' => 'pre-0.4.0',
+               ];
+            }
+            $settings->saveRaw([
+                GlobalActorItemtypePolicy::BACKUP_KEY => json_encode($backup, JSON_THROW_ON_ERROR),
+            ]);
+         }
+
+         foreach ($legacyKeys as $key) {
+            if (!$DB->delete(self::POLICY_OPTION_TABLE, ['option_key' => $key])) {
+               throw new \RuntimeException('Unable to remove legacy actor itemtype options.');
+            }
+         }
+         $settings->saveRaw([GlobalActorItemtypePolicy::MIGRATION_KEY => '1']);
+         $DB->commit();
+      } catch (\Throwable $error) {
+         $DB->rollBack();
+         throw $error;
       }
    }
 }

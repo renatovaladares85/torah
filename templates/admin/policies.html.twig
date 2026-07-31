@@ -1,4 +1,9 @@
 <div class="container-fluid">
+   {% include '@torah/admin/global_actor_settings.html.twig' with {
+      'action': global_actor_action,
+      'policy_model': policy_model,
+      'global_actor_itemtypes': global_actor_itemtypes
+   } only %}
    <section class="mb-4">
       <form method="post" action="{{ action }}" data-submit-once data-torah-policy-form>
          <input type="hidden" name="_glpi_csrf_token" value="{{ csrf_token() }}">
@@ -55,12 +60,9 @@
                               'policy_model': policy_model,
                               'blocked_rules': set.blocked_rules,
                               'backend_rule_keys': set.backend_rule_keys,
-                              'actor_itemtypes': set.actor_itemtypes,
                               'matrix_id': 'policy-' ~ set.id
                            } only %}
                            <div class="d-flex gap-2 mt-3">
-                              <button class="btn btn-outline-secondary" type="button" data-torah-select-all>{{ __('Select all', 'torah') }}</button>
-                              <button class="btn btn-outline-secondary" type="button" data-torah-clear-all>{{ __('Clear all', 'torah') }}</button>
                               <button class="btn btn-primary" type="submit" name="save" value="1">{{ _x('button', 'Save') }}</button>
                               <button class="btn btn-outline-danger" type="submit" name="delete" value="1"
                                       onclick="return confirm('{{ __('Remove this entity configuration?', 'torah')|e('js') }}');">

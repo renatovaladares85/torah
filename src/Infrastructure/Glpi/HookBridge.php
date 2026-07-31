@@ -55,6 +55,6 @@ final class HookBridge
 
     /** @param array<string, mixed> $params */
    public static function filterActors(array $params): array {
-       return (new ActorListFilter())->filter($params);
+       return (new ActorListFilter(ServiceFactory::globalActorSettings()))->filter($params);
    }
 }

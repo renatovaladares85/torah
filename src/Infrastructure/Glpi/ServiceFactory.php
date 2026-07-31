@@ -18,6 +18,7 @@ final class ServiceFactory
    private static ?PolicyResolver $resolver = null;
    private static ?TicketMutationGuard $guard = null;
    private static ?TicketPolicyPayload $policyPayload = null;
+   private static ?GlpiGlobalActorSettingsStore $globalActorSettings = null;
 
    public static function catalog(): PolicyCatalog {
        self::loadExternalCapabilities();
@@ -40,6 +41,7 @@ final class ServiceFactory
            new ActorMutationDetector(),
            new FieldMutationDetector(),
            new GlpiAuditLogger(),
+           self::globalActorSettings(),
        );
    }
 
@@ -48,7 +50,12 @@ final class ServiceFactory
           self::resolver(),
           self::catalog(),
           new AuthorizationContextFactory(),
+          self::globalActorSettings(),
       );
+   }
+
+   public static function globalActorSettings(): GlpiGlobalActorSettingsStore {
+      return self::$globalActorSettings ??= new GlpiGlobalActorSettingsStore();
    }
 
    private static function loadExternalCapabilities(): void {

@@ -6,6 +6,11 @@ use GlpiPlugin\Torah\Infrastructure\Glpi\ServiceFactory;
 
 Session::checkLoginUser();
 
+if (($_SERVER['REQUEST_METHOD'] ?? '') !== 'GET') {
+   http_response_code(405);
+   exit;
+}
+
 $action = (string) ($_GET['action'] ?? '');
 $ticketId = (int) ($_GET['tickets_id'] ?? 0);
 $entityId = (int) ($_GET['entities_id'] ?? -1);
