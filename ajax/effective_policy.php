@@ -13,8 +13,6 @@ if (($_SERVER['REQUEST_METHOD'] ?? '') !== 'POST') {
     exit;
 }
 
-Session::checkCSRF($_POST);
-
 $ticketId = (int) ($_POST['tickets_id'] ?? 0);
 $ticket = new Ticket();
 if ($ticketId <= 0 || !$ticket->getFromDB($ticketId) || !$ticket->can($ticketId, READ)) {

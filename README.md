@@ -12,10 +12,10 @@ blocked.
 
 | Torah | GLPI | PHP |
 |---|---|---|
-| 0.3.x | >= 10.0.10 and < 10.0.99 | >= 8.2 |
-| 0.1.x | >= 10.0.10 and < 10.0.99 | >= 8.2 |
+| 0.3.x | >= 10.0.20 and < 10.0.99 | >= 8.2 |
+| 0.1.x | >= 10.0.20 and < 10.0.99 | >= 8.2 |
 
-The initial validation targets GLPI 10.0.10 and 10.0.25. Compatibility outside
+The initial validation targets GLPI 10.0.20 and 10.0.25. Compatibility outside
 this matrix is not declared.
 
 ## Main Features

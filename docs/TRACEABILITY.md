@@ -15,7 +15,7 @@
 | Backend property enforcement | `FieldMutationDetector`, ticket update hook | Property catalog tests |
 | External capability support | `CapabilityRegistry`, `PolicyApi` | Capability tests |
 | Plugin-owned persistence | `DatabaseInstaller`, `GlpiPolicyStore` | GLPI lifecycle matrix |
-| Secure administration | Admin endpoints and use cases | ACL/CSRF tests |
+| Secure administration | GLPI HTTP CSRF pipeline and admin endpoints | Endpoint and form CSRF regression tests |
 | Profile-grouped administrative policy matrix UI | `AdminPage`, admin Twig templates, scoped JavaScript | Administrative view-model and matrix action tests |
 | Profileless backend behavior | `AuthorizationContextFactory` | Context fallback regression test |
 | Safe audit data | `AuditLogger` | Audit payload tests |

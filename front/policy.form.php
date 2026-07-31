@@ -15,8 +15,6 @@ if (($_SERVER['REQUEST_METHOD'] ?? '') !== 'POST') {
     exit;
 }
 
-Session::checkCSRF($_POST);
-
 try {
    $store = new GlpiPolicyStore();
     $catalog = ServiceFactory::catalog();

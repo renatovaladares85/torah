@@ -23,7 +23,7 @@
    <versions>
       <version>
          <num>0.3.2</num>
-         <compatibility>~10.0.10</compatibility>
+         <compatibility>~10.0.20</compatibility>
       </version>
    </versions>
    <langs>

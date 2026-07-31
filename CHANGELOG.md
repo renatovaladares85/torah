@@ -3,6 +3,17 @@
 All notable changes to this project are documented in this file. The format is
 based on Keep a Changelog and the project follows Semantic Versioning.
 
+## [Unreleased]
+
+### Fixed
+
+- Relied on the GLPI 10.0.20+ HTTP CSRF pipeline for Torah POST endpoints,
+  preventing a second validation from rejecting an already validated token.
+
+### Changed
+
+- Declared GLPI 10.0.20 as the minimum supported GLPI version.
+
 ## [0.3.2] - 2026-07-31
 
 ### Changed
