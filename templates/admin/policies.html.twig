@@ -5,8 +5,20 @@
    </div>
 
    <section class="mb-4">
-      <h2 class="h3 mb-3">{{ __('New policy set', 'torah') }}</h2>
+      <h2 class="h3 mb-3">{{ __('Backend execution context', 'torah') }}</h2>
       <form method="post" action="{{ action }}" data-submit-once>
+         <input type="hidden" name="_glpi_csrf_token" value="{{ csrf_token() }}">
+         <label class="form-label">{{ __('Profile for backend processes without a user session', 'torah') }}</label>
+         {{ backend_profile_dropdown|raw }}
+         <p class="form-text">{{ __('This profile is used only to resolve Torah policies for cron, CLI and other processes that do not have an active user profile.', 'torah') }}</p>
+         {% if not backend_profile %}<div class="alert alert-warning">{{ __('Backend restrictions cannot be evaluated for profileless processes until a profile is configured.', 'torah') }}</div>{% endif %}
+         <button class="btn btn-outline-primary" type="submit" name="save_backend_profile" value="1">{{ _x('button', 'Save') }}</button>
+      </form>
+   </section>
+
+   <section class="mb-4">
+      <h2 class="h3 mb-3">{{ __('New policy set', 'torah') }}</h2>
+      <form method="post" action="{{ action }}" data-submit-once data-torah-policy-form>
          <input type="hidden" name="_glpi_csrf_token" value="{{ csrf_token() }}">
          <fieldset class="border rounded p-3">
             <legend class="fs-5 px-2">{{ __('Policy scope', 'torah') }}</legend>
@@ -28,6 +40,13 @@
             </div>
             <p class="form-text mb-0 mt-3">{{ __('The policy applies to the selected profile and entity. When recursive is enabled, it may also apply to descendant entities.', 'torah') }}</p>
          </fieldset>
+         {% include '@torah/admin/rule_matrix.html.twig' with {
+            'policy_model': policy_model,
+            'blocked_rules': {},
+            'backend_rule_keys': {},
+            'actor_itemtypes': new_actor_itemtypes,
+            'matrix_id': 'new-policy'
+         } only %}
          <button class="btn btn-primary mt-3" type="submit" name="save" value="1">
             {{ _x('button', 'Add') }}
          </button>
@@ -78,6 +97,7 @@
                            {% include '@torah/admin/rule_matrix.html.twig' with {
                               'policy_model': policy_model,
                               'blocked_rules': set.blocked_rules,
+                              'backend_rule_keys': set.backend_rule_keys,
                               'actor_itemtypes': set.actor_itemtypes,
                               'matrix_id': 'policy-' ~ set.id
                            } only %}

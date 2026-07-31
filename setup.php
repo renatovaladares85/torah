@@ -17,7 +17,7 @@
 use Glpi\Plugin\Hooks;
 use GlpiPlugin\Torah\Infrastructure\Glpi\HookBridge;
 
-define('PLUGIN_TORAH_VERSION', '0.2.2');
+define('PLUGIN_TORAH_VERSION', '0.3.0');
 define('PLUGIN_TORAH_MIN_GLPI_VERSION', '10.0.10');
 define('PLUGIN_TORAH_MAX_GLPI_VERSION', '10.0.99');
 define('PLUGIN_TORAH_MIN_PHP_VERSION', '8.2.0');
@@ -30,19 +30,20 @@ function plugin_init_torah(): void {
 
     $PLUGIN_HOOKS[Hooks::CSRF_COMPLIANT]['torah'] = true;
     $PLUGIN_HOOKS['config_page']['torah'] = 'front/config.php';
-    $PLUGIN_HOOKS[Hooks::ADD_JAVASCRIPT]['torah'][] = 'js/ticket-policy.js';
     $PLUGIN_HOOKS[Hooks::POST_ITEM_FORM]['torah'] = [HookBridge::class, 'postItemForm'];
     $PLUGIN_HOOKS[Hooks::FILTER_ACTORS]['torah'] = [HookBridge::class, 'filterActors'];
 
-   foreach ([Ticket::class, Ticket_User::class, Group_Ticket::class, Supplier_Ticket::class, Ticket_Contract::class] as $itemtype) {
+   foreach ([Ticket::class, Ticket_User::class, Group_Ticket::class, Supplier_Ticket::class, Ticket_Contract::class, Item_Ticket::class, Ticket_Ticket::class, TicketValidation::class] as $itemtype) {
        $PLUGIN_HOOKS[Hooks::PRE_ITEM_UPDATE]['torah'][$itemtype] = [HookBridge::class, 'preItemUpdate'];
    }
 
-   foreach ([Ticket::class, Ticket_User::class, Group_Ticket::class, Supplier_Ticket::class, Ticket_Contract::class] as $itemtype) {
+   foreach ([Ticket::class, Ticket_User::class, Group_Ticket::class, Supplier_Ticket::class, Ticket_Contract::class, Item_Ticket::class, Ticket_Ticket::class, TicketValidation::class] as $itemtype) {
        $PLUGIN_HOOKS[Hooks::PRE_ITEM_ADD]['torah'][$itemtype] = [HookBridge::class, 'preItemAdd'];
    }
 
-   foreach ([Ticket_User::class, Group_Ticket::class, Supplier_Ticket::class, Ticket_Contract::class, SlaLevel_Ticket::class, OlaLevel_Ticket::class] as $itemtype) {
+   $PLUGIN_HOOKS[Hooks::ITEM_ADD]['torah'][Ticket::class] = [HookBridge::class, 'itemAdd'];
+
+   foreach ([Ticket_User::class, Group_Ticket::class, Supplier_Ticket::class, Ticket_Contract::class, Item_Ticket::class, Ticket_Ticket::class, TicketValidation::class, SlaLevel_Ticket::class, OlaLevel_Ticket::class] as $itemtype) {
        $PLUGIN_HOOKS[Hooks::PRE_ITEM_DELETE]['torah'][$itemtype] = [HookBridge::class, 'preItemDelete'];
        $PLUGIN_HOOKS[Hooks::PRE_ITEM_PURGE]['torah'][$itemtype] = [HookBridge::class, 'preItemDelete'];
    }

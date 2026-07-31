@@ -1,6 +1,6 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: Torah 0.2.2\n"
+"Project-Id-Version: Torah 0.3.0\n"
 "Report-Msgid-Bugs-To: https://github.com/renatovaladares85/torah/issues\n"
 "PO-Revision-Date: 2026-07-31 00:00+0000\n"
 "Last-Translator: Torah contributors\n"
@@ -10,9 +10,6 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
-
-msgid "Actor changes"
-msgstr "Alterações de atores"
 
 msgid "Actors"
 msgstr "Atores"
@@ -47,8 +44,17 @@ msgstr "Itens associados"
 msgid "Backend"
 msgstr "Backend"
 
-msgid "Backend enforcement will be connected in a later implementation step."
-msgstr "O bloqueio de backend será conectado em uma etapa posterior da implementação."
+msgid "Backend applies selected restrictions to API, cron, automation, integrations, plugins, and backend code."
+msgstr "O backend aplica as restrições selecionadas à API, cron, automações, integrações, plugins e código de backend."
+
+msgid "Backend execution context"
+msgstr "Contexto de execução de backend"
+
+msgid "Backend execution profile saved."
+msgstr "Perfil de execução de backend salvo."
+
+msgid "Backend restrictions cannot be evaluated for profileless processes until a profile is configured."
+msgstr "As restrições de backend não podem ser avaliadas para processos sem perfil até que um perfil seja configurado."
 
 msgid "Blocked by the active Torah policy."
 msgstr "Bloqueado pela política ativa do Torah."
@@ -182,8 +188,14 @@ msgstr "A política se aplica ao perfil e à entidade selecionados. Quando a rec
 msgid "The policy set could not be saved. Review the selected scope and rules."
 msgstr "Não foi possível salvar o conjunto de políticas. Revise o escopo e as regras selecionadas."
 
-msgid "This field may be updated automatically by GLPI processes."
-msgstr "Este campo pode ser atualizado automaticamente pelos processos do GLPI."
+msgid "Profile for backend processes without a user session"
+msgstr "Perfil para processos de backend sem sessão de usuário"
+
+msgid "This field may be updated automatically by GLPI. Backend enforcement can affect API, cron, rules and internal processes."
+msgstr "Este campo pode ser atualizado automaticamente pelo GLPI. O bloqueio de backend pode afetar API, cron, regras e processos internos."
+
+msgid "This profile is used only to resolve Torah policies for cron, CLI and other processes that do not have an active user profile."
+msgstr "Este perfil é usado somente para resolver políticas do Torah em cron, CLI e outros processos sem um perfil de usuário ativo."
 
 msgid "Tickets"
 msgstr "Chamados"

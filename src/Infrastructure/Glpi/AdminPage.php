@@ -6,7 +6,9 @@ use Dropdown;
 use Entity;
 use Glpi\Application\View\TemplateRenderer;
 use GlpiPlugin\Torah\Application\ActorItemtypePolicy;
+use GlpiPlugin\Torah\Application\BackendRulePolicy;
 use GlpiPlugin\Torah\Application\PolicyCatalog;
+use GlpiPlugin\Torah\Application\TicketControlCatalog;
 use GlpiPlugin\Torah\Domain\Policy\PolicySet;
 use Html;
 use Plugin;
@@ -21,6 +23,9 @@ final class AdminPage
 
        $profileGroups = [];
       foreach ((new GlpiPolicyStore())->all() as $set) {
+         if (!\Session::haveAccessToEntity($set->entityId, $set->recursive)) {
+            continue;
+         }
           $viewModel = self::viewModel($set, $catalog, $policyModel);
           $profileId = $viewModel['profile_id'];
          if (!isset($profileGroups[$profileId])) {
@@ -45,6 +50,13 @@ final class AdminPage
            'new_entity'          => Entity::dropdown([
                'name'    => 'entities_id',
                'value'   => (int) ($_SESSION['glpiactive_entity'] ?? 0),
+               'display' => false,
+           ]),
+           'new_actor_itemtypes' => self::actorItemtypes(null),
+           'backend_profile' => (new BackendExecutionProfile())->get(),
+           'backend_profile_dropdown' => Profile::dropdown([
+               'name' => 'backend_profile_id',
+               'value' => (new BackendExecutionProfile())->get() ?? 0,
                'display' => false,
            ]),
        ]);
@@ -72,34 +84,23 @@ final class AdminPage
            'blocked_rules'   => $blockedRules,
            'preserved_blocked_rules' => $preservedBlockedRules,
            'actor_itemtypes' => self::actorItemtypes($set),
+           'backend_rule_keys' => self::backendRules($set, $catalog),
        ];
    }
 
     /** @return array<string, mixed> */
    private static function policyModel(PolicyCatalog $catalog): array {
-       $actorRules = [];
-      foreach ($catalog->all() as $rule) {
-         if ($rule->domain === 'assistance' && $rule->object === 'ticket' && $rule->group === 'actors') {
-             $actorRules[] = $rule;
-         }
-      }
-
-       $fieldRules = self::fieldRules($catalog);
+      $fieldRules = self::fieldRules($catalog);
        $renderedRuleKeys = [];
       foreach ($fieldRules as $fieldRule) {
-         foreach (['add_key', 'update_key'] as $ruleKeyName) {
-            if ($fieldRule[$ruleKeyName] !== null) {
-                $renderedRuleKeys[] = $fieldRule[$ruleKeyName];
+         foreach (['add_keys', 'update_keys'] as $ruleKeysName) {
+            foreach ($fieldRule[$ruleKeysName] as $ruleKey) {
+               $renderedRuleKeys[] = $ruleKey;
             }
          }
       }
-      foreach ($actorRules as $actorRule) {
-          $renderedRuleKeys[] = $actorRule->key;
-      }
-
        return [
            'field_rules'          => $fieldRules,
-           'actor_rules'          => $actorRules,
            'actor_itemtype_roles' => self::actorItemtypeRoles(),
            'rendered_rule_keys'   => array_values(array_unique($renderedRuleKeys)),
        ];
@@ -107,41 +108,16 @@ final class AdminPage
 
     /** @return list<array<string, mixed>> */
    private static function fieldRules(PolicyCatalog $catalog): array {
-       $definitions = [
-           ['key' => 'opening_date', 'label' => __('Opening date', 'torah')],
-           ['key' => 'type', 'label' => __('Type', 'torah')],
-           ['key' => 'category', 'label' => __('Category', 'torah')],
-           ['key' => 'status', 'label' => __('Status', 'torah'), 'sensitive' => true],
-           ['key' => 'request_source', 'label' => __('Request source', 'torah')],
-           ['key' => 'urgency', 'label' => __('Urgency', 'torah')],
-           ['key' => 'impact', 'label' => __('Impact', 'torah')],
-           ['key' => 'priority', 'label' => __('Priority', 'torah'), 'sensitive' => true],
-           ['key' => 'total_duration', 'label' => __('Total duration', 'torah')],
-           ['key' => 'approval_status', 'label' => __('Approval request', 'torah')],
-           ['key' => 'requester', 'label' => __('Requester', 'torah'), 'ui_only' => true],
-           ['key' => 'observer', 'label' => __('Observer', 'torah'), 'ui_only' => true],
-           ['key' => 'assigned_to', 'label' => __('Assigned to', 'torah'), 'ui_only' => true],
-           ['key' => 'associated_item', 'label' => __('Associated items', 'torah')],
-           ['key' => 'sla_tto', 'label' => __('TTO', 'torah'), 'sensitive' => true],
-           ['key' => 'sla_ttr', 'label' => __('TTR', 'torah'), 'sensitive' => true],
-           ['key' => 'ola_tto', 'label' => __('Internal TTO', 'torah'), 'sensitive' => true],
-           ['key' => 'ola_ttr', 'label' => __('Internal TTR', 'torah'), 'sensitive' => true],
-           ['key' => 'linked_tickets', 'label' => __('Linked tickets', 'torah'), 'ui_only' => true],
-       ];
-
        $rules = [];
-       foreach ($definitions as $definition) {
-          $addKey = sprintf('ticket.field.%s.add', $definition['key']);
-          $updateKey = sprintf('ticket.field.%s.update', $definition['key']);
+      foreach ((new TicketControlCatalog())->all() as $definition) {
           $rules[] = [
-              'key'        => $definition['key'],
+              'key'        => $definition->key,
               'label'      => $definition['label'],
-              'add_key'    => $catalog->has($addKey) ? $addKey : null,
-              'update_key' => $catalog->has($updateKey) ? $updateKey : null,
-              'ui_only'    => $definition['ui_only'] ?? false,
-              'sensitive'  => $definition['sensitive'] ?? false,
+              'add_keys'   => $definition->addRuleKeys,
+              'update_keys' => $definition->updateRuleKeys,
+              'sensitive'  => $definition->sensitive,
           ];
-       }
+      }
 
        return $rules;
    }
@@ -170,5 +146,16 @@ final class AdminPage
       }
 
        return $actorItemtypes;
+   }
+
+   /** @return array<string, true> */
+   private static function backendRules(PolicySet $set, PolicyCatalog $catalog): array {
+      $rules = [];
+      foreach ($set->blockedRuleKeys() as $rule) {
+         if (BackendRulePolicy::enforces($set, $rule, $catalog)) {
+            $rules[$rule] = true;
+         }
+      }
+      return $rules;
    }
 }

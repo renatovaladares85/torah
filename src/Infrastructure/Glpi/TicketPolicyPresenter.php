@@ -3,7 +3,8 @@
 namespace GlpiPlugin\Torah\Infrastructure\Glpi;
 
 use Glpi\Application\View\TemplateRenderer;
-use GlpiPlugin\Torah\Application\ActorItemtypePolicy;
+use Html;
+use Plugin;
 use Ticket;
 
 final class TicketPolicyPresenter
@@ -15,43 +16,17 @@ final class TicketPolicyPresenter
           return;
       }
 
-       $contextFactory = new AuthorizationContextFactory();
-       $context = $ticket->isNewItem()
-           ? $contextFactory->fromTicketInput($ticket, ['entities_id' => (int) ($_SESSION['glpiactive_entity'] ?? 0)])
-           : $contextFactory->fromTicket($ticket);
-      if ($context === null) {
-          return;
-      }
-
-       $policy = ServiceFactory::resolver()->resolve($context);
-      if ($policy === null) {
-          return;
-      }
-
-       $rules = [];
-       $catalog = ServiceFactory::catalog();
+       Html::requireJs(Plugin::getWebDir('torah') . '/js/ticket-policy.js');
        $action = $ticket->isNewItem() ? 'add' : 'update';
-      foreach ($policy->blockedRuleKeys() as $ruleKey) {
-          $rule = $catalog->get($ruleKey);
-         if ($rule !== null && $rule->selectors !== [] && ($rule->action === null || $rule->action === $action)) {
-             $rules[] = [
-                 'key'       => $rule->key,
-                 'selectors' => $rule->selectors,
-             ];
-         }
-      }
-
-       $actorItemtypes = [];
-      foreach (array_keys(ActorItemtypePolicy::roleLabels()) as $role) {
-          $actorItemtypes[$role] = ActorItemtypePolicy::allowedFor($policy, $role);
-      }
+       $input = $ticket->isNewItem() ? ['entities_id' => (int) ($_SESSION['glpiactive_entity'] ?? 0)] : [];
+       $payload = ServiceFactory::policyPayload()->forTicket($ticket, $input, $action);
 
        TemplateRenderer::getInstance()->display('@torah/ticket/policy_data.html.twig', [
-           'payload' => [
-               'rules'           => $rules,
-               'actor_itemtypes' => $actorItemtypes,
-               'message'         => __('Blocked by the active Torah policy.', 'torah'),
-           ],
+           'payload' => $payload,
+           'ticket_id' => (int) ($ticket->fields['id'] ?? 0),
+           'entity_id' => (int) ($input['entities_id'] ?? $ticket->fields['entities_id'] ?? 0),
+           'action' => $action,
+           'url' => Plugin::getWebDir('torah') . '/ajax/ticket-policy.php',
        ]);
    }
 }

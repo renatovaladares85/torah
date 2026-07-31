@@ -5,6 +5,7 @@ include('../../../inc/includes.php');
 use GlpiPlugin\Torah\Application\Admin\DeletePolicySet;
 use GlpiPlugin\Torah\Application\Admin\PolicySetInput;
 use GlpiPlugin\Torah\Application\Admin\SavePolicySet;
+use GlpiPlugin\Torah\Infrastructure\Glpi\BackendExecutionProfile;
 use GlpiPlugin\Torah\Infrastructure\Glpi\GlpiPolicyStore;
 use GlpiPlugin\Torah\Infrastructure\Glpi\ServiceFactory;
 
@@ -18,7 +19,14 @@ if (($_SERVER['REQUEST_METHOD'] ?? '') !== 'POST') {
 Session::checkCSRF($_POST);
 
 try {
-    $store = new GlpiPolicyStore();
+   if (isset($_POST['save_backend_profile'])) {
+       $value = (int) ($_POST['backend_profile_id'] ?? 0);
+       (new BackendExecutionProfile())->save($value > 0 ? $value : null);
+       Session::addMessageAfterRedirect(__('Backend execution profile saved.', 'torah'));
+       Html::redirect(Plugin::getWebDir('torah') . '/front/config.php');
+       exit;
+   }
+   $store = new GlpiPolicyStore();
     $catalog = ServiceFactory::catalog();
    if (isset($_POST['delete'])) {
        (new DeletePolicySet($store))->execute((int) ($_POST['id'] ?? 0));

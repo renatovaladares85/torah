@@ -3,6 +3,26 @@
 All notable changes to this project are documented in this file. The format is
 based on Keep a Changelog and the project follows Semantic Versioning.
 
+## [0.3.0] - 2026-07-31
+
+### Added
+
+- Explicit Backend policy persistence, with conservative enforcement for
+  policy sets created before this release.
+- Independent Opening and Update rules for ticket actors and matrix support for
+  the 19 supported ticket controls, including composite SLA/OLA controls.
+- Hooks for associated items, linked tickets and ticket validations, in
+  addition to existing actor, contract and level-agreement paths.
+- An optional backend execution profile used only when a process has no active
+  user profile.
+
+### Changed
+
+- Opening and Update remain interface restrictions; Backend now controls server
+  enforcement for the selected action.
+- New policies can be configured completely in their first submission.
+- Ticket UI locking is scoped and reversible and no longer disables form values.
+
 ## [0.2.2] - 2026-07-31
 
 ### Changed
@@ -59,6 +79,7 @@ based on Keep a Changelog and the project follows Semantic Versioning.
 - Repository and package validation reject common secrets and private artifacts.
 
 [0.2.2]: https://github.com/renatovaladares85/torah/releases/tag/0.2.2
+[0.3.0]: https://github.com/renatovaladares85/torah/releases/tag/0.3.0
 [0.2.1]: https://github.com/renatovaladares85/torah/releases/tag/0.2.1
 [0.2.0]: https://github.com/renatovaladares85/torah/releases/tag/0.2.0
 [0.1.1]: https://github.com/renatovaladares85/torah/releases/tag/0.1.1

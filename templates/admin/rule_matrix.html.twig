@@ -57,13 +57,17 @@
                </thead>
                <tbody>
                   {% for field in policy_model.field_rules %}
-                     {% set opening_checked = field.add_key and blocked_rules[field.add_key] is defined %}
-                     {% set update_checked = field.update_key and blocked_rules[field.update_key] is defined %}
-                     <tr data-torah-field-row data-torah-field-label="{{ field.label|lower|e('html_attr') }}" data-torah-ui-only="{{ field.ui_only ? '1' : '0' }}">
+                     {% set opening_checked = false %}
+                     {% for rule_key in field.add_keys %}{% if blocked_rules[rule_key] is defined %}{% set opening_checked = true %}{% endif %}{% endfor %}
+                     {% set update_checked = false %}
+                     {% for rule_key in field.update_keys %}{% if blocked_rules[rule_key] is defined %}{% set update_checked = true %}{% endif %}{% endfor %}
+                     {% set backend_checked = false %}
+                     {% for rule_key in field.add_keys|merge(field.update_keys) %}{% if backend_rule_keys[rule_key] is defined %}{% set backend_checked = true %}{% endif %}{% endfor %}
+                     <tr data-torah-field-row data-torah-field-label="{{ field.label|lower|e('html_attr') }}">
                         <th scope="row">
                            <span>{{ field.label }}</span>
                            {% if field.sensitive %}
-                              <button class="btn btn-sm p-0 border-0 ms-1" type="button" data-bs-toggle="tooltip" title="{{ __('This field may be updated automatically by GLPI processes.', 'torah') }}" aria-label="{{ field.label }}">
+                              <button class="btn btn-sm p-0 border-0 ms-1" type="button" data-bs-toggle="tooltip" title="{{ __('This field may be updated automatically by GLPI. Backend enforcement can affect API, cron, rules and internal processes.', 'torah') }}" aria-label="{{ field.label }}">
                                  <i class="ti ti-info-circle" aria-hidden="true"></i>
                               </button>
                            {% endif %}
@@ -71,18 +75,20 @@
                         <td class="text-center">
                            <label class="visually-hidden" for="{{ matrix_id }}-{{ field.key }}-opening">{{ __('Opening', 'torah') }}: {{ field.label }}</label>
                            <input class="form-check-input" type="checkbox" id="{{ matrix_id }}-{{ field.key }}-opening" data-torah-action="opening"
-                                  {% if field.add_key %}name="blocked_rules[]" value="{{ field.add_key }}"{% endif %}
+                                  name="blocked_controls[opening][]" value="{{ field.key }}"
                                   {{ opening_checked ? 'checked' : '' }}>
                         </td>
                         <td class="text-center">
                            <label class="visually-hidden" for="{{ matrix_id }}-{{ field.key }}-update">{{ __('Update', 'torah') }}: {{ field.label }}</label>
                            <input class="form-check-input" type="checkbox" id="{{ matrix_id }}-{{ field.key }}-update" data-torah-action="update"
-                                  {% if field.update_key %}name="blocked_rules[]" value="{{ field.update_key }}"{% endif %}
+                                  name="blocked_controls[update][]" value="{{ field.key }}"
                                   {{ update_checked ? 'checked' : '' }}>
                         </td>
                         <td class="text-center">
                            <label class="visually-hidden" for="{{ matrix_id }}-{{ field.key }}-backend">{{ __('Backend', 'torah') }}: {{ field.label }}</label>
                            <input class="form-check-input" type="checkbox" id="{{ matrix_id }}-{{ field.key }}-backend" data-torah-action="backend"
+                                  name="backend_controls[]" value="{{ field.key }}"
+                                  {{ backend_checked ? 'checked' : '' }}
                                   {{ (opening_checked or update_checked) ? '' : 'disabled' }}>
                         </td>
                      </tr>
@@ -90,7 +96,7 @@
                </tbody>
             </table>
          </div>
-         <p class="form-text mb-0 mt-2">{{ __('Backend enforcement will be connected in a later implementation step.', 'torah') }}</p>
+         <p class="form-text mb-0 mt-2">{{ __('Backend applies selected restrictions to API, cron, automation, integrations, plugins, and backend code.', 'torah') }}</p>
       </section>
 
       <section aria-labelledby="{{ matrix_id }}-actors-title">
@@ -110,17 +116,6 @@
                      {% endfor %}
                   </fieldset>
                </section>
-            {% endfor %}
-         </div>
-
-         <h5 class="fs-6 mb-2">{{ __('Actor changes', 'torah') }}</h5>
-         <div class="row g-2">
-            {% for rule in policy_model.actor_rules %}
-               <label class="form-check col-md-4">
-                  <input class="form-check-input" type="checkbox" name="blocked_rules[]" value="{{ rule.key }}"
-                         {{ blocked_rules[rule.key] is defined ? 'checked' : '' }}>
-                  <span class="form-check-label">{{ rule.label }}</span>
-               </label>
             {% endfor %}
          </div>
       </section>

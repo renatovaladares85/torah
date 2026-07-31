@@ -18,7 +18,7 @@ values.
 
 - GLPI authorization is authoritative; Torah never grants access.
 - JavaScript is not a security boundary.
-- Backend hooks enforce all restrictions.
+- Backend hooks enforce only restrictions whose Backend option is selected;
+  legacy policies retain their restrictive backend interpretation.
 - Disabled Torah code does not affect GLPI behavior.
 - Audit records exclude ticket content, actor details, and changed values.
-

@@ -1,14 +1,11 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: Torah 0.2.2\n"
+"Project-Id-Version: Torah 0.3.0\n"
 "Report-Msgid-Bugs-To: https://github.com/renatovaladares85/torah/issues\n"
 "POT-Creation-Date: 2026-07-31 00:00+0000\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-
-msgid "Actor changes"
-msgstr ""
 
 msgid "Actors"
 msgstr ""
@@ -43,7 +40,16 @@ msgstr ""
 msgid "Backend"
 msgstr ""
 
-msgid "Backend enforcement will be connected in a later implementation step."
+msgid "Backend applies selected restrictions to API, cron, automation, integrations, plugins, and backend code."
+msgstr ""
+
+msgid "Backend execution context"
+msgstr ""
+
+msgid "Backend execution profile saved."
+msgstr ""
+
+msgid "Backend restrictions cannot be evaluated for profileless processes until a profile is configured."
 msgstr ""
 
 msgid "Blocked by the active Torah policy."
@@ -178,7 +184,13 @@ msgstr ""
 msgid "The policy set could not be saved. Review the selected scope and rules."
 msgstr ""
 
-msgid "This field may be updated automatically by GLPI processes."
+msgid "Profile for backend processes without a user session"
+msgstr ""
+
+msgid "This field may be updated automatically by GLPI. Backend enforcement can affect API, cron, rules and internal processes."
+msgstr ""
+
+msgid "This profile is used only to resolve Torah policies for cron, CLI and other processes that do not have an active user profile."
 msgstr ""
 
 msgid "Tickets"

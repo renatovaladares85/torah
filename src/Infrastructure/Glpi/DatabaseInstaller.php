@@ -74,6 +74,7 @@ final class DatabaseInstaller
       }
 
        self::migrateLegacyFieldRules();
+       self::migrateLegacyActorRules();
 
        $migration->executeMigration();
 
@@ -128,6 +129,34 @@ final class DatabaseInstaller
          }
 
           $DB->delete(self::BLOCKED_RULE_TABLE, ['id' => (int) $row['id']]);
+      }
+   }
+
+   private static function migrateLegacyActorRules(): void {
+      global $DB;
+
+      $now = $_SESSION['glpi_currenttime'] ?? date('Y-m-d H:i:s');
+      $table = self::BLOCKED_RULE_TABLE;
+      foreach ($DB->request("SELECT `id`, `plugin_torah_policysets_id`, `rule_key` FROM `$table` WHERE `rule_key` IN ('ticket.actor.requester', 'ticket.actor.observer', 'ticket.actor.assignee')") as $row) {
+         $legacy = (string) $row['rule_key'];
+         $policySetId = (int) $row['plugin_torah_policysets_id'];
+         foreach (['add', 'update'] as $action) {
+            $rule = "{$legacy}.{$action}";
+            $existing = $DB->request([
+                'FROM' => self::BLOCKED_RULE_TABLE,
+                'WHERE' => ['plugin_torah_policysets_id' => $policySetId, 'rule_key' => $rule],
+                'LIMIT' => 1,
+            ]);
+            if (count($existing) === 0) {
+               $DB->insert(self::BLOCKED_RULE_TABLE, [
+                   'plugin_torah_policysets_id' => $policySetId,
+                   'rule_key' => $rule,
+                   'date_creation' => $now,
+                   'date_mod' => $now,
+               ]);
+            }
+         }
+         $DB->delete(self::BLOCKED_RULE_TABLE, ['id' => (int) $row['id']]);
       }
    }
 }

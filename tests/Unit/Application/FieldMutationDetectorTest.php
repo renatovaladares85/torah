@@ -33,7 +33,7 @@ final class FieldMutationDetectorTest extends TestCase
             continue;
          }
          foreach ($rule->inputKeys as $key) {
-             yield $rule->key => [$key];
+             yield $rule->key . ':' . $key => [$key];
          }
       }
    }

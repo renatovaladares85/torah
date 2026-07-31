@@ -5,10 +5,10 @@ namespace GlpiPlugin\Torah\Infrastructure\Glpi;
 use GlpiPlugin\Torah\Application\ActorMutationDetector;
 use GlpiPlugin\Torah\Application\CapabilityRegistry;
 use GlpiPlugin\Torah\Application\FieldMutationDetector;
-use GlpiPlugin\Torah\Application\InternalMutationClassifier;
 use GlpiPlugin\Torah\Application\PolicyCatalog;
 use GlpiPlugin\Torah\Application\PolicyResolver;
 use GlpiPlugin\Torah\Application\TicketMutationGuard;
+use GlpiPlugin\Torah\Application\TicketPolicyPayload;
 use Plugin;
 
 final class ServiceFactory
@@ -17,6 +17,7 @@ final class ServiceFactory
    private static ?PolicyCatalog $catalog = null;
    private static ?PolicyResolver $resolver = null;
    private static ?TicketMutationGuard $guard = null;
+   private static ?TicketPolicyPayload $policyPayload = null;
 
    public static function catalog(): PolicyCatalog {
        self::loadExternalCapabilities();
@@ -38,9 +39,16 @@ final class ServiceFactory
            new AuthorizationContextFactory(),
            new ActorMutationDetector(),
            new FieldMutationDetector(),
-           new InternalMutationClassifier(),
            new GlpiAuditLogger(),
        );
+   }
+
+   public static function policyPayload(): TicketPolicyPayload {
+      return self::$policyPayload ??= new TicketPolicyPayload(
+          self::resolver(),
+          self::catalog(),
+          new AuthorizationContextFactory(),
+      );
    }
 
    private static function loadExternalCapabilities(): void {

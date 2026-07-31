@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace GlpiPlugin\Torah\Tests\Unit\Application;
 
+use GlpiPlugin\Torah\Application\BackendRulePolicy;
+use GlpiPlugin\Torah\Application\CapabilityRegistry;
+use GlpiPlugin\Torah\Application\PolicyCatalog;
 use GlpiPlugin\Torah\Application\PolicyResolver;
 use GlpiPlugin\Torah\Domain\Authorization\AuthorizationContext;
 use GlpiPlugin\Torah\Domain\Policy\EntityHierarchy;
@@ -55,6 +58,13 @@ final class PolicyResolverTest extends TestCase
 
        self::assertTrue($resolver->decide($this->context(profileId: 7), 'ticket.field.status')->allowed);
        self::assertFalse($resolver->decide($this->context(profileId: 8), 'ticket.field.status')->allowed);
+   }
+
+   public function testBackendDecisionRequiresExplicitBackendWhenOptionExists(): void {
+      $resolver = $this->resolver([
+          new PolicySet(1, 7, 20, false, ['ticket.field.status.update'], [BackendRulePolicy::OPTION_KEY => '[]']),
+      ], []);
+      self::assertTrue($resolver->decideBackend($this->context(), 'ticket.field.status.update', new PolicyCatalog(new CapabilityRegistry()))->allowed);
    }
 
     /**

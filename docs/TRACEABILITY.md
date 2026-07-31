@@ -8,9 +8,10 @@
 | Exact then nearest recursive policy | `PolicyResolver` | Ancestor precedence tests |
 | No default blocking | Empty rule persistence | Installation and save tests |
 | Ticket-only built-in rules | Policy catalog metadata | Catalog tests |
-| Add/update property blocking | `TicketFieldCatalog`, `TicketMutationGuard` | Field catalog and guard tests |
+| Opening/update interface controls | `TicketControlCatalog`, `TicketPolicyPresenter` | Catalog and view-model tests |
+| Explicit backend enforcement | `BackendRulePolicy`, `PolicyResolver::decideBackend` | Backend policy and resolver tests |
 | Actor itemtype options | `ActorItemtypePolicy`, `ActorListFilter`, `GlpiPolicyStore` | Input and actor payload tests |
-| Backend actor enforcement | `ActorPayloadInspector`, ticket and relation hooks | Actor payload unit tests |
+| Backend actor and relation enforcement | `ActorPayloadInspector`, ticket and relation hooks | Actor payload and guard tests |
 | Backend property enforcement | `FieldMutationDetector`, ticket update hook | Property catalog tests |
 | External capability support | `CapabilityRegistry`, `PolicyApi` | Capability tests |
 | Plugin-owned persistence | `DatabaseInstaller`, `GlpiPolicyStore` | GLPI lifecycle matrix |

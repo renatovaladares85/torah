@@ -29,3 +29,6 @@ Run `tools/check-public-repo.sh` before every commit, package, or push. A human
 review must still verify context because automated scanners cannot prove that
 all data is synthetic.
 
+Torah audit events use only policy, profile, entity, ticket, origin and hook
+identifiers. They never include ticket content, actor details, values or full
+request payloads.

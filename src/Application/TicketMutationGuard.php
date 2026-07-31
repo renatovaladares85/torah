@@ -6,14 +6,18 @@ use CommonDBTM;
 use CommonITILActor;
 use GlpiPlugin\Torah\Domain\Authorization\AuthorizationContext;
 use GlpiPlugin\Torah\Infrastructure\Glpi\AuthorizationContextFactory;
+use GlpiPlugin\Torah\Infrastructure\Glpi\TicketCreationContext;
 use Group_Ticket;
+use Item_Ticket;
 use OlaLevel_Ticket;
 use Session;
 use SlaLevel_Ticket;
 use Supplier_Ticket;
 use Ticket;
 use Ticket_Contract;
+use Ticket_Ticket;
 use Ticket_User;
+use TicketValidation;
 
 final class TicketMutationGuard
 {
@@ -23,27 +27,34 @@ final class TicketMutationGuard
         private readonly AuthorizationContextFactory $contextFactory,
         private readonly ActorMutationDetector $actorDetector,
         private readonly FieldMutationDetector $fieldDetector,
-        private readonly InternalMutationClassifier $internalMutationClassifier,
         private readonly AuditLogger $auditLogger,
     ) {
    }
 
    public function guardTicketUpdate(Ticket $ticket): bool {
-       $context = $this->contextFactory->fromTicket($ticket);
+      $context = $this->contextFactory->fromTicket($ticket);
       if ($context === null || !is_array($ticket->input)) {
+         if ($context === null) {
+            $this->auditLogger->contextUnresolved((int) ($ticket->fields['entities_id'] ?? 0), (int) ($ticket->fields['id'] ?? 0), 'ticket_update');
+         }
           return true;
       }
 
        $input = $ticket->input;
-      if ($this->internalMutationClassifier->isDerivedStatusUpdate($input)) {
-          return true;
-      }
-
       if (!$this->guardActorInput($ticket, $context, $input, 'ticket_update', false)) {
           return $this->cancel($ticket);
       }
 
-       return $this->guardFieldInput($ticket, $context, $ticket->fields, $input, 'update', 'ticket_update');
+      if (!$this->guardFieldInput($ticket, $context, $ticket->fields, $input, 'update', 'ticket_update')) {
+         return false;
+      }
+      if ($this->fieldDetector->changes($ticket->fields, $input, 'entities_id')) {
+         $destination = $this->contextFactory->fromTicketInput($ticket, $input);
+         if ($destination !== null && !$this->guardFieldInput($ticket, $destination, $ticket->fields, $input, 'update', 'ticket_entity_destination', ['entities_id'])) {
+            return false;
+         }
+      }
+       return true;
    }
 
    public function guardTicketAdd(Ticket $ticket): bool {
@@ -54,6 +65,7 @@ final class TicketMutationGuard
        $input = $ticket->input;
        $context = $this->contextFactory->fromTicketInput($ticket, $input);
       if ($context === null) {
+          $this->auditLogger->contextUnresolved((int) ($input['entities_id'] ?? 0), 0, 'ticket_add');
           return true;
       }
 
@@ -75,6 +87,7 @@ final class TicketMutationGuard
       array $input,
       string $action,
       string $source,
+      array $ignoredInputKeys = [],
    ): bool {
       foreach ($this->catalog->all() as $rule) {
          if ($rule->group !== 'properties' || $rule->object !== 'ticket' || $rule->action !== $action) {
@@ -82,6 +95,9 @@ final class TicketMutationGuard
          }
 
          foreach ($rule->inputKeys as $inputKey) {
+            if (in_array($inputKey, $ignoredInputKeys, true)) {
+               continue;
+            }
             if (!$this->fieldDetector->changes($existing, $input, $inputKey)) {
                 continue;
             }
@@ -96,52 +112,38 @@ final class TicketMutationGuard
    }
 
    public function guardRelationMutation(CommonDBTM $item, string $source = 'relation_mutation'): bool {
-       $ticketId = (int) ($item->input['tickets_id'] ?? $item->fields['tickets_id'] ?? 0);
-      if ($ticketId <= 0) {
-          return true;
+      foreach ($this->relationTicketIds($item) as $ticketId) {
+         $ticket = new Ticket();
+         if (!$ticket->getFromDB($ticketId)) {
+            continue;
+         }
+         $context = $this->contextFactory->fromTicket($ticket);
+         if ($context === null) {
+            $this->auditLogger->contextUnresolved((int) ($ticket->fields['entities_id'] ?? 0), $ticketId, $source);
+            continue;
+         }
+         $action = TicketCreationContext::contains($ticketId) ? 'add' : 'update';
+         $role = $this->relationRole($item);
+         if ($source === 'relation_add' && $role !== null && !$this->allowsActorItemtypes($context, $role, [$this->relationItemtype($item)], $source)) {
+            return $this->cancel($item);
+         }
+         $ruleKey = $this->relationRuleKey($item, $action);
+         if ($ruleKey !== null && !$this->allow($context, $ruleKey, $source)) {
+            return $this->cancel($item);
+         }
       }
-
-       $ticket = new Ticket();
-      if (!$ticket->getFromDB($ticketId)) {
-          return true;
-      }
-
-       $context = $this->contextFactory->fromTicket($ticket);
-      if ($context === null) {
-         return true;
-      }
-
-       $role = $this->relationRole($item);
-      if ($source === 'relation_add' && $role !== null && !$this->allowsActorItemtypes(
-          $context,
-          $role,
-          [$this->relationItemtype($item)],
-          $source,
-      )) {
-          return $this->cancel($item);
-      }
-
-       $ruleKey = $this->relationRuleKey($item);
-      if ($ruleKey === null || $this->allow($context, $ruleKey, $source)) {
-          return true;
-      }
-
-       return $this->cancel($item);
+      return true;
    }
 
    public function guardLevelAgreementDeletion(CommonDBTM $item): bool {
-      if (!is_array($item->input)) {
-          return true;
-      }
-
-       $isSla = $item instanceof SlaLevel_Ticket && isset($_POST['sla_delete']);
-       $isOla = $item instanceof OlaLevel_Ticket && isset($_POST['ola_delete']);
+       $isSla = $item instanceof SlaLevel_Ticket;
+       $isOla = $item instanceof OlaLevel_Ticket;
       if (!$isSla && !$isOla) {
           return true;
       }
 
-       $ticketId = (int) ($_POST['id'] ?? $item->fields['tickets_id'] ?? 0);
-       $type = (int) ($_POST['type'] ?? 0);
+       $ticketId = (int) ($item->input['tickets_id'] ?? $item->fields['tickets_id'] ?? 0);
+       $type = (int) ($item->input['type'] ?? $item->fields['type'] ?? 0);
       if ($ticketId <= 0 || $type <= 0) {
           return true;
       }
@@ -158,11 +160,9 @@ final class TicketMutationGuard
 
        $suffix = $type === \SLM::TTO ? 'tto' : 'ttr';
        $ruleKeys = [sprintf('ticket.field.%s_%s.update', $isSla ? 'sla' : 'ola', $suffix)];
-      if ($isSla && !empty($_POST['delete_date'])) {
-          $ruleKeys[] = $type === \SLM::TTO
-              ? 'ticket.field.time_to_own.update'
-              : 'ticket.field.solution_deadline.update';
-      }
+       $ruleKeys[] = $type === \SLM::TTO
+           ? ($isSla ? 'ticket.field.time_to_own.update' : 'ticket.field.internal_time_to_own.update')
+           : ($isSla ? 'ticket.field.solution_deadline.update' : 'ticket.field.internal_solution_deadline.update');
 
       foreach ($ruleKeys as $ruleKey) {
          if (!$this->allow($context, $ruleKey, 'level_agreement_delete')) {
@@ -174,7 +174,12 @@ final class TicketMutationGuard
    }
 
    private function allow(AuthorizationContext $context, string $ruleKey, string $source): bool {
-       $decision = $this->resolver->decide($context, $ruleKey);
+      try {
+         $decision = $this->resolver->decideBackend($context, $ruleKey, $this->catalog);
+      } catch (\Throwable) {
+         $this->auditLogger->evaluationError($context, $source);
+         return true;
+      }
       if ($decision->allowed) {
           return true;
       }
@@ -207,7 +212,7 @@ final class TicketMutationGuard
              continue;
          }
 
-          $key = 'ticket.actor.' . ($role === 'assign' ? 'assignee' : $role);
+          $key = 'ticket.actor.' . ($role === 'assign' ? 'assignee' : $role) . '.' . ($newTicket ? 'add' : 'update');
          if (!$this->allow($context, $key, $source)) {
              return false;
          }
@@ -244,9 +249,21 @@ final class TicketMutationGuard
        return true;
    }
 
-   private function relationRuleKey(CommonDBTM $item): ?string {
+   private function relationRuleKey(CommonDBTM $item, string $action = 'update'): ?string {
       if ($item instanceof Ticket_Contract) {
           return 'ticket.field.contract.update';
+      }
+
+      if ($item instanceof Item_Ticket) {
+         return "ticket.control.associated_items.{$action}";
+      }
+
+      if ($item instanceof Ticket_Ticket) {
+         return "ticket.control.linked_tickets.{$action}";
+      }
+
+      if ($item instanceof TicketValidation) {
+         return "ticket.control.approval_request.{$action}";
       }
 
       if (!$item instanceof Ticket_User && !$item instanceof Group_Ticket && !$item instanceof Supplier_Ticket) {
@@ -256,9 +273,9 @@ final class TicketMutationGuard
        $role = $this->relationRole($item);
 
        return match ($role) {
-           'requester' => 'ticket.actor.requester',
-           'observer'  => 'ticket.actor.observer',
-           'assign'    => 'ticket.actor.assignee',
+           'requester' => "ticket.actor.requester.{$action}",
+           'observer'  => "ticket.actor.observer.{$action}",
+           'assign'    => "ticket.actor.assignee.{$action}",
            default     => null,
        };
    }
@@ -278,6 +295,20 @@ final class TicketMutationGuard
        };
    }
 
+   /** @return list<int> */
+   private function relationTicketIds(CommonDBTM $item): array {
+      $input = is_array($item->input) ? $item->input : [];
+      $fields = is_array($item->fields) ? $item->fields : [];
+      $ids = [];
+      foreach (['tickets_id', 'tickets_id_1', 'tickets_id_2'] as $key) {
+         $id = (int) ($input[$key] ?? $fields[$key] ?? 0);
+         if ($id > 0) {
+            $ids[$id] = true;
+         }
+      }
+      return array_keys($ids);
+   }
+
    private function relationItemtype(CommonDBTM $item): string {
       if ($item instanceof Group_Ticket) {
           return 'Group';
@@ -292,12 +323,28 @@ final class TicketMutationGuard
 
    private function cancel(CommonDBTM $item): false {
        $item->input = false;
-       Session::addMessageAfterRedirect(
+      if ($this->isInteractiveSession()) {
+         Session::addMessageAfterRedirect(
            __('Torah blocked this change according to the active profile and entity policy.', 'torah'),
            false,
            ERROR,
-       );
+         );
+      }
 
        return false;
+   }
+
+   private function isInteractiveSession(): bool {
+      if (Session::isCron()) {
+         return false;
+      }
+      if (method_exists(Session::class, 'isAPI')) {
+         try {
+            return !Session::isAPI();
+         } catch (\Throwable) {
+            return false;
+         }
+      }
+      return true;
    }
 }

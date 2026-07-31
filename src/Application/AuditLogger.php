@@ -12,4 +12,8 @@ interface AuditLogger
         ?int $policySetId,
         string $source,
     ): void;
+
+   public function contextUnresolved(int $entityId, int $ticketId, string $source): void;
+
+   public function evaluationError(AuthorizationContext $context, string $source): void;
 }

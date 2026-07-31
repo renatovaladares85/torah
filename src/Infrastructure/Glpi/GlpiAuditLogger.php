@@ -8,6 +8,8 @@ use Toolbox;
 
 final class GlpiAuditLogger implements AuditLogger
 {
+   /** @var array<string, true> */
+   private static array $technicalEvents = [];
    public function denied(
         AuthorizationContext $context,
         string $ruleKey,
@@ -21,10 +23,38 @@ final class GlpiAuditLogger implements AuditLogger
            'profile_id'    => $context->profileId,
            'entity_id'     => $context->entityId,
            'ticket_id'     => $context->ticketId,
-           'user_id'       => $context->userId,
+           'effective_user_id' => $context->userId ?: null,
+           'impersonator_id' => $context->impersonatorId,
+           'execution_origin' => $context->executionOrigin,
            'source'        => $source,
        ];
 
        Toolbox::logInFile('torah', json_encode($event, JSON_THROW_ON_ERROR) . PHP_EOL);
+   }
+
+   public function contextUnresolved(int $entityId, int $ticketId, string $source): void {
+      $deduplicationKey = "{$entityId}:{$ticketId}:{$source}";
+      if (isset(self::$technicalEvents[$deduplicationKey])) {
+         return;
+      }
+      self::$technicalEvents[$deduplicationKey] = true;
+      Toolbox::logInFile('torah', json_encode([
+          'event' => 'context_unresolved',
+          'entity_id' => $entityId,
+          'ticket_id' => $ticketId,
+          'source' => $source,
+      ], JSON_THROW_ON_ERROR) . PHP_EOL);
+   }
+
+   public function evaluationError(AuthorizationContext $context, string $source): void {
+      Toolbox::logInFile('torah', json_encode([
+          'event' => 'policy_evaluation_error',
+          'profile_id' => $context->profileId,
+          'entity_id' => $context->entityId,
+          'ticket_id' => $context->ticketId,
+          'effective_user_id' => $context->userId ?: null,
+          'execution_origin' => $context->executionOrigin,
+          'source' => $source,
+      ], JSON_THROW_ON_ERROR) . PHP_EOL);
    }
 }

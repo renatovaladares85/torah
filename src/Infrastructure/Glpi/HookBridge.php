@@ -22,11 +22,20 @@ final class HookBridge
    public static function preItemAdd(CommonDBTM $item): void {
       if ($item instanceof Ticket) {
           ServiceFactory::guard()->guardTicketAdd($item);
+         if ($item->input !== false) {
+            TicketCreationContext::beginPending();
+         }
 
           return;
       }
 
        ServiceFactory::guard()->guardRelationMutation($item, 'relation_add');
+   }
+
+   public static function itemAdd(CommonDBTM $item): void {
+      if ($item instanceof Ticket) {
+         TicketCreationContext::end((int) ($item->fields['id'] ?? 0));
+      }
    }
 
    public static function preItemDelete(CommonDBTM $item): void {

@@ -36,4 +36,13 @@ final class PolicyResolver
 
        return AuthorizationDecision::deny($ruleKey, $policy->id);
    }
+
+   public function decideBackend(AuthorizationContext $context, string $ruleKey, PolicyCatalog $catalog): AuthorizationDecision {
+      $policy = $this->resolve($context);
+      if ($policy === null || !$policy->blocks($ruleKey) || !BackendRulePolicy::enforces($policy, $ruleKey, $catalog)) {
+         return AuthorizationDecision::allow();
+      }
+
+      return AuthorizationDecision::deny($ruleKey, $policy->id);
+   }
 }

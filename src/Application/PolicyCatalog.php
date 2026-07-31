@@ -48,31 +48,55 @@ final class PolicyCatalog
           return $this->builtIn;
       }
 
-       $definitions = [
-           new PolicyRule('ticket.actor.requester', 'actors', __('Requester', 'torah'), [], ['[data-actor-type="requester"]', 'form[id^="addme_as_requester_"] button']),
-           new PolicyRule('ticket.actor.observer', 'actors', __('Observer', 'torah'), [], ['[data-actor-type="observer"]', 'form[id^="addme_as_observer_"] button']),
-           new PolicyRule('ticket.actor.assignee', 'actors', __('Assigned technician, group, or supplier', 'torah'), [], ['[data-actor-type="assign"]', 'form[id^="addme_as_assign_"] button']),
-       ];
-
-       foreach ($this->ticketFields->all() as $field) {
-          foreach (['add', 'update'] as $action) {
-             $definitions[] = new PolicyRule(
-                sprintf('ticket.field.%s.%s', $field->key, $action),
-                'properties',
-                $field->label,
-                [$field->inputKey],
-                $field->selectors,
+       $definitions = [];
+      foreach ([
+           'requester' => [__('Requester', 'torah'), 'requester'],
+           'observer'  => [__('Observer', 'torah'), 'observer'],
+           'assignee'  => [__('Assigned technician, group, or supplier', 'torah'), 'assign'],
+       ] as $role => [$label, $selectorRole]) {
+         // Deprecated aliases are retained for safe read compatibility. The
+         // installer converts persisted aliases to the action-specific rules.
+         $definitions[] = new PolicyRule("ticket.actor.{$role}", 'legacy', $label);
+         foreach (['add', 'update'] as $action) {
+            $definitions[] = new PolicyRule(
+                "ticket.actor.{$role}.{$action}",
+                'actors',
+                $label,
+                [],
+                ["[data-actor-type=\"{$selectorRole}\"]", "form[id^=\"addme_as_{$selectorRole}_\"] button"],
                 'assistance',
                 'ticket',
                 $action,
-             );
-          }
-       }
+            );
+         }
+      }
+
+      foreach ($this->ticketFields->all() as $field) {
+         foreach (['add', 'update'] as $action) {
+            $definitions[] = new PolicyRule(
+               sprintf('ticket.field.%s.%s', $field->key, $action),
+               'properties',
+               $field->label,
+               [$field->inputKey],
+               $field->selectors,
+               'assistance',
+               'ticket',
+               $action,
+            );
+         }
+      }
+
+       $definitions[] = new PolicyRule('ticket.control.approval_request.add', 'properties', __('Approval request', 'torah'), ['_add_validation', 'users_id_validate'], ['[name="_add_validation"]', '[name="users_id_validate"]'], 'assistance', 'ticket', 'add');
+       $definitions[] = new PolicyRule('ticket.control.approval_request.update', 'properties', __('Approval request', 'torah'), [], [], 'assistance', 'ticket', 'update');
+       $definitions[] = new PolicyRule('ticket.control.associated_items.add', 'properties', __('Associated items', 'torah'), ['itemtype', 'items_id'], ['[name="itemtype"]', '[name="items_id"]'], 'assistance', 'ticket', 'add');
+       $definitions[] = new PolicyRule('ticket.control.associated_items.update', 'properties', __('Associated items', 'torah'), [], [], 'assistance', 'ticket', 'update');
+       $definitions[] = new PolicyRule('ticket.control.linked_tickets.add', 'properties', __('Linked tickets', 'torah'), ['_link', '_linkedto'], ['[name="_link"]', '[name="_linkedto"]'], 'assistance', 'ticket', 'add');
+       $definitions[] = new PolicyRule('ticket.control.linked_tickets.update', 'properties', __('Linked tickets', 'torah'), ['_link', '_linkedto'], ['[name="_link"]', '[name="_linkedto"]'], 'assistance', 'ticket', 'update');
 
        $this->builtIn = [];
-       foreach ($definitions as $definition) {
-           $this->builtIn[$definition->key] = $definition;
-       }
+      foreach ($definitions as $definition) {
+          $this->builtIn[$definition->key] = $definition;
+      }
 
        return $this->builtIn;
    }
