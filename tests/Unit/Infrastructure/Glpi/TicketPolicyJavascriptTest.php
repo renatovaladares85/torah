@@ -13,7 +13,8 @@ final class TicketPolicyJavascriptTest extends TestCase
       $script = (string) file_get_contents($root . '/js/ticket-policy.js');
       $template = (string) file_get_contents($root . '/templates/ticket/policy_data.html.twig');
 
-      self::assertStringContainsString('form[name="form_ticket"]', $template);
+      self::assertStringContainsString('form#itil-form', $template);
+      self::assertStringContainsString("local?.matches('form#itil-form')", $script);
       self::assertStringNotContainsString("document.querySelector('form')", $script);
       self::assertStringContainsString('[Torah]', $script);
       self::assertStringContainsString('validPayload', $script);

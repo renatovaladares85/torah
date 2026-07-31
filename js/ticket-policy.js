@@ -7,11 +7,12 @@
    const warn = (message) => console.warn(`[Torah] ${message}`);
    const findForm = (container) => {
       const local = container.closest('form');
-      if (local?.matches('form[name="form_ticket"]')) {
+      if (local?.matches('form#itil-form')) {
          return local;
       }
       const selector = container.dataset.torahFormSelector;
-      return selector ? document.querySelector(selector) : null;
+      const form = selector ? document.querySelector(selector) : null;
+      return form instanceof HTMLFormElement ? form : null;
    };
 
    const restore = (form) => form.querySelectorAll(`[${marker}]`).forEach((element) => {

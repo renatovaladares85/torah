@@ -1,6 +1,6 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: Torah 0.4.0\n"
+"Project-Id-Version: Torah 0.4.1\n"
 "Report-Msgid-Bugs-To: https://github.com/renatovaladares85/torah/issues\n"
 "PO-Revision-Date: 2026-07-31 00:00+0000\n"
 "Last-Translator: Torah contributors\n"
@@ -209,8 +209,6 @@ msgstr "Usuários"
 msgid "These settings apply globally to all Torah policies, profiles, and entities. Selected actor types can be added to the corresponding role. Unselected types are hidden from selectors and rejected by backend validation. Existing actors are not removed automatically."
 msgstr "Estas configurações se aplicam globalmente a todas as políticas, perfis e entidades do Torah. Os tipos de ator marcados podem ser adicionados ao papel correspondente. Tipos desmarcados ficam ocultos dos seletores e são rejeitados pela validação de backend. Atores existentes não são removidos automaticamente."
 
-msgid "This configuration affects all profiles and entities."
-msgstr "Esta configuração afeta todos os perfis e entidades."
 msgid "When selected, the restriction will also apply to changes made through API, cron, automation, integrations, plugins, or backend code."
 msgstr "Quando selecionado, o bloqueio também será aplicado às alterações realizadas por API, cron, automações, integrações, plugins ou código de backend."
 

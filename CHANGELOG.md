@@ -14,6 +14,14 @@ based on Keep a Changelog and the project follows Semantic Versioning.
 
 - Declared GLPI 10.0.20 as the minimum supported GLPI version.
 
+## [0.4.1] - 2026-07-31
+
+### Fixed
+
+- Targeted the GLPI 10.0.20 Ticket form `#itil-form` when applying Torah UI
+  restrictions, instead of a nonexistent `form_ticket` name.
+- Removed redundant global actor configuration helper text.
+
 ## [0.4.0] - 2026-07-31
 
 ### Added
@@ -137,6 +145,7 @@ based on Keep a Changelog and the project follows Semantic Versioning.
 - Repository and package validation reject common secrets and private artifacts.
 
 [0.2.2]: https://github.com/renatovaladares85/torah/releases/tag/0.2.2
+[0.4.1]: https://github.com/renatovaladares85/torah/releases/tag/0.4.1
 [0.4.0]: https://github.com/renatovaladares85/torah/releases/tag/0.4.0
 [0.3.1]: https://github.com/renatovaladares85/torah/releases/tag/0.3.1
 [0.3.2]: https://github.com/renatovaladares85/torah/releases/tag/0.3.2

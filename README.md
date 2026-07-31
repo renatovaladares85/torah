@@ -75,6 +75,9 @@ Global actor types only constrain the kinds of actors that can be added while
 the field is otherwise editable. Matrix row and column All checkboxes are UI
 helpers and are not persisted.
 
+For GLPI 10.0.20, Torah applies visual restrictions to the native Ticket form
+identified by `#itil-form`.
+
 Torah evaluates backend restrictions only when the current execution has an
 active GLPI profile. Cron, CLI and other profileless processes remain outside
 Torah restrictions; an effective human or API session profile is never
