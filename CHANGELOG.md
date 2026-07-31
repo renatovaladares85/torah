@@ -13,6 +13,8 @@ based on Keep a Changelog and the project follows Semantic Versioning.
   paths instead of unsupported `Html::requireJs()` URLs.
 - Expanded static analysis and regression coverage for the administrative view
   model and plugin JavaScript registration.
+- Removed an unsupported JavaScript hook constant that prevented GLPI 10 from
+  loading the plugin before its official update process.
 
 ## [0.3.0] - 2026-07-31
 
