@@ -4,12 +4,21 @@ parameters:
         - src/Domain
         - src/Application/ActorPayloadInspector.php
         - src/Application/AuditLogger.php
+        - src/Application/BackendRulePolicy.php
         - src/Application/CapabilityDefinition.php
         - src/Application/CapabilityRegistry.php
         - src/Application/FieldMutationDetector.php
         - src/Application/PolicyCatalog.php
         - src/Application/PolicyResolver.php
+        - src/Application/TicketControlDefinition.php
+        - src/Application/TicketControlCatalog.php
+        - src/Application/TicketPolicyPayload.php
         - src/Application/Admin/PolicySetInput.php
+        - src/Infrastructure/Glpi/AdminPage.php
+        - src/Infrastructure/Glpi/AdminPolicyModelBuilder.php
+        - src/Infrastructure/Glpi/BackendExecutionProfile.php
+        - src/Infrastructure/Glpi/ServiceFactory.php
+        - src/Infrastructure/Glpi/TicketPolicyPresenter.php
     bootstrapFiles:
         - tests/phpstan-bootstrap.php
     treatPhpDocTypesAsCertain: false

@@ -3,6 +3,17 @@
 All notable changes to this project are documented in this file. The format is
 based on Keep a Changelog and the project follows Semantic Versioning.
 
+## [0.3.1] - 2026-07-31
+
+### Fixed
+
+- Restored the administrative policy page by converting ticket control objects
+  into Twig-safe view-model arrays.
+- Loaded administrative and ticket policy JavaScript with GLPI-relative script
+  paths instead of unsupported `Html::requireJs()` URLs.
+- Expanded static analysis and regression coverage for the administrative view
+  model and plugin JavaScript registration.
+
 ## [0.3.0] - 2026-07-31
 
 ### Added
@@ -79,6 +90,7 @@ based on Keep a Changelog and the project follows Semantic Versioning.
 - Repository and package validation reject common secrets and private artifacts.
 
 [0.2.2]: https://github.com/renatovaladares85/torah/releases/tag/0.2.2
+[0.3.1]: https://github.com/renatovaladares85/torah/releases/tag/0.3.1
 [0.3.0]: https://github.com/renatovaladares85/torah/releases/tag/0.3.0
 [0.2.1]: https://github.com/renatovaladares85/torah/releases/tag/0.2.1
 [0.2.0]: https://github.com/renatovaladares85/torah/releases/tag/0.2.0

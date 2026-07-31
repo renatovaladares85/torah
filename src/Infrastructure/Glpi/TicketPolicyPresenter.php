@@ -16,7 +16,7 @@ final class TicketPolicyPresenter
           return;
       }
 
-       Html::requireJs(Plugin::getWebDir('torah') . '/js/ticket-policy.js');
+       echo Html::script('plugins/torah/js/ticket-policy.js', ['version' => PLUGIN_TORAH_VERSION]);
        $action = $ticket->isNewItem() ? 'add' : 'update';
        $input = $ticket->isNewItem() ? ['entities_id' => (int) ($_SESSION['glpiactive_entity'] ?? 0)] : [];
        $payload = ServiceFactory::policyPayload()->forTicket($ticket, $input, $action);

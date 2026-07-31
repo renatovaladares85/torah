@@ -39,7 +39,10 @@ final class TicketControlCatalog
       return null;
    }
 
-   /** @param list<string> $controlKeys @return list<string> */
+   /**
+    * @param list<string> $controlKeys
+    * @return list<string>
+    */
    public function expand(array $controlKeys, string $action): array {
       $rules = [];
       foreach ($controlKeys as $key) {

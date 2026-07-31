@@ -1,6 +1,6 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: Torah 0.3.0\n"
+"Project-Id-Version: Torah 0.3.1\n"
 "Report-Msgid-Bugs-To: https://github.com/renatovaladares85/torah/issues\n"
 "POT-Creation-Date: 2026-07-31 00:00+0000\n"
 "MIME-Version: 1.0\n"

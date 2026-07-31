@@ -8,7 +8,6 @@ use Glpi\Application\View\TemplateRenderer;
 use GlpiPlugin\Torah\Application\ActorItemtypePolicy;
 use GlpiPlugin\Torah\Application\BackendRulePolicy;
 use GlpiPlugin\Torah\Application\PolicyCatalog;
-use GlpiPlugin\Torah\Application\TicketControlCatalog;
 use GlpiPlugin\Torah\Domain\Policy\PolicySet;
 use Html;
 use Plugin;
@@ -18,8 +17,8 @@ final class AdminPage
 {
    public static function render(): void {
        $catalog = ServiceFactory::catalog();
-       $policyModel = self::policyModel($catalog);
-       Html::requireJs(Plugin::getWebDir('torah') . '/js/admin-policy-matrix.js');
+       $policyModel = (new AdminPolicyModelBuilder())->build();
+       echo Html::script('plugins/torah/js/admin-policy-matrix.js', ['version' => PLUGIN_TORAH_VERSION]);
 
        $profileGroups = [];
       foreach ((new GlpiPolicyStore())->all() as $set) {
@@ -63,6 +62,7 @@ final class AdminPage
    }
 
     /**
+     * @param array<string, mixed> $policyModel
      * @return array<string, mixed>
      */
    private static function viewModel(PolicySet $set, PolicyCatalog $catalog, array $policyModel): array {
@@ -86,55 +86,6 @@ final class AdminPage
            'actor_itemtypes' => self::actorItemtypes($set),
            'backend_rule_keys' => self::backendRules($set, $catalog),
        ];
-   }
-
-    /** @return array<string, mixed> */
-   private static function policyModel(PolicyCatalog $catalog): array {
-      $fieldRules = self::fieldRules($catalog);
-       $renderedRuleKeys = [];
-      foreach ($fieldRules as $fieldRule) {
-         foreach (['add_keys', 'update_keys'] as $ruleKeysName) {
-            foreach ($fieldRule[$ruleKeysName] as $ruleKey) {
-               $renderedRuleKeys[] = $ruleKey;
-            }
-         }
-      }
-       return [
-           'field_rules'          => $fieldRules,
-           'actor_itemtype_roles' => self::actorItemtypeRoles(),
-           'rendered_rule_keys'   => array_values(array_unique($renderedRuleKeys)),
-       ];
-   }
-
-    /** @return list<array<string, mixed>> */
-   private static function fieldRules(PolicyCatalog $catalog): array {
-       $rules = [];
-      foreach ((new TicketControlCatalog())->all() as $definition) {
-          $rules[] = [
-              'key'        => $definition->key,
-              'label'      => $definition['label'],
-              'add_keys'   => $definition->addRuleKeys,
-              'update_keys' => $definition->updateRuleKeys,
-              'sensitive'  => $definition->sensitive,
-          ];
-      }
-
-       return $rules;
-   }
-
-    /** @return list<array<string, mixed>> */
-   private static function actorItemtypeRoles(): array {
-       $itemtypeLabels = ActorItemtypePolicy::itemtypeLabels();
-       $roles = [];
-      foreach (ActorItemtypePolicy::roleLabels() as $role => $label) {
-          $itemtypes = [];
-         foreach ($itemtypeLabels as $itemtype => $itemtypeLabel) {
-             $itemtypes[] = ['key' => $itemtype, 'label' => $itemtypeLabel];
-         }
-          $roles[] = ['key' => $role, 'label' => $label, 'itemtypes' => $itemtypes];
-      }
-
-       return $roles;
    }
 
     /** @return array<string, array<string, true>> */

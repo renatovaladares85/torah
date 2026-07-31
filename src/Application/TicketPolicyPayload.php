@@ -14,7 +14,10 @@ final class TicketPolicyPayload
    ) {
    }
 
-   /** @param array<string, mixed> $input @return array<string, mixed> */
+   /**
+    * @param array<string, mixed> $input
+    * @return array<string, mixed>
+    */
    public function forTicket(Ticket $ticket, array $input, string $action): array {
       $context = $this->contextFactory->fromTicketInput($ticket, $input);
       if ($context === null || !in_array($action, ['add', 'update'], true)) {
