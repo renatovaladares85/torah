@@ -5,6 +5,13 @@ based on Keep a Changelog and the project follows Semantic Versioning.
 
 ## [Unreleased]
 
+## [0.4.8] - 2026-08-01
+
+### Added
+
+- Added tag-validated GitHub release automation that creates draft releases
+  with production ZIP, TAR.GZ, and SHA-256 checksum assets only.
+
 ### Changed
 
 - Built reproducible `.tar.gz` and `.zip` production packages from an explicit
@@ -206,6 +213,7 @@ based on Keep a Changelog and the project follows Semantic Versioning.
 - Repository and package validation reject common secrets and private artifacts.
 
 [0.4.7]: https://github.com/renatovaladares85/torah/releases/tag/0.4.7
+[0.4.8]: https://github.com/renatovaladares85/torah/releases/tag/v0.4.8
 [0.4.6]: https://github.com/renatovaladares85/torah/releases/tag/0.4.6
 [0.4.5]: https://github.com/renatovaladares85/torah/releases/tag/0.4.5
 [0.4.4]: https://github.com/renatovaladares85/torah/releases/tag/0.4.4

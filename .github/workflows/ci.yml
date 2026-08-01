@@ -2,7 +2,10 @@ name: CI
 
 on:
   push:
+    tags-ignore:
+      - 'v*'
   pull_request:
+  workflow_call:
 
 permissions:
   contents: read
@@ -51,7 +54,7 @@ jobs:
           path: |
             dist/torah-*.tar.gz
             dist/torah-*.zip
-            dist/torah-*.sha256
+            dist/SHA256SUMS.txt
           if-no-files-found: error
 
   glpi-smoke:
@@ -115,7 +118,7 @@ jobs:
             "https://github.com/glpi-project/glpi/releases/download/${GLPI_VERSION}/glpi-${GLPI_VERSION}.tgz" \
             --output "$RUNNER_TEMP/glpi.tgz"
           tar --extract --gzip --file="$RUNNER_TEMP/glpi.tgz" --directory="$RUNNER_TEMP"
-          (cd dist && sha256sum --check torah-*.sha256)
+          (cd dist && sha256sum --check SHA256SUMS.txt)
           package="$(find dist -maxdepth 1 -type f -name "torah-*.${TORAH_PACKAGE_FORMAT}" -print -quit)"
           test -n "$package"
           tools/validate-package.sh "$package"

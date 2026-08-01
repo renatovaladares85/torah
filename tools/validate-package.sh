@@ -4,6 +4,7 @@ set -euo pipefail
 
 root="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 archive="${1:-}"
+manifest="${TORAH_PACKAGE_MANIFEST:-$root/tools/package-files.txt}"
 
 if [[ -z "$archive" || ! -f "$archive" ]]; then
     printf 'Usage: %s <torah-version.tar.gz|torah-version.zip>\n' "${0##*/}" >&2
@@ -11,6 +12,10 @@ if [[ -z "$archive" || ! -f "$archive" ]]; then
 fi
 
 archive="$(cd "$(dirname "$archive")" && pwd)/$(basename "$archive")"
+if [[ ! -f "$manifest" ]]; then
+    printf 'Production package manifest is unavailable.\n' >&2
+    exit 1
+fi
 mkdir -p "$root/var"
 work="$(mktemp -d "$root/var/package-validation.XXXXXX")"
 trap 'rm -rf "$work"' EXIT
@@ -22,6 +27,7 @@ touch "$actual_files"
 
 case "$archive" in
     *.tar.gz)
+        gzip --test "$archive"
         tar --list --gzip --file="$archive" > "$entries"
         if tar --list --verbose --gzip --file="$archive" | awk '$1 !~ /^[-d]/ { found = 1 } END { exit !found }'; then
             printf 'Package contains an unsupported entry type.\n' >&2
@@ -41,6 +47,7 @@ case "$archive" in
         fi
         ;;
     *.zip)
+        unzip -tq "$archive"
         unzip -Z1 "$archive" > "$entries"
         if zipinfo -l "$archive" | awk '$1 ~ /^[bclps]/ { found = 1 } END { exit !found }'; then
             printf 'Package contains an unsupported entry type.\n' >&2
@@ -78,6 +85,12 @@ while IFS= read -r entry; do
 
     relative="${entry#torah/}"
     relative="${relative%/}"
+    case "$relative" in
+        .git|.git/*|.github|.github/*|.env|.env.*|tests|tests/*|test|test/*|node_modules|node_modules/*|coverage|coverage/*|vendor|vendor/*|phpunit.xml|phpunit.xml.dist|*.log|*.sql|*.dump|*.pem|*.key|id_rsa|id_ed25519)
+            printf 'Package contains a prohibited path.\n' >&2
+            exit 1
+            ;;
+    esac
     if [[ -z "$relative" || "$entry" = */ ]]; then
         continue
     fi
@@ -86,7 +99,7 @@ while IFS= read -r entry; do
     file_count=$((file_count + 1))
 done < "$entries"
 
-sed '/^[[:space:]]*#/d; /^[[:space:]]*$/d; s#^#torah/#' "$root/tools/package-files.txt" \
+sed '/^[[:space:]]*#/d; /^[[:space:]]*$/d; s#^#torah/#' "$manifest" \
     | LC_ALL=C sort > "$expected_files"
 LC_ALL=C sort -o "$actual_files" "$actual_files"
 if ! diff --unified "$expected_files" "$actual_files"; then
@@ -102,6 +115,11 @@ case "$archive" in
         unzip -q "$archive" -d "$work/extracted"
         ;;
 esac
+
+if find "$work/extracted" -mindepth 1 -maxdepth 1 -not -name torah -print -quit | rg -q .; then
+    printf 'Package extraction created content outside the torah root.\n' >&2
+    exit 1
+fi
 
 package="$work/extracted/torah"
 required_files=(setup.php hook.php plugin.xml LICENSE locales/pt_BR.mo)

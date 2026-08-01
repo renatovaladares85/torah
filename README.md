@@ -51,6 +51,37 @@ again. New policies start with no restrictions or Backend selections.
 Do not rename the `torah` directory. GitHub's automatically generated source
 archives contain the development repository and are not production packages.
 
+## Release Packages
+
+Production packages are built from the explicit runtime allowlist in
+`tools/package-files.txt`. It excludes tests, development dependencies, CI,
+internal documentation, local configuration, caches, logs, dumps, and other
+non-runtime files.
+
+From a clean checkout, validate and build the current commit locally with:
+
+```bash
+composer qa
+tests/Packaging/package.sh
+(cd dist && sha256sum --check SHA256SUMS.txt)
+```
+
+The build creates `torah-<version>.tar.gz`, `torah-<version>.zip`, and
+`SHA256SUMS.txt` in `dist/`. Both archives contain one root directory named
+`torah/`. To prepare a release after approval, create an annotated tag that
+matches the declared version:
+
+```bash
+git tag -a v<version> -m "Release v<version>"
+git push origin v<version>
+```
+
+The tag starts the release workflow. It validates the complete CI workflow and
+creates a GitHub **draft** release containing only the production packages and
+checksums. Review the draft assets and notes in GitHub, verify checksums with
+`sha256sum --check SHA256SUMS.txt`, then publish manually. Never install the
+automatically generated GitHub source archives.
+
 ## Configuration
 
 Actor types are a global configuration, independent of profiles, entities and

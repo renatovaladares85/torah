@@ -38,6 +38,15 @@ These instructions apply to the entire repository.
 - Keep the version consistent in `setup.php`, `plugin.xml`, release artifacts,
   documentation, and changelog entries.
 
+## Release Automation
+
+- Build production assets only through the versioned explicit allowlist and
+  package validator.
+- Release tags use the `v<SemVer>` format and must match the declared plugin
+  version exactly.
+- GitHub Actions may create release drafts only. A human must review assets and
+  publish the release explicitly.
+
 ## Security And Privacy
 
 - This is a public repository. Never commit real tickets, personal data,

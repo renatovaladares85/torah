@@ -28,6 +28,7 @@
 | Public repository privacy | Scanner and packaging workflow | CI privacy job |
 | CI validation tool provisioning | `ci.yml` installs ripgrep in each isolated runner | CI quality and GLPI artifact smoke jobs |
 | Minimal production distribution | Allowlisted reproducible archives, package validator, and artifact-based GLPI matrix | Packaging regression test, manifest/security checks, and GLPI artifact smoke jobs |
+| Human-reviewed production release | Tag/version-validated draft release workflow with ZIP, TAR.GZ, and SHA-256 assets | Reusable CI workflow, package validation, checksum verification, and GitHub draft release creation |
 | No core modifications | Repository scope and CI checks | Package manifest review |
 
 Update this matrix whenever a requirement or implementation boundary changes.

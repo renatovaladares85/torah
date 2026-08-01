@@ -1,0 +1,93 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  validate:
+    name: Complete validation
+    uses: ./.github/workflows/ci.yml
+
+  release:
+    name: Create draft release
+    needs: validate
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out tagged source
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          fetch-depth: 0
+
+      - name: Configure PHP
+        uses: shivammathur/setup-php@f3e473d116dcccaddc5834248c87452386958240 # v2
+        with:
+          php-version: '8.2'
+          extensions: json, mbstring, mysqli, intl, xml
+          tools: composer:v2
+          coverage: none
+
+      - name: Install package validation tools
+        run: sudo apt-get update && sudo apt-get install --yes gettext libxml2-utils unzip ripgrep
+
+      - name: Build and verify tagged production assets
+        env:
+          RELEASE_TAG: ${{ github.ref_name }}
+        run: |
+          tools/package.sh --tag "$RELEASE_TAG" "refs/tags/$RELEASE_TAG"
+          (cd dist && sha256sum --check SHA256SUMS.txt)
+          git diff --check
+          test -z "$(git status --porcelain)"
+
+      - name: Create release notes
+        env:
+          RELEASE_TAG: ${{ github.ref_name }}
+        run: |
+          version="${RELEASE_TAG#v}"
+          cat > "$RUNNER_TEMP/release-notes.md" <<EOF
+          ## Production installation packages
+
+          - `torah-${version}.zip`
+          - `torah-${version}.tar.gz`
+          - `SHA256SUMS.txt`
+
+          Compatibility: GLPI >= 10.0.20 and < 10.0.99; PHP >= 8.2.
+
+          Checksums:
+
+          ```text
+          $(cat dist/SHA256SUMS.txt)
+          ```
+
+          Extract one of the package assets into `<GLPI_ROOT>/plugins`; the
+          resulting directory must be `<GLPI_ROOT>/plugins/torah`. Verify the
+          attached checksums before installation. See [CHANGELOG.md](https://github.com/${{ github.repository }}/blob/${RELEASE_TAG}/CHANGELOG.md) for the changes in this version.
+
+          Do not use the automatically generated **Source code (zip)** or
+          **Source code (tar.gz)** archives as installation packages. They are
+          raw repository snapshots and did not pass the production packaging
+          process.
+          EOF
+
+      - name: Create GitHub draft release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RELEASE_TAG: ${{ github.ref_name }}
+        run: |
+          version="${RELEASE_TAG#v}"
+          gh release create "$RELEASE_TAG" \
+            "dist/torah-${version}.zip" \
+            "dist/torah-${version}.tar.gz" \
+            dist/SHA256SUMS.txt \
+            --verify-tag \
+            --draft \
+            --title "Torah ${version}" \
+            --notes-file "$RUNNER_TEMP/release-notes.md"
