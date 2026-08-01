@@ -31,4 +31,13 @@ final class TicketFieldCatalogTest extends TestCase
        self::assertContains('sla_tto', $keys);
        self::assertContains('ola_ttr', $keys);
    }
+
+   public function testConditionalDatesRetainTheirExistingRuleKeysAndFriendlyLabels(): void {
+      $catalog = new PolicyCatalog(new CapabilityRegistry());
+
+      self::assertSame('Resolution date', $catalog->get('ticket.field.solution_date.update')?->label);
+      self::assertSame('Close date', $catalog->get('ticket.field.closing_date.update')?->label);
+      self::assertSame('Resolution date', $catalog->labelForRuleKey('ticket.field.solution_date.update'));
+      self::assertSame('Close date', $catalog->labelForRuleKey('ticket.field.closing_date.update'));
+   }
 }

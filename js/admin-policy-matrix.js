@@ -31,7 +31,7 @@
 
    const syncRow = (row) => {
       syncBackend(row);
-      setState(row.querySelector('[data-torah-row-all]'), actions.map((action) => actionInput(row, action)).filter(Boolean));
+      setState(row.querySelector('[data-torah-row-all]'), actions.map((action) => actionInput(row, action)).filter((input) => input && !input.disabled));
    };
 
    const syncColumns = (form) => {
@@ -74,8 +74,7 @@
          if (row && input.matches('[data-torah-row-all]')) {
             actions.forEach((action) => {
                const current = actionInput(row, action);
-               if (current) {
-                  current.disabled = false;
+               if (current && !current.disabled) {
                   current.checked = input.checked;
                }
             });

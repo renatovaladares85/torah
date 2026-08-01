@@ -18,7 +18,8 @@
 | Plugin-owned persistence | `DatabaseInstaller`, `GlpiPolicyStore` | GLPI lifecycle matrix |
 | Secure administration | GLPI HTTP CSRF pipeline and admin endpoints | Endpoint and form CSRF regression tests |
 | Profile-grouped administrative policy matrix UI | `AdminPage`, admin Twig templates, scoped JavaScript | Administrative view-model and matrix action tests |
-| Reversible ticket field locks | `TicketControlCatalog`, `TicketPolicyPayload`, ticket JavaScript scoped to GLPI `#itil-form` | Catalog and JavaScript regression tests |
+| Reversible ticket field locks | `TicketControlCatalog`, `TicketPolicyPayload`, Flatpickr-aware ticket JavaScript scoped to GLPI `#itil-form` | Catalog, payload and JavaScript regression tests |
+| Friendly policy-denial messages | `TicketControlCatalog`, `TicketMutationGuard` | Catalog and guard regression tests |
 | Profileless backend behavior | `AuthorizationContextFactory` | Context fallback regression test |
 | Safe audit data | `AuditLogger` | Audit payload tests |
 | English source, pt_BR translation | `locales/torah.pot`, `pt_BR.po`, `pt_BR.mo` | Locale and `msgfmt` checks |

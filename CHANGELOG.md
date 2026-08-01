@@ -14,6 +14,23 @@ based on Keep a Changelog and the project follows Semantic Versioning.
 
 - Declared GLPI 10.0.20 as the minimum supported GLPI version.
 
+## [0.4.2] - 2026-07-31
+
+### Added
+
+- Resolution date and Close date as update-only ticket policy controls.
+
+### Fixed
+
+- Locked GLPI 10.0.20 Flatpickr date controls through their visible input,
+  calendar controls, and instance configuration while preserving submitted
+  values and restoring the original state when a policy changes.
+- Added field-specific Torah restriction messages in the interface and backend.
+
+### Changed
+
+- Added lock strategies and friendly labels to the ticket-policy payload.
+
 ## [0.4.1] - 2026-07-31
 
 ### Fixed
@@ -145,6 +162,7 @@ based on Keep a Changelog and the project follows Semantic Versioning.
 - Repository and package validation reject common secrets and private artifacts.
 
 [0.2.2]: https://github.com/renatovaladares85/torah/releases/tag/0.2.2
+[0.4.2]: https://github.com/renatovaladares85/torah/releases/tag/0.4.2
 [0.4.1]: https://github.com/renatovaladares85/torah/releases/tag/0.4.1
 [0.4.0]: https://github.com/renatovaladares85/torah/releases/tag/0.4.0
 [0.3.1]: https://github.com/renatovaladares85/torah/releases/tag/0.3.1

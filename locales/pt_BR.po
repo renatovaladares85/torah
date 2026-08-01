@@ -1,6 +1,6 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: Torah 0.4.1\n"
+"Project-Id-Version: Torah 0.4.2\n"
 "Report-Msgid-Bugs-To: https://github.com/renatovaladares85/torah/issues\n"
 "PO-Revision-Date: 2026-07-31 00:00+0000\n"
 "Last-Translator: Torah contributors\n"
@@ -44,14 +44,14 @@ msgstr "Itens associados"
 msgid "Backend"
 msgstr "Backend"
 
-msgid "Blocked by the active Torah policy."
-msgstr "Bloqueado pela política ativa do Torah."
+msgid "Actor"
+msgstr "Ator"
 
 msgid "Category"
 msgstr "Categoria"
 
-msgid "Closing date"
-msgstr "Data de fechamento"
+msgid "and"
+msgstr "e"
 
 msgid "Contract"
 msgstr "Contrato"
@@ -152,8 +152,8 @@ msgstr "SLA para solução"
 msgid "Save global configuration"
 msgstr "Salvar configuração global"
 
-msgid "Solution date"
-msgstr "Data da solução"
+msgid "Close date"
+msgstr "Data de fechamento"
 
 msgid "Status"
 msgstr "Status"
@@ -188,8 +188,23 @@ msgstr "Título"
 msgid "Torah policies"
 msgstr "Políticas do Torah"
 
-msgid "Torah blocked this change according to the active profile and entity policy."
-msgstr "O Torah bloqueou esta alteração conforme a política do perfil e da entidade ativos."
+msgid "Resolution date"
+msgstr "Data da solução"
+
+msgid "Restricted field"
+msgstr "Campo restrito"
+
+msgid "The field \"%s\" is read-only because it is restricted by the active Torah policy."
+msgstr "O campo \"%s\" está somente leitura porque foi restringido pela política ativa do Torah."
+
+msgid "Torah blocked the field \"%s\" according to the active profile and entity policy."
+msgstr "O Torah bloqueou o campo \"%s\" conforme a política do perfil e da entidade ativos."
+
+msgid "Torah blocked the fields %s according to the active profile and entity policy."
+msgstr "O Torah bloqueou os campos %s conforme a política do perfil e da entidade ativos."
+
+msgid "Torah does not allow actor type \"%1$s\" in the \"%2$s\" field."
+msgstr "O Torah não permite o tipo de ator \"%1$s\" no campo \"%2$s\"."
 
 msgid "Total duration"
 msgstr "Duração total"

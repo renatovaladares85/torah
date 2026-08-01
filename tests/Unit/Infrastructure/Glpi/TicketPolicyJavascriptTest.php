@@ -19,5 +19,11 @@ final class TicketPolicyJavascriptTest extends TestCase
       self::assertStringContainsString('[Torah]', $script);
       self::assertStringContainsString('validPayload', $script);
       self::assertStringContainsString('MutationObserver', $script);
+      self::assertStringContainsString('lockFlatpickr', $script);
+      self::assertStringContainsString('instance.altInput', $script);
+      self::assertStringContainsString("[data-toggle], [data-clear]", $script);
+      self::assertStringContainsString('allowInput: false, clickOpens: false', $script);
+      self::assertStringContainsString('restoreSnapshot', $script);
+      self::assertStringContainsString("{ ...rule, strategy: 'text' }", $script);
    }
 }

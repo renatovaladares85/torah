@@ -42,21 +42,17 @@ final class TicketMutationGuard
           return true;
       }
 
-       $input = $ticket->input;
-      if (!$this->guardActorInput($ticket, $context, $input, 'ticket_update', false)) {
-          return $this->cancel($ticket);
-      }
-
-      if (!$this->guardFieldInput($ticket, $context, $ticket->fields, $input, 'update', 'ticket_update')) {
-         return false;
-      }
+      $input = $ticket->input;
+      $denials = [];
+      $this->guardActorInput($ticket, $context, $input, 'ticket_update', false, $denials);
+      $this->guardFieldInput($ticket, $context, $ticket->fields, $input, 'update', 'ticket_update', $denials);
       if ($this->fieldDetector->changes($ticket->fields, $input, 'entities_id')) {
          $destination = $this->contextFactory->fromTicketInput($ticket, $input);
-         if ($destination !== null && !$this->guardFieldInput($ticket, $destination, $ticket->fields, $input, 'update', 'ticket_entity_destination', ['entities_id'])) {
-            return false;
+         if ($destination !== null) {
+            $this->guardFieldInput($ticket, $destination, $ticket->fields, $input, 'update', 'ticket_entity_destination', $denials, ['entities_id']);
          }
       }
-       return true;
+       return $denials === [] ? true : $this->cancel($ticket, $denials);
    }
 
    public function guardTicketAdd(Ticket $ticket): bool {
@@ -71,11 +67,11 @@ final class TicketMutationGuard
           return true;
       }
 
-      if (!$this->guardActorInput($ticket, $context, $input, 'ticket_add', true)) {
-          return $this->cancel($ticket);
-      }
+      $denials = [];
+      $this->guardActorInput($ticket, $context, $input, 'ticket_add', true, $denials);
+      $this->guardFieldInput($ticket, $context, [], $input, 'add', 'ticket_add', $denials);
 
-       return $this->guardFieldInput($ticket, $context, [], $input, 'add', 'ticket_add');
+      return $denials === [] ? true : $this->cancel($ticket, $denials);
    }
 
     /**
@@ -89,8 +85,9 @@ final class TicketMutationGuard
       array $input,
       string $action,
       string $source,
+      array &$denials,
       array $ignoredInputKeys = [],
-   ): bool {
+   ): void {
       foreach ($this->catalog->all() as $rule) {
          if ($rule->group !== 'properties' || $rule->object !== 'ticket' || $rule->action !== $action) {
              continue;
@@ -104,13 +101,12 @@ final class TicketMutationGuard
                 continue;
             }
 
-            if (!$this->allow($context, $rule->key, $source)) {
-                return $this->cancel($ticket);
+            $denial = $this->denial($context, $rule->key, $source);
+            if ($denial !== null) {
+                $denials[$denial['key']] = $denial['label'];
             }
          }
       }
-
-       return true;
    }
 
    public function guardRelationMutation(CommonDBTM $item, string $source = 'relation_mutation'): bool {
@@ -126,12 +122,16 @@ final class TicketMutationGuard
          }
          $action = TicketCreationContext::contains($ticketId) ? 'add' : 'update';
          $role = $this->relationRole($item);
-         if ($source === 'relation_add' && $role !== null && !$this->allowsActorItemtypes($context, $role, [$this->relationItemtype($item)], $source)) {
-            return $this->cancel($item);
+         $denials = [];
+         if ($source === 'relation_add' && $role !== null) {
+            $this->allowsActorItemtypes($context, $role, [$this->relationItemtype($item)], $source, $denials);
          }
          $ruleKey = $this->relationRuleKey($item, $action);
-         if ($ruleKey !== null && !$this->allow($context, $ruleKey, $source)) {
-            return $this->cancel($item);
+         if ($ruleKey !== null && ($denial = $this->denial($context, $ruleKey, $source)) !== null) {
+            $denials[$denial['key']] = $denial['label'];
+         }
+         if ($denials !== []) {
+            return $this->cancel($item, $denials);
          }
       }
       return true;
@@ -166,29 +166,34 @@ final class TicketMutationGuard
            ? ($isSla ? 'ticket.field.time_to_own.update' : 'ticket.field.internal_time_to_own.update')
            : ($isSla ? 'ticket.field.solution_deadline.update' : 'ticket.field.internal_solution_deadline.update');
 
+      $denials = [];
       foreach ($ruleKeys as $ruleKey) {
-         if (!$this->allow($context, $ruleKey, 'level_agreement_delete')) {
-             return $this->cancel($item);
+         $denial = $this->denial($context, $ruleKey, 'level_agreement_delete');
+         if ($denial !== null) {
+            $denials[$denial['key']] = $denial['label'];
          }
       }
-
-       return true;
+      return $denials === [] ? true : $this->cancel($item, $denials);
    }
 
-   private function allow(AuthorizationContext $context, string $ruleKey, string $source): bool {
+   /** @return array{key: string, label: string}|null */
+   private function denial(AuthorizationContext $context, string $ruleKey, string $source): ?array {
       try {
          $decision = $this->resolver->decideBackend($context, $ruleKey, $this->catalog);
       } catch (\Throwable) {
          $this->auditLogger->evaluationError($context, $source);
-         return true;
+         return null;
       }
       if ($decision->allowed) {
-          return true;
+          return null;
       }
 
        $this->auditLogger->denied($context, $ruleKey, $decision->policySetId, $source);
 
-       return false;
+       $control = $this->catalog->findControlByRuleKey($ruleKey);
+       $label = $control?->label ?? $this->catalog->labelForRuleKey($ruleKey) ?? __('Restricted field', 'torah');
+
+       return ['key' => $control?->key ?? $ruleKey, 'label' => $label];
    }
 
     /** @param array<string, mixed> $input */
@@ -198,14 +203,13 @@ final class TicketMutationGuard
        array $input,
        string $source,
        bool $newTicket,
-   ): bool {
+       array &$denials,
+   ): void {
       foreach (['requester', 'observer', 'assign'] as $role) {
           $addedItemtypes = $newTicket
               ? $this->actorDetector->addedItemtypesForNewTicket($input, $role)
               : $this->actorDetector->addedItemtypes($ticket, $input, $role);
-         if (!$this->allowsActorItemtypes($context, $role, $addedItemtypes, $source)) {
-             return false;
-         }
+         $this->allowsActorItemtypes($context, $role, $addedItemtypes, $source, $denials);
 
           $hasMutation = $newTicket
               ? $addedItemtypes !== []
@@ -215,30 +219,31 @@ final class TicketMutationGuard
          }
 
           $key = 'ticket.actor.' . ($role === 'assign' ? 'assignee' : $role) . '.' . ($newTicket ? 'add' : 'update');
-         if (!$this->allow($context, $key, $source)) {
-             return false;
+         $denial = $this->denial($context, $key, $source);
+         if ($denial !== null) {
+             $denials[$denial['key']] = $denial['label'];
          }
       }
-
-       return true;
    }
 
     /** @param list<string> $itemtypes */
-   private function allowsActorItemtypes(AuthorizationContext $context, string $role, array $itemtypes, string $source): bool {
+   private function allowsActorItemtypes(AuthorizationContext $context, string $role, array $itemtypes, string $source, array &$denials): void {
       if ($itemtypes === []) {
-          return true;
+         return;
       }
 
        $allowed = array_fill_keys($this->globalActorSettings->all()[$role] ?? GlobalActorItemtypePolicy::ITEMTYPES, true);
       foreach ($itemtypes as $itemtype) {
          if (!isset($allowed[$itemtype])) {
              $this->auditLogger->actorItemtypeDenied($context, $role, $itemtype, $source);
-
-             return false;
+             $label = $this->catalog->findControlByRuleKey('ticket.actor.' . ($role === 'assign' ? 'assignee' : $role) . '.update')?->label ?? __('Actor', 'torah');
+             $denials['actor-type-' . $role . '-' . $itemtype] = sprintf(
+                 __('Torah does not allow actor type "%1$s" in the "%2$s" field.', 'torah'),
+                 $itemtype,
+                 $label,
+             );
          }
       }
-
-       return true;
    }
 
    private function relationRuleKey(CommonDBTM $item, string $action = 'update'): ?string {
@@ -313,17 +318,41 @@ final class TicketMutationGuard
        return 'User';
    }
 
-   private function cancel(CommonDBTM $item): false {
+   /** @param array<string, string> $denials */
+   private function cancel(CommonDBTM $item, array $denials = []): false {
        $item->input = false;
       if ($this->isInteractiveSession()) {
+         $labels = array_values(array_unique($denials));
+         $message = count($labels) === 1 && str_starts_with((string) array_key_first($denials), 'actor-type-')
+             ? $labels[0]
+             : $this->messageForLabels($labels);
          Session::addMessageAfterRedirect(
-           __('Torah blocked this change according to the active profile and entity policy.', 'torah'),
+           $message,
            false,
            ERROR,
          );
       }
 
        return false;
+   }
+
+   /** @param list<string> $labels */
+   private function messageForLabels(array $labels): string {
+      if (count($labels) <= 1) {
+         return sprintf(
+             __('Torah blocked the field "%s" according to the active profile and entity policy.', 'torah'),
+             $labels[0] ?? __('Restricted field', 'torah'),
+         );
+      }
+
+      $quoted = array_map(static fn (string $label): string => sprintf('"%s"', $label), $labels);
+      $last = array_pop($quoted);
+      $formatted = count($quoted) === 0 ? $last : implode(', ', $quoted) . ' ' . __('and', 'torah') . ' ' . $last;
+
+      return sprintf(
+          __('Torah blocked the fields %s according to the active profile and entity policy.', 'torah'),
+          $formatted,
+      );
    }
 
    private function isInteractiveSession(): bool {

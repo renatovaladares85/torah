@@ -18,6 +18,8 @@ final class AdminPolicyModelBuilder
              'label' => $definition->label,
              'add_keys' => $definition->addRuleKeys,
              'update_keys' => $definition->updateRuleKeys,
+             'opening_applicable' => $definition->addRuleKeys !== [],
+             'update_applicable' => $definition->updateRuleKeys !== [],
              'sensitive' => $definition->sensitive,
          ];
          $renderedRuleKeys = [...$renderedRuleKeys, ...$definition->addRuleKeys, ...$definition->updateRuleKeys];

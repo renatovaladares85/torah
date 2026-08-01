@@ -1,6 +1,6 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: Torah 0.4.1\n"
+"Project-Id-Version: Torah 0.4.2\n"
 "Report-Msgid-Bugs-To: https://github.com/renatovaladares85/torah/issues\n"
 "POT-Creation-Date: 2026-07-31 00:00+0000\n"
 "MIME-Version: 1.0\n"
@@ -40,13 +40,13 @@ msgstr ""
 msgid "Backend"
 msgstr ""
 
-msgid "Blocked by the active Torah policy."
+msgid "Actor"
 msgstr ""
 
 msgid "Category"
 msgstr ""
 
-msgid "Closing date"
+msgid "and"
 msgstr ""
 
 msgid "Contract"
@@ -148,7 +148,7 @@ msgstr ""
 msgid "Save global configuration"
 msgstr ""
 
-msgid "Solution date"
+msgid "Close date"
 msgstr ""
 
 msgid "Status"
@@ -184,7 +184,22 @@ msgstr ""
 msgid "Torah policies"
 msgstr ""
 
-msgid "Torah blocked this change according to the active profile and entity policy."
+msgid "Resolution date"
+msgstr ""
+
+msgid "Restricted field"
+msgstr ""
+
+msgid "The field \"%s\" is read-only because it is restricted by the active Torah policy."
+msgstr ""
+
+msgid "Torah blocked the field \"%s\" according to the active profile and entity policy."
+msgstr ""
+
+msgid "Torah blocked the fields %s according to the active profile and entity policy."
+msgstr ""
+
+msgid "Torah does not allow actor type \"%1$s\" in the \"%2$s\" field."
 msgstr ""
 
 msgid "Total duration"

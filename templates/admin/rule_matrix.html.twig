@@ -54,13 +54,15 @@
                            <label class="visually-hidden" for="{{ matrix_id }}-{{ field.key }}-opening">{{ __('Opening', 'torah') }}: {{ field.label }}</label>
                            <input class="form-check-input" type="checkbox" id="{{ matrix_id }}-{{ field.key }}-opening" data-torah-action="opening"
                                   name="blocked_controls[opening][]" value="{{ field.key }}"
-                                  {{ opening_checked ? 'checked' : '' }}>
+                                  {{ opening_checked ? 'checked' : '' }}
+                                  {{ field.opening_applicable ? '' : 'disabled' }}>
                         </td>
                         <td class="text-center">
                            <label class="visually-hidden" for="{{ matrix_id }}-{{ field.key }}-update">{{ __('Update', 'torah') }}: {{ field.label }}</label>
                            <input class="form-check-input" type="checkbox" id="{{ matrix_id }}-{{ field.key }}-update" data-torah-action="update"
                                   name="blocked_controls[update][]" value="{{ field.key }}"
-                                  {{ update_checked ? 'checked' : '' }}>
+                                  {{ update_checked ? 'checked' : '' }}
+                                  {{ field.update_applicable ? '' : 'disabled' }}>
                         </td>
                         <td class="text-center">
                            <label class="visually-hidden" for="{{ matrix_id }}-{{ field.key }}-backend">{{ __('Backend', 'torah') }}: {{ field.label }}</label>

@@ -11,11 +11,15 @@ final class PolicyCatalog
 
    private readonly TicketFieldCatalog $ticketFields;
 
+   private readonly TicketControlCatalog $ticketControls;
+
    public function __construct(
       private readonly CapabilityRegistry $capabilities,
       ?TicketFieldCatalog $ticketFields = null,
+      ?TicketControlCatalog $ticketControls = null,
    ) {
       $this->ticketFields = $ticketFields ?? new TicketFieldCatalog();
+      $this->ticketControls = $ticketControls ?? new TicketControlCatalog();
    }
 
     /** @return array<string, PolicyRule> */
@@ -40,6 +44,14 @@ final class PolicyCatalog
 
    public function get(string $key): ?PolicyRule {
        return $this->all()[$key] ?? null;
+   }
+
+   public function findControlByRuleKey(string $ruleKey): ?TicketControlDefinition {
+      return $this->ticketControls->findByRuleKey($ruleKey);
+   }
+
+   public function labelForRuleKey(string $ruleKey): ?string {
+      return $this->findControlByRuleKey($ruleKey)?->label ?? $this->get($ruleKey)?->label;
    }
 
     /** @return array<string, PolicyRule> */

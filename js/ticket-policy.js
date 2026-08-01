@@ -3,6 +3,7 @@
 
    const marker = 'data-torah-locked';
    const validRoles = ['requester', 'observer', 'assign'];
+   const lockableAttributes = ['aria-disabled', 'aria-readonly', 'aria-label', 'title', 'tabindex'];
 
    const warn = (message) => console.warn(`[Torah] ${message}`);
    const findForm = (container) => {
@@ -15,66 +16,204 @@
       return form instanceof HTMLFormElement ? form : null;
    };
 
+   const snapshot = (element) => ({
+      readOnly: Boolean(element.readOnly),
+      disabled: Boolean(element.disabled),
+      hidden: Boolean(element.hidden),
+      attributes: Object.fromEntries(lockableAttributes.map((name) => [name, element.getAttribute(name)])),
+   });
+   const restoreSnapshot = (element, state) => {
+      element.readOnly = state.readOnly;
+      element.disabled = state.disabled;
+      element.hidden = state.hidden;
+      Object.entries(state.attributes).forEach(([name, value]) => {
+         if (value === null) {
+            element.removeAttribute(name);
+         } else {
+            element.setAttribute(name, value);
+         }
+      });
+   };
+   const prevent = (event) => event.preventDefault();
+   const addPreventers = (element, state, events = ['click', 'mousedown', 'pointerdown', 'keydown']) => {
+      events.forEach((eventName) => {
+         element.addEventListener(eventName, prevent, true);
+         state.handlers.push([element, eventName, prevent]);
+      });
+   };
+   const readonly = (element, message) => {
+      element.readOnly = true;
+      element.setAttribute('aria-readonly', 'true');
+      element.setAttribute('aria-disabled', 'true');
+      element.setAttribute('aria-label', message);
+      element.setAttribute('title', message);
+   };
+   const disabledControl = (element, message) => {
+      element.disabled = true;
+      element.hidden = true;
+      element.setAttribute('aria-disabled', 'true');
+      element.setAttribute('title', message);
+      element.setAttribute('tabindex', '-1');
+   };
    const restore = (form) => form.querySelectorAll(`[${marker}]`).forEach((element) => {
       const state = element._torahLockState;
-      if (state) {
-         element.readOnly = state.readOnly;
-         if (state.ariaDisabled === null) {
-            element.removeAttribute('aria-disabled');
-         } else {
-            element.setAttribute('aria-disabled', state.ariaDisabled);
-         }
-         if (state.title === null) {
-            element.removeAttribute('title');
-         } else {
-            element.setAttribute('title', state.title);
-         }
-         state.handlers.forEach(([eventName, handler]) => element.removeEventListener(eventName, handler, true));
+      if (!state) {
+         element.removeAttribute(marker);
+         return;
       }
-      element.classList.remove('pe-none', 'opacity-75');
-      if (window.jQuery && window.jQuery(element).data('select2')) {
-         window.jQuery(element).next('.select2-container').removeClass('pe-none opacity-75');
+      state.handlers.forEach(([target, eventName, handler]) => target.removeEventListener(eventName, handler, true));
+      state.elements.forEach(([target, saved]) => restoreSnapshot(target, saved));
+      if (state.flatpickr && typeof state.flatpickr.instance.set === 'function') {
+         state.flatpickr.instance.set({
+            allowInput: state.flatpickr.allowInput,
+            clickOpens: state.flatpickr.clickOpens,
+         });
       }
+      state.addedClasses.forEach(([target, classes]) => target.classList.remove(...classes));
       element.removeAttribute(marker);
       delete element._torahLockState;
    });
-
-   const lock = (element, message) => {
+   const stateFor = (element) => {
       if (element.hasAttribute(marker)) {
-         return;
+         return null;
       }
-      const state = { readOnly: Boolean(element.readOnly), ariaDisabled: element.getAttribute('aria-disabled'), title: element.getAttribute('title'), value: element.value, handlers: [] };
-      const prevent = (event) => event.preventDefault();
-      const restoreValue = () => { if (element.value !== state.value) {
-            element.value = state.value;
-      } };
-      ['click', 'keydown', 'mousedown', 'select2:opening'].forEach((eventName) => {
-         element.addEventListener(eventName, prevent, true);
-         state.handlers.push([eventName, prevent]);
-      });
-      element.addEventListener('change', restoreValue, true);
-      state.handlers.push(['change', restoreValue]);
+      const state = { elements: [[element, snapshot(element)]], handlers: [], addedClasses: [] };
       element._torahLockState = state;
       element.setAttribute(marker, '1');
+      return state;
+   };
+   const remember = (state, element) => {
+      if (element && !state.elements.some(([target]) => target === element)) {
+         state.elements.push([element, snapshot(element)]);
+      }
+   };
+   const addClasses = (state, element, classes) => {
+      const added = classes.filter((name) => !element.classList.contains(name));
+      if (added.length > 0) {
+         element.classList.add(...added);
+         state.addedClasses.push([element, added]);
+      }
+   };
+   const lockSimpleInput = (element, message) => {
+      const state = stateFor(element);
+      if (!state) {
+         return;
+      }
+      readonly(element, message);
+      addPreventers(element, state);
+   };
+   const lockNativeSelect = (element, message) => {
+      const state = stateFor(element);
+      if (!state) {
+         return;
+      }
+      addClasses(state, element, ['pe-none', 'opacity-75']);
       element.setAttribute('aria-disabled', 'true');
       element.setAttribute('title', message);
-   if (element.matches('input[type="text"], input[type="date"], input[type="number"], textarea')) {
-      element.readOnly = true;
-   } else {
-      element.classList.add('pe-none', 'opacity-75');
-   }
-   if (window.jQuery && window.jQuery(element).data('select2')) {
-      window.jQuery(element).next('.select2-container').addClass('pe-none opacity-75');
-   }
+      element.setAttribute('tabindex', '-1');
+      addPreventers(element, state);
    };
-
-   const validPayload = (value) => {
-      if (!value || typeof value !== 'object' || !Array.isArray(value.rules) || !value.actor_itemtypes || typeof value.actor_itemtypes !== 'object') {
-         return false;
+   const lockSelect2 = (element, message) => {
+      lockNativeSelect(element, message);
+      const state = element._torahLockState;
+      const container = window.jQuery && window.jQuery(element).next('.select2-container')[0];
+      if (state && container) {
+         addClasses(state, container, ['pe-none', 'opacity-75']);
       }
-      return validRoles.every((role) => Array.isArray(value.actor_itemtypes[role]));
+   };
+   const lockFlatpickr = (original, message) => {
+      const wrapper = original.closest('.flatpickr');
+      if (!wrapper || wrapper.hasAttribute(marker)) {
+         return;
+      }
+      const instance = wrapper._flatpickr || original._flatpickr;
+      if (!instance) {
+         lockSimpleInput(original, message);
+         return;
+      }
+      const state = stateFor(wrapper);
+      if (!state) {
+         return;
+      }
+      state.flatpickr = {
+         instance,
+         allowInput: instance.config.allowInput,
+         clickOpens: instance.config.clickOpens,
+      };
+      remember(state, original);
+      readonly(original, message);
+      const altInput = instance.altInput;
+      if (altInput) {
+         remember(state, altInput);
+         readonly(altInput, message);
+         addPreventers(altInput, state, ['click', 'mousedown', 'pointerdown', 'keydown', 'focus']);
+      }
+      wrapper.querySelectorAll('[data-toggle], [data-clear]').forEach((control) => {
+         remember(state, control);
+         disabledControl(control, message);
+         addPreventers(control, state);
+      });
+      addPreventers(original, state, ['click', 'mousedown', 'pointerdown', 'keydown', 'focus']);
+   if (typeof instance.close === 'function') {
+      instance.close();
+   }
+   if (typeof instance.set === 'function') {
+      instance.set({ allowInput: false, clickOpens: false });
+   }
+      addClasses(state, wrapper, ['opacity-75']);
+   };
+   const lockCompositeControl = (form, rule, message) => {
+      if ((rule.controls || []).length === 0) {
+         applyRule(form, { ...rule, strategy: 'text' }, message);
+         return;
+      }
+      rule.controls.forEach((control) => applyRule(form, control, message));
+   };
+   const lockActor = (element, message) => {
+      const state = stateFor(element);
+      if (!state) {
+         return;
+      }
+      addClasses(state, element, ['pe-none', 'opacity-75']);
+      element.setAttribute('aria-disabled', 'true');
+      element.setAttribute('title', message);
+      addPreventers(element, state);
+   };
+   const applyRule = (form, rule, message) => {
+      if (!rule || typeof rule !== 'object') {
+         return;
+      }
+      if (rule.strategy === 'composite') {
+         lockCompositeControl(form, rule, message);
+         return;
+      }
+      (rule.selectors || []).forEach((selector) => {
+         try {
+            form.querySelectorAll(selector).forEach((element) => {
+               if (rule.strategy === 'flatpickr') {
+                  lockFlatpickr(element, message);
+               } else if (rule.strategy === 'select2') {
+                  lockSelect2(element, message);
+               } else if (rule.strategy === 'select') {
+                  lockNativeSelect(element, message);
+               } else if (rule.strategy === 'actor' || rule.strategy === 'relation') {
+                  lockActor(element, message);
+               } else {
+                  lockSimpleInput(element, message);
+               }
+            });
+         } catch (_) {
+            warn('A compatibility selector could not be applied.');
+         }
+      });
    };
 
+   const validRule = (rule) => rule && typeof rule === 'object'
+      && typeof rule.key === 'string' && typeof rule.label === 'string' && typeof rule.strategy === 'string'
+      && Array.isArray(rule.selectors) && Array.isArray(rule.controls);
+   const validPayload = (value) => value && typeof value === 'object' && Array.isArray(value.rules)
+      && value.rules.every(validRule) && value.actor_itemtypes && typeof value.actor_itemtypes === 'object'
+      && validRoles.every((role) => Array.isArray(value.actor_itemtypes[role]));
    const payload = (container) => {
       try {
          const value = JSON.parse(container.dataset.torahTicketPolicy || '{}');
@@ -82,12 +221,11 @@
             throw new Error('invalid payload structure');
          }
          return value;
-      } catch (error) {
+      } catch (_) {
          warn('The ticket policy payload is invalid; keeping the form unchanged.');
          return null;
       }
    };
-
    const actorType = (value) => {
       if (typeof value !== 'string') {
          return null;
@@ -95,17 +233,13 @@
       const normalized = value.replace(/^.*\\/, '');
       return ['User', 'Group', 'Supplier'].includes(normalized) ? normalized : null;
    };
-
    const applyActorTypes = (form, allowedByRole) => {
       validRoles.forEach((role) => {
          const allowed = new Set(allowedByRole[role]);
          form.querySelectorAll(`[data-actor-type="${role}"], [data-torah-actor-role="${role}"]`).forEach((area) => {
             area.querySelectorAll('[data-itemtype], option[value]').forEach((option) => {
                const type = actorType(option.dataset.itemtype || option.value);
-               if (!type) {
-                  return;
-               }
-               if (option.selected) {
+               if (!type || option.selected) {
                   return;
                }
                option.hidden = !allowed.has(type);
@@ -114,7 +248,6 @@
          });
       });
    };
-
    const applyContainer = (container) => {
       const form = findForm(container);
       const policy = payload(container);
@@ -122,14 +255,9 @@
          return;
       }
       restore(form);
-      policy.rules.forEach((rule) => (rule.selectors || []).forEach((selector) => {
-         try {
-            form.querySelectorAll(selector).forEach((element) => lock(element, policy.message || 'Blocked by Torah policy.')); } catch (_) {
-            warn('A compatibility selector could not be applied.'); }
-      }));
+      policy.rules.forEach((rule) => applyRule(form, rule, (policy.message || 'Blocked by Torah policy.').replace('%s', rule.label)));
       applyActorTypes(form, policy.actor_itemtypes);
    };
-
    const apply = () => document.querySelectorAll('[data-torah-ticket-policy]').forEach(applyContainer);
    const requestPolicy = (container) => {
       const form = findForm(container);
@@ -157,7 +285,6 @@
          .catch((error) => warn(`Unable to refresh ticket policy (${error.message}).`))
          .finally(() => { delete container.dataset.torahRefreshing; });
    };
-
    const initialize = () => document.querySelectorAll('[data-torah-ticket-policy]').forEach((container) => {
       const form = findForm(container);
       if (!form || form.dataset.torahPolicyInitialized === '1') {
@@ -184,7 +311,9 @@ if (document.readyState === 'loading') {
    initialize();
 }
    window.addEventListener('focus', () => document.querySelectorAll('[data-torah-ticket-policy]').forEach(requestPolicy));
-   document.addEventListener('visibilitychange', () => { if (!document.hidden) {
+   document.addEventListener('visibilitychange', () => {
+      if (!document.hidden) {
          document.querySelectorAll('[data-torah-ticket-policy]').forEach(requestPolicy);
-   } });
+      }
+   });
 })();
