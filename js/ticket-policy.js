@@ -231,6 +231,10 @@
       rule.controls.forEach((control) => applyRule(form, control, message));
    };
    const lockActor = (element, message) => {
+      if (element.matches('select[data-actor-type]')) {
+         lockSelect2(element, message);
+         return;
+      }
       const state = stateFor(element);
       if (!state) {
          return;
@@ -238,6 +242,7 @@
       addClasses(state, element, ['pe-none', 'opacity-75']);
       element.setAttribute('aria-disabled', 'true');
       element.setAttribute('title', message);
+      element.setAttribute('tabindex', '-1');
       addPreventers(element, state);
    };
    const applyRule = (form, rule, message) => {

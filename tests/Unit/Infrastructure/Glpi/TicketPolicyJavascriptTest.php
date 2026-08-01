@@ -31,6 +31,8 @@ final class TicketPolicyJavascriptTest extends TestCase
       self::assertStringNotContainsString(".next('.select2-container')", $script);
       self::assertStringContainsString("element.addEventListener('change', restoreValue, true)", $script);
       self::assertStringContainsString('restoreSelectValue(element, state)', $script);
+      self::assertStringContainsString("element.matches('select[data-actor-type]')", $script);
+      self::assertStringContainsString('lockSelect2(element, message)', $script);
       self::assertStringContainsString('applyContainer(container, false)', $script);
       self::assertStringContainsString('state.cleanup.forEach', $script);
    }

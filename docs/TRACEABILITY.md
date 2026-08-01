@@ -19,6 +19,7 @@
 | Secure administration | GLPI HTTP CSRF pipeline and admin endpoints | Endpoint and form CSRF regression tests |
 | Profile-grouped administrative policy matrix UI | `AdminPage`, admin Twig templates, scoped JavaScript | Administrative view-model and matrix action tests |
 | Reversible ticket field locks | `TicketControlCatalog`, `TicketPolicyPayload`, Select2/Flatpickr-aware ticket JavaScript scoped to GLPI `#itil-form` | Catalog, payload and JavaScript regression tests |
+| GLPI actor and Approval request visual locks | Actor/approval definitions in `TicketControlCatalog` and Select2-aware actor handling in `ticket-policy.js` | Actor selector, Approval request composite and JavaScript regression tests |
 | Friendly policy-denial messages | `TicketControlCatalog`, `TicketMutationGuard` | Catalog and guard regression tests |
 | Profileless backend behavior | `AuthorizationContextFactory` | Context fallback regression test |
 | Safe audit data | `AuditLogger` | Audit payload tests |

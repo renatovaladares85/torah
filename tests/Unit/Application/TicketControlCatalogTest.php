@@ -52,6 +52,33 @@ final class TicketControlCatalogTest extends TestCase
       }
    }
 
+   public function testActorControlsTargetTheGlpiSelect2AndAssociateMyselfButton(): void {
+      $catalog = new TicketControlCatalog();
+      $roles = [
+         'requester' => 'requester',
+         'observer' => 'observer',
+         'assignee' => 'assign',
+      ];
+
+      foreach ($roles as $key => $role) {
+         $control = $catalog->get($key);
+         self::assertSame('actor', $control?->lockStrategy, $key);
+         self::assertSame([
+            '[data-actor-type="' . $role . '"]',
+            'button[form^="addme_as_' . $role . '_"]',
+         ], $control?->selectors, $key);
+      }
+   }
+
+   public function testApprovalRequestLocksItsVisibleGlpiSelect2WithoutTargetingTheHiddenPayload(): void {
+      $control = (new TicketControlCatalog())->get('approval_request');
+
+      self::assertSame('composite', $control?->lockStrategy);
+      self::assertSame([
+         ['strategy' => 'select2', 'selectors' => ['[name="users_id_validate"]']],
+      ], $control?->controls);
+   }
+
    public function testRuleKeyResolvesToItsFriendlyControl(): void {
       $control = (new TicketControlCatalog())->findByRuleKey('ticket.field.sla_tto.update');
 

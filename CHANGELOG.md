@@ -5,8 +5,12 @@ based on Keep a Changelog and the project follows Semantic Versioning.
 
 ## [Unreleased]
 
+## [0.4.4] - 2026-07-31
+
 ### Fixed
 
+- Locked the visible GLPI 10.0.20 actor Select2 widgets, their Associate myself
+  shortcuts, and the Approval request Select2 while preserving submitted values.
 - Relied on the GLPI 10.0.20+ HTTP CSRF pipeline for Torah POST endpoints,
   preventing a second validation from rejecting an already validated token.
 
@@ -172,6 +176,7 @@ based on Keep a Changelog and the project follows Semantic Versioning.
 - Repository and package validation reject common secrets and private artifacts.
 
 [0.2.2]: https://github.com/renatovaladares85/torah/releases/tag/0.2.2
+[0.4.4]: https://github.com/renatovaladares85/torah/releases/tag/0.4.4
 [0.4.3]: https://github.com/renatovaladares85/torah/releases/tag/0.4.3
 [0.4.2]: https://github.com/renatovaladares85/torah/releases/tag/0.4.2
 [0.4.1]: https://github.com/renatovaladares85/torah/releases/tag/0.4.1

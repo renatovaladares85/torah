@@ -18,7 +18,18 @@ final class TicketControlCatalog
          $this->field('impact', __('Impact', 'torah'), 'impact', 'impact', false, 'select2'),
          $this->field('priority', __('Priority', 'torah'), 'priority', 'priority', true, 'select2'),
          $this->field('total_duration', __('Total duration', 'torah'), 'total_duration', 'actiontime', false, 'select2'),
-         new TicketControlDefinition('approval_request', __('Approval request', 'torah'), ['ticket.control.approval_request.add'], ['ticket.control.approval_request.update'], ['[name="_add_validation"]', '[name="users_id_validate"]'], false, 'composite'),
+         new TicketControlDefinition(
+            'approval_request',
+            __('Approval request', 'torah'),
+            ['ticket.control.approval_request.add'],
+            ['ticket.control.approval_request.update'],
+            ['[name="_add_validation"]', '[name="users_id_validate"]'],
+            false,
+            'composite',
+            [
+               ['strategy' => 'select2', 'selectors' => ['[name="users_id_validate"]']],
+            ],
+         ),
          $this->actor('requester', __('Requester', 'torah'), 'requester'),
          $this->actor('observer', __('Observer', 'torah'), 'observer'),
          $this->actor('assignee', __('Assigned to', 'torah'), 'assign'),
@@ -74,7 +85,7 @@ final class TicketControlCatalog
    }
 
    private function actor(string $key, string $label, string $selectorRole): TicketControlDefinition {
-      return new TicketControlDefinition($key, $label, ["ticket.actor.{$key}.add"], ["ticket.actor.{$key}.update"], ["[data-actor-type=\"{$selectorRole}\"]", "form[id^=\"addme_as_{$selectorRole}_\"] button"], false, 'actor');
+      return new TicketControlDefinition($key, $label, ["ticket.actor.{$key}.add"], ["ticket.actor.{$key}.update"], ["[data-actor-type=\"{$selectorRole}\"]", "button[form^=\"addme_as_{$selectorRole}_\"]"], false, 'actor');
    }
 
    /**
