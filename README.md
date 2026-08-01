@@ -40,12 +40,16 @@ again. New policies start with no restrictions or Backend selections.
 
 ## Installation
 
-1. Place the release directory at `<GLPI_ROOT>/plugins/torah`.
-2. Open **Setup > Plugins**.
-3. Install and activate **Torah**.
-4. Open the plugin configuration page and create policy sets.
+1. Download the `torah-<version>.tar.gz` or `torah-<version>.zip` production
+   asset from the GitHub release.
+2. Extract it directly into `<GLPI_ROOT>/plugins`. The resulting directory must
+   be `<GLPI_ROOT>/plugins/torah`.
+3. Open **Setup > Plugins**.
+4. Install and activate **Torah**.
+5. Open the plugin configuration page and create policy sets.
 
-Do not rename the `torah` directory.
+Do not rename the `torah` directory. GitHub's automatically generated source
+archives contain the development repository and are not production packages.
 
 ## Configuration
 

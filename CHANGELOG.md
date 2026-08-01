@@ -5,6 +5,14 @@ based on Keep a Changelog and the project follows Semantic Versioning.
 
 ## [Unreleased]
 
+### Changed
+
+- Built reproducible `.tar.gz` and `.zip` production packages from an explicit
+  runtime allowlist, with manifest, security, checksum, and reference validation.
+- Updated CI smoke tests to install the extracted production artifact on the
+  minimum and latest supported GLPI 10.0.x versions instead of using a symlink
+  to the development checkout.
+
 ## [0.4.6] - 2026-08-01
 
 ### Fixed

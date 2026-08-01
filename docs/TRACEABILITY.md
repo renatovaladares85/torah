@@ -26,6 +26,7 @@
 | Safe audit data | `AuditLogger` | Audit payload tests |
 | English source, pt_BR translation | `locales/torah.pot`, `pt_BR.po`, `pt_BR.mo` | Locale and `msgfmt` checks |
 | Public repository privacy | Scanner and packaging workflow | CI privacy job |
+| Minimal production distribution | Allowlisted reproducible archives, package validator, and artifact-based GLPI matrix | Packaging regression test, manifest/security checks, and GLPI artifact smoke jobs |
 | No core modifications | Repository scope and CI checks | Package manifest review |
 
 Update this matrix whenever a requirement or implementation boundary changes.
