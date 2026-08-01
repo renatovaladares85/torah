@@ -5,6 +5,13 @@ based on Keep a Changelog and the project follows Semantic Versioning.
 
 ## [Unreleased]
 
+## [0.4.5] - 2026-07-31
+
+### Fixed
+
+- Locked the Approval request validator type and its dynamically loaded user
+  and group Select2 controls in the GLPI 10.0.20 ticket form.
+
 ## [0.4.4] - 2026-07-31
 
 ### Fixed
@@ -176,6 +183,7 @@ based on Keep a Changelog and the project follows Semantic Versioning.
 - Repository and package validation reject common secrets and private artifacts.
 
 [0.2.2]: https://github.com/renatovaladares85/torah/releases/tag/0.2.2
+[0.4.5]: https://github.com/renatovaladares85/torah/releases/tag/0.4.5
 [0.4.4]: https://github.com/renatovaladares85/torah/releases/tag/0.4.4
 [0.4.3]: https://github.com/renatovaladares85/torah/releases/tag/0.4.3
 [0.4.2]: https://github.com/renatovaladares85/torah/releases/tag/0.4.2

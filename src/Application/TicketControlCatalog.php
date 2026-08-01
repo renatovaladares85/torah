@@ -23,11 +23,11 @@ final class TicketControlCatalog
             __('Approval request', 'torah'),
             ['ticket.control.approval_request.add'],
             ['ticket.control.approval_request.update'],
-            ['[name="_add_validation"]', '[name="users_id_validate"]'],
+            ['[name="_add_validation"]', 'select[name="validatortype"]', 'select[name^="users_id_validate"]'],
             false,
             'composite',
             [
-               ['strategy' => 'select2', 'selectors' => ['[name="users_id_validate"]']],
+               ['strategy' => 'select2', 'selectors' => ['select[name="validatortype"]', 'select[name^="users_id_validate"]']],
             ],
          ),
          $this->actor('requester', __('Requester', 'torah'), 'requester'),

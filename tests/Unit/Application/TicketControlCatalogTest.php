@@ -75,7 +75,15 @@ final class TicketControlCatalogTest extends TestCase
 
       self::assertSame('composite', $control?->lockStrategy);
       self::assertSame([
-         ['strategy' => 'select2', 'selectors' => ['[name="users_id_validate"]']],
+         '[name="_add_validation"]',
+         'select[name="validatortype"]',
+         'select[name^="users_id_validate"]',
+      ], $control?->selectors);
+      self::assertSame([
+         [
+            'strategy' => 'select2',
+            'selectors' => ['select[name="validatortype"]', 'select[name^="users_id_validate"]'],
+         ],
       ], $control?->controls);
    }
 
