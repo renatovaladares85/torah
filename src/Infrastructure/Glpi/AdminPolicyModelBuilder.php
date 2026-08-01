@@ -25,18 +25,19 @@ final class AdminPolicyModelBuilder
          $renderedRuleKeys = [...$renderedRuleKeys, ...$definition->addRuleKeys, ...$definition->updateRuleKeys];
       }
 
-      $itemtypeLabels = GlobalActorItemtypePolicy::itemtypeLabels();
+      $actorItemtypes = [];
+      foreach (GlobalActorItemtypePolicy::itemtypeLabels() as $itemtype => $label) {
+         $actorItemtypes[] = ['key' => $itemtype, 'label' => $label];
+      }
+
       $roles = [];
       foreach (GlobalActorItemtypePolicy::roleLabels() as $role => $label) {
-         $itemtypes = [];
-         foreach ($itemtypeLabels as $itemtype => $itemtypeLabel) {
-            $itemtypes[] = ['key' => $itemtype, 'label' => $itemtypeLabel];
-         }
-         $roles[] = ['key' => $role, 'label' => $label, 'itemtypes' => $itemtypes];
+         $roles[] = ['key' => $role, 'label' => $label, 'itemtypes' => $actorItemtypes];
       }
 
       return [
           'field_rules' => $fieldRules,
+          'actor_itemtypes' => $actorItemtypes,
           'actor_itemtype_roles' => $roles,
           'rendered_rule_keys' => array_values(array_unique($renderedRuleKeys)),
       ];

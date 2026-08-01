@@ -19,3 +19,21 @@ if (!function_exists('__')) {
        return $message;
    }
 }
+
+if (!class_exists('Config')) {
+   class Config
+   {
+      /** @var array<string, array<string, mixed>> */
+      private static array $values = [];
+
+      /** @return array<string, mixed> */
+      public static function getConfigurationValues(string $context): array {
+         return self::$values[$context] ?? [];
+      }
+
+      /** @param array<string, mixed> $values */
+      public static function setTestConfigurationValues(string $context, array $values): void {
+         self::$values[$context] = $values;
+      }
+   }
+}

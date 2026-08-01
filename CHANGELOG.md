@@ -5,6 +5,14 @@ based on Keep a Changelog and the project follows Semantic Versioning.
 
 ## [Unreleased]
 
+## [0.4.6] - 2026-08-01
+
+### Fixed
+
+- Restored the Users, Groups, and Suppliers headers in the global actor settings
+  matrix and correctly filtered disabled actor types, including namespaced values
+  and empty entity groups, through GLPI's native actor hook.
+
 ## [0.4.5] - 2026-07-31
 
 ### Fixed
@@ -183,6 +191,7 @@ based on Keep a Changelog and the project follows Semantic Versioning.
 - Repository and package validation reject common secrets and private artifacts.
 
 [0.2.2]: https://github.com/renatovaladares85/torah/releases/tag/0.2.2
+[0.4.6]: https://github.com/renatovaladares85/torah/releases/tag/0.4.6
 [0.4.5]: https://github.com/renatovaladares85/torah/releases/tag/0.4.5
 [0.4.4]: https://github.com/renatovaladares85/torah/releases/tag/0.4.4
 [0.4.3]: https://github.com/renatovaladares85/torah/releases/tag/0.4.3

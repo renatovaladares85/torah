@@ -34,5 +34,19 @@ final class AdminPolicyModelBuilderTest extends TestCase
       $resolution = $controls[array_search('solution_date', array_column($controls, 'key'), true)];
       self::assertFalse($resolution['opening_applicable']);
       self::assertTrue($resolution['update_applicable']);
+
+      $itemtypes = $model['actor_itemtypes'];
+      self::assertSame(['User', 'Group', 'Supplier'], array_column($itemtypes, 'key'));
+      self::assertCount(3, $itemtypes);
+      foreach ($itemtypes as $itemtype) {
+         self::assertIsString($itemtype['label']);
+         self::assertNotSame('', $itemtype['label']);
+      }
+
+      $roles = $model['actor_itemtype_roles'];
+      self::assertSame(['requester', 'observer', 'assign'], array_column($roles, 'key'));
+      foreach ($roles as $role) {
+         self::assertSame($itemtypes, $role['itemtypes']);
+      }
    }
 }

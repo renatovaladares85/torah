@@ -54,9 +54,10 @@ final class ActorListFilter
          if (!is_array($actor)) {
             continue;
          }
-         if (isset($actor['children']) && is_array($actor['children'])) {
+         $hadChildren = isset($actor['children']) && is_array($actor['children']);
+         if ($hadChildren) {
             $actor['children'] = $this->filterItemtypes($actor['children'], $allowed);
-            if ($actor['children'] === [] && isset($actor['itemtype']) && $actor['itemtype'] !== 'Entity') {
+            if ($actor['children'] === []) {
                continue;
             }
          }
@@ -74,10 +75,14 @@ final class ActorListFilter
       if (!is_string($itemtype)) {
          return null;
       }
-      $itemtype = ltrim($itemtype, '\\');
-      $itemtype = substr($itemtype, (int) strrpos('\\' . $itemtype, '\\') + 1);
+      $normalized = ltrim($itemtype, '\\');
+      if ($normalized === '') {
+         return null;
+      }
+      $separator = strrpos($normalized, '\\');
+      $shortName = $separator === false ? $normalized : substr($normalized, $separator + 1);
 
-      return in_array($itemtype, ['User', 'Group', 'Supplier'], true) ? $itemtype : null;
+      return in_array($shortName, ['User', 'Group', 'Supplier'], true) ? $shortName : null;
    }
 
    /** @param array<string, mixed> $params */

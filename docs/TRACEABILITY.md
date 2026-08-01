@@ -11,6 +11,7 @@
 | Opening/update interface controls | `TicketControlCatalog`, `TicketPolicyPresenter` | Catalog and view-model tests |
 | Explicit backend enforcement | `BackendRulePolicy`, `PolicySetInput`, `PolicyResolver::decideBackend` | Backend presence, policy and resolver tests |
 | Global actor itemtype configuration | `GlobalActorItemtypePolicy`, `GlpiGlobalActorSettingsStore`, `ActorListFilter` | Global policy, input and actor payload tests |
+| Global actor matrix headers and native actor search filtering | Canonical itemtypes in `AdminPolicyModelBuilder`; normalization and recursive pruning in `ActorListFilter` | Administrative model, role combinations, namespaces, grouped results and hook payload regression tests |
 | Legacy actor option migration | `DatabaseInstaller` global migration and technical Config backup | Migration source and lifecycle validation |
 | Backend actor and relation enforcement | `ActorPayloadInspector`, ticket and relation hooks | Actor payload and guard tests |
 | Backend property enforcement | `FieldMutationDetector`, ticket update hook | Property catalog tests |
