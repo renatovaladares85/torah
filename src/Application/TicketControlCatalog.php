@@ -9,14 +9,15 @@ final class TicketControlCatalog
    public function all(): array {
       return [
          $this->field('opening_date', __('Opening date', 'torah'), 'opening_date', 'date', false, 'flatpickr'),
-         $this->field('type', __('Type', 'torah'), 'type', 'type', false, 'select'),
+         // GLPI 10.0.20 adapts these dropdown helpers with Select2.
+         $this->field('type', __('Type', 'torah'), 'type', 'type', false, 'select2'),
          $this->field('category', __('Category', 'torah'), 'category', 'itilcategories_id', false, 'select2'),
-         $this->field('status', __('Status', 'torah'), 'status', 'status', true, 'select'),
+         $this->field('status', __('Status', 'torah'), 'status', 'status', true, 'select2'),
          $this->field('request_source', __('Request source', 'torah'), 'request_source', 'requesttypes_id', false, 'select2'),
-         $this->field('urgency', __('Urgency', 'torah'), 'urgency', 'urgency', false, 'select'),
-         $this->field('impact', __('Impact', 'torah'), 'impact', 'impact', false, 'select'),
-         $this->field('priority', __('Priority', 'torah'), 'priority', 'priority', true, 'select'),
-         $this->field('total_duration', __('Total duration', 'torah'), 'total_duration', 'actiontime'),
+         $this->field('urgency', __('Urgency', 'torah'), 'urgency', 'urgency', false, 'select2'),
+         $this->field('impact', __('Impact', 'torah'), 'impact', 'impact', false, 'select2'),
+         $this->field('priority', __('Priority', 'torah'), 'priority', 'priority', true, 'select2'),
+         $this->field('total_duration', __('Total duration', 'torah'), 'total_duration', 'actiontime', false, 'select2'),
          new TicketControlDefinition('approval_request', __('Approval request', 'torah'), ['ticket.control.approval_request.add'], ['ticket.control.approval_request.update'], ['[name="_add_validation"]', '[name="users_id_validate"]'], false, 'composite'),
          $this->actor('requester', __('Requester', 'torah'), 'requester'),
          $this->actor('observer', __('Observer', 'torah'), 'observer'),

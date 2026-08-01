@@ -28,6 +28,8 @@ final class AdminPolicySimplificationTest extends TestCase
        self::assertStringContainsString('data-torah-row-all', $matrix);
        self::assertStringContainsString('data-torah-column-all', $matrix);
        self::assertStringContainsString('indeterminate', $script);
+       self::assertStringContainsString('name="backend_controls_present"', $matrix);
+       self::assertStringNotContainsString('backend.checked = true', $script);
        self::assertStringNotContainsString('data-torah-select-all', $script);
    }
 

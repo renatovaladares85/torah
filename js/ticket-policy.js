@@ -16,16 +16,24 @@
       return form instanceof HTMLFormElement ? form : null;
    };
 
+   const selectedValues = (element) => element.matches?.('select')
+      ? Array.from(element.options).filter((option) => option.selected).map((option) => option.value)
+      : null;
    const snapshot = (element) => ({
       readOnly: Boolean(element.readOnly),
       disabled: Boolean(element.disabled),
       hidden: Boolean(element.hidden),
+      selectedValues: selectedValues(element),
       attributes: Object.fromEntries(lockableAttributes.map((name) => [name, element.getAttribute(name)])),
    });
    const restoreSnapshot = (element, state) => {
       element.readOnly = state.readOnly;
       element.disabled = state.disabled;
       element.hidden = state.hidden;
+      if (state.selectedValues !== null) {
+         const selected = new Set(state.selectedValues);
+         Array.from(element.options).forEach((option) => { option.selected = selected.has(option.value); });
+      }
       Object.entries(state.attributes).forEach(([name, value]) => {
          if (value === null) {
             element.removeAttribute(name);
@@ -37,6 +45,9 @@
    const prevent = (event) => event.preventDefault();
    const addPreventers = (element, state, events = ['click', 'mousedown', 'pointerdown', 'keydown']) => {
       events.forEach((eventName) => {
+         if (state.handlers.some(([target, savedEvent]) => target === element && savedEvent === eventName)) {
+            return;
+         }
          element.addEventListener(eventName, prevent, true);
          state.handlers.push([element, eventName, prevent]);
       });
@@ -62,6 +73,7 @@
          return;
       }
       state.handlers.forEach(([target, eventName, handler]) => target.removeEventListener(eventName, handler, true));
+      state.cleanup.forEach((callback) => callback());
       state.elements.forEach(([target, saved]) => restoreSnapshot(target, saved));
       if (state.flatpickr && typeof state.flatpickr.instance.set === 'function') {
          state.flatpickr.instance.set({
@@ -77,7 +89,7 @@
       if (element.hasAttribute(marker)) {
          return null;
       }
-      const state = { elements: [[element, snapshot(element)]], handlers: [], addedClasses: [] };
+      const state = { elements: [[element, snapshot(element)]], handlers: [], cleanup: [], addedClasses: [] };
       element._torahLockState = state;
       element.setAttribute(marker, '1');
       return state;
@@ -102,24 +114,73 @@
       readonly(element, message);
       addPreventers(element, state);
    };
-   const lockNativeSelect = (element, message) => {
-      const state = stateFor(element);
-      if (!state) {
-         return;
+   const restoreSelectValue = (element, state) => {
+      const saved = state.elements.find(([target]) => target === element)?.[1];
+      if (Array.isArray(saved?.selectedValues)) {
+         const selected = new Set(saved.selectedValues);
+         Array.from(element.options).forEach((option) => { option.selected = selected.has(option.value); });
       }
+   };
+   const lockNativeSelect = (element, message) => {
+      const state = element._torahLockState || stateFor(element);
+      if (!state) {
+         return state;
+      }
+      if (state.nativeSelectLocked) {
+         restoreSelectValue(element, state);
+         return state;
+      }
+      state.nativeSelectLocked = true;
       addClasses(state, element, ['pe-none', 'opacity-75']);
       element.setAttribute('aria-disabled', 'true');
       element.setAttribute('title', message);
       element.setAttribute('tabindex', '-1');
-      addPreventers(element, state);
+      addPreventers(element, state, ['click', 'mousedown', 'pointerdown', 'keydown', 'wheel']);
+      const restoreValue = () => restoreSelectValue(element, state);
+      element.addEventListener('change', restoreValue, true);
+      state.handlers.push([element, 'change', restoreValue]);
+
+      return state;
+   };
+   const select2Container = (element) => {
+      if (!window.jQuery) {
+         return null;
+      }
+      const instanceContainer = window.jQuery(element).data('select2')?.$container?.[0];
+      if (instanceContainer) {
+         return instanceContainer;
+      }
+
+      return element.nextElementSibling?.matches('.select2-container') ? element.nextElementSibling : null;
+   };
+   const preventSelect2Events = (element, state) => {
+      if (!window.jQuery || state.select2EventsLocked) {
+         return;
+      }
+      const events = 'select2:opening.torahPolicy select2:selecting.torahPolicy';
+      const jqueryElement = window.jQuery(element);
+      jqueryElement.on(events, prevent);
+      state.cleanup.push(() => jqueryElement.off(events, prevent));
+      state.select2EventsLocked = true;
    };
    const lockSelect2 = (element, message) => {
-      lockNativeSelect(element, message);
-      const state = element._torahLockState;
-      const container = window.jQuery && window.jQuery(element).next('.select2-container')[0];
-      if (state && container) {
-         addClasses(state, container, ['pe-none', 'opacity-75']);
+      const state = lockNativeSelect(element, message) || element._torahLockState;
+      if (!state) {
+         return;
       }
+      preventSelect2Events(element, state);
+      const container = select2Container(element);
+      if (!container || state.select2Containers?.includes(container)) {
+         return;
+      }
+      state.select2Containers = [...(state.select2Containers || []), container];
+      remember(state, container);
+      addClasses(state, container, ['pe-none', 'opacity-75']);
+      container.setAttribute('aria-disabled', 'true');
+      container.setAttribute('aria-readonly', 'true');
+      container.setAttribute('title', message);
+      container.setAttribute('tabindex', '-1');
+      addPreventers(container, state, ['click', 'mousedown', 'pointerdown', 'keydown']);
    };
    const lockFlatpickr = (original, message) => {
       const wrapper = original.closest('.flatpickr');
@@ -248,13 +309,15 @@
          });
       });
    };
-   const applyContainer = (container) => {
+   const applyContainer = (container, restoreExisting = true) => {
       const form = findForm(container);
       const policy = payload(container);
       if (!form || !policy) {
          return;
       }
-      restore(form);
+      if (restoreExisting) {
+         restore(form);
+      }
       policy.rules.forEach((rule) => applyRule(form, rule, (policy.message || 'Blocked by Torah policy.').replace('%s', rule.label)));
       applyActorTypes(form, policy.actor_itemtypes);
    };
@@ -298,8 +361,11 @@
       };
       form.addEventListener('change', refresh);
       form.addEventListener('shown.bs.collapse', refresh);
-      form.addEventListener('submit', () => applyContainer(container));
-      const observer = new MutationObserver(refresh);
+      form.addEventListener('submit', () => applyContainer(container, false));
+      const observer = new MutationObserver(() => {
+         applyContainer(container, false);
+         refresh();
+      });
       observer.observe(form, { childList: true, subtree: true });
       applyContainer(container);
       refresh();

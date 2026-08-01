@@ -14,6 +14,16 @@ based on Keep a Changelog and the project follows Semantic Versioning.
 
 - Declared GLPI 10.0.20 as the minimum supported GLPI version.
 
+## [0.4.3] - 2026-07-31
+
+### Fixed
+
+- Locked the visible GLPI 10.0.20 Select2 widgets for ticket dropdown controls,
+  including dynamically rebuilt fields, while preserving submitted values and
+  reversible Flatpickr locks.
+- Persisted an explicitly empty Backend selection from the administrative
+  matrix so new frontend-only policies are not interpreted as legacy policies.
+
 ## [0.4.2] - 2026-07-31
 
 ### Added
@@ -162,6 +172,7 @@ based on Keep a Changelog and the project follows Semantic Versioning.
 - Repository and package validation reject common secrets and private artifacts.
 
 [0.2.2]: https://github.com/renatovaladares85/torah/releases/tag/0.2.2
+[0.4.3]: https://github.com/renatovaladares85/torah/releases/tag/0.4.3
 [0.4.2]: https://github.com/renatovaladares85/torah/releases/tag/0.4.2
 [0.4.1]: https://github.com/renatovaladares85/torah/releases/tag/0.4.1
 [0.4.0]: https://github.com/renatovaladares85/torah/releases/tag/0.4.0

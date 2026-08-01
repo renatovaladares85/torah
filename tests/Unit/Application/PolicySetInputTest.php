@@ -56,6 +56,36 @@ final class PolicySetInputTest extends TestCase
        self::assertArrayHasKey(BackendRulePolicy::OPTION_KEY, $input->options);
    }
 
+   /** @dataProvider frontendOnlyControls */
+   public function testMatrixPresencePersistsExplicitEmptyBackendSelection(array $blockedControls): void {
+      $input = PolicySetInput::fromHttp([
+          'profiles_id' => '4',
+          'entities_id' => '0',
+          'blocked_controls' => $blockedControls,
+          'backend_controls_present' => '1',
+      ], new PolicyCatalog(new CapabilityRegistry()));
+
+      self::assertNotSame([], $input->blockedRules);
+      self::assertSame('[]', $input->options[BackendRulePolicy::OPTION_KEY]);
+   }
+
+   public function testMatrixPresencePersistsExplicitEmptyBackendWithNoRestrictions(): void {
+      $input = PolicySetInput::fromHttp([
+          'profiles_id' => '4',
+          'entities_id' => '0',
+          'backend_controls_present' => '1',
+      ], new PolicyCatalog(new CapabilityRegistry()));
+
+      self::assertSame([], $input->blockedRules);
+      self::assertSame('[]', $input->options[BackendRulePolicy::OPTION_KEY]);
+   }
+
+   /** @return iterable<string, array{array<string, list<string>>}> */
+   public static function frontendOnlyControls(): iterable {
+      yield 'opening only' => [['opening' => ['type']]];
+      yield 'update only' => [['update' => ['status']]];
+   }
+
    public function testBackendRequiresItsControlToBeSelected(): void {
        $this->expectException(\InvalidArgumentException::class);
        PolicySetInput::fromHttp([

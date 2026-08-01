@@ -74,7 +74,7 @@ final class PolicySetInput
 
        // Structured controls are authoritative for the matrix. Legacy callers may
        // still submit blocked_rules and retain the legacy backend interpretation.
-      if (array_key_exists('backend_controls', $data)) {
+      if (array_key_exists('backend_controls', $data) || isset($data['backend_controls_present'])) {
          $options[BackendRulePolicy::OPTION_KEY] = BackendRulePolicy::encode(
              BackendRulePolicy::normalize(array_values(array_unique($backendRules)), $catalog),
          );

@@ -44,6 +44,14 @@ final class TicketControlCatalogTest extends TestCase
       self::assertSame(['ticket.field.solution_date.update'], $catalog->get('solution_date')?->updateRuleKeys);
    }
 
+   public function testGlpiTenDropdownControlsUseTheirSelect2WidgetStrategy(): void {
+      $catalog = new TicketControlCatalog();
+
+      foreach (['type', 'category', 'status', 'request_source', 'urgency', 'impact', 'priority', 'total_duration'] as $key) {
+         self::assertSame('select2', $catalog->get($key)?->lockStrategy, $key);
+      }
+   }
+
    public function testRuleKeyResolvesToItsFriendlyControl(): void {
       $control = (new TicketControlCatalog())->findByRuleKey('ticket.field.sla_tto.update');
 

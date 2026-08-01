@@ -25,5 +25,13 @@ final class TicketPolicyJavascriptTest extends TestCase
       self::assertStringContainsString('allowInput: false, clickOpens: false', $script);
       self::assertStringContainsString('restoreSnapshot', $script);
       self::assertStringContainsString("{ ...rule, strategy: 'text' }", $script);
+      self::assertStringContainsString("data('select2')?.\$container?.[0]", $script);
+      self::assertStringContainsString('select2:opening.torahPolicy', $script);
+      self::assertStringContainsString('select2:selecting.torahPolicy', $script);
+      self::assertStringNotContainsString(".next('.select2-container')", $script);
+      self::assertStringContainsString("element.addEventListener('change', restoreValue, true)", $script);
+      self::assertStringContainsString('restoreSelectValue(element, state)', $script);
+      self::assertStringContainsString('applyContainer(container, false)', $script);
+      self::assertStringContainsString('state.cleanup.forEach', $script);
    }
 }
