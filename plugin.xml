@@ -22,7 +22,7 @@
    </authors>
    <versions>
       <version>
-         <num>0.4.6</num>
+         <num>0.4.7</num>
          <compatibility>~10.0.20</compatibility>
       </version>
    </versions>

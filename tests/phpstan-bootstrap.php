@@ -7,7 +7,7 @@ if (!function_exists('__')) {
 }
 
 if (!defined('PLUGIN_TORAH_VERSION')) {
-   define('PLUGIN_TORAH_VERSION', '0.4.6');
+   define('PLUGIN_TORAH_VERSION', '0.4.7');
 }
 
 class Config

@@ -17,7 +17,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Check out source
-        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
 
       - name: Configure PHP
         uses: shivammathur/setup-php@f3e473d116dcccaddc5834248c87452386958240 # v2
@@ -28,7 +28,7 @@ jobs:
           coverage: none
 
       - name: Install validation tools
-        run: sudo apt-get update && sudo apt-get install --yes gettext libxml2-utils
+        run: sudo apt-get update && sudo apt-get install --yes gettext libxml2-utils ripgrep
 
       - name: Install dependencies
         run: composer install --no-interaction --prefer-dist
@@ -84,7 +84,7 @@ jobs:
 
     steps:
       - name: Check out Torah
-        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
 
       - name: Configure PHP
         uses: shivammathur/setup-php@f3e473d116dcccaddc5834248c87452386958240 # v2
@@ -98,7 +98,7 @@ jobs:
         run: composer install --no-interaction --prefer-dist
 
       - name: Install artifact validation tools
-        run: sudo apt-get update && sudo apt-get install --yes gettext libxml2-utils unzip
+        run: sudo apt-get update && sudo apt-get install --yes gettext libxml2-utils unzip ripgrep
 
       - name: Download production package
         uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4.3.0

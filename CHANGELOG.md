@@ -13,6 +13,13 @@ based on Keep a Changelog and the project follows Semantic Versioning.
   minimum and latest supported GLPI 10.0.x versions instead of using a symlink
   to the development checkout.
 
+## [0.4.7] - 2026-08-01
+
+### Fixed
+
+- Provisioned ripgrep in both CI runners and updated the pinned checkout action
+  to its Node.js 24 runtime.
+
 ## [0.4.6] - 2026-08-01
 
 ### Fixed
@@ -198,7 +205,7 @@ based on Keep a Changelog and the project follows Semantic Versioning.
 - Backend hooks reject manual bypass attempts independently of JavaScript.
 - Repository and package validation reject common secrets and private artifacts.
 
-[0.2.2]: https://github.com/renatovaladares85/torah/releases/tag/0.2.2
+[0.4.7]: https://github.com/renatovaladares85/torah/releases/tag/0.4.7
 [0.4.6]: https://github.com/renatovaladares85/torah/releases/tag/0.4.6
 [0.4.5]: https://github.com/renatovaladares85/torah/releases/tag/0.4.5
 [0.4.4]: https://github.com/renatovaladares85/torah/releases/tag/0.4.4
@@ -209,6 +216,7 @@ based on Keep a Changelog and the project follows Semantic Versioning.
 [0.3.1]: https://github.com/renatovaladares85/torah/releases/tag/0.3.1
 [0.3.2]: https://github.com/renatovaladares85/torah/releases/tag/0.3.2
 [0.3.0]: https://github.com/renatovaladares85/torah/releases/tag/0.3.0
+[0.2.2]: https://github.com/renatovaladares85/torah/releases/tag/0.2.2
 [0.2.1]: https://github.com/renatovaladares85/torah/releases/tag/0.2.1
 [0.2.0]: https://github.com/renatovaladares85/torah/releases/tag/0.2.0
 [0.1.1]: https://github.com/renatovaladares85/torah/releases/tag/0.1.1
