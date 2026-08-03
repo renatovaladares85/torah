@@ -5,10 +5,12 @@ O [CHANGELOG.md](CHANGELOG.md) em inglês é a fonte autoritativa.
 
 ## [Unreleased]
 
-## [0.4.9] - 2026-08-03
+## [0.4.9-rc.1] - 2026-08-03
 
 ### Adicionado
 
+- Adicionado o logo de catálogo PNG de 40×40 e sua URL pública raw do
+  repositório aos metadados do plugin e ao pacote de produção validado.
 - Adicionado gerador determinístico de notas de release a partir da seção
   correspondente do changelog e de assets de produção validados.
 - Adicionada cobertura de regressão para extração de notas de release e casos
@@ -19,9 +21,11 @@ O [CHANGELOG.md](CHANGELOG.md) em inglês é a fonte autoritativa.
 
 - Mantido o README em inglês focado no uso, instalação, configuração,
   segurança, compatibilidade e pacotes oficiais de produção do Torah.
-- Preservado 0.4.8 como o marco da release pública inicial e identificadas as
-  entradas anteriores do changelog como marcos de desenvolvimento, não como
-  releases publicadas.
+- Preservado 0.4.8 como marco interno e imutável de desenvolvimento, sem
+  release no GitHub, e identificadas as entradas anteriores do changelog como
+  marcos de desenvolvimento, não como releases publicadas.
+- Preparado 0.4.9-rc.1 como a primeira pré-release pública. Sua draft release
+  conterá somente assets de pacote de produção validados e checksums.
 
 ### Corrigido
 

@@ -51,6 +51,8 @@ These instructions apply to the entire repository.
   version exactly.
 - GitHub Actions may create release drafts only. A human must review assets and
   publish the release explicitly.
+- Tags with a SemVer prerelease suffix create drafts marked as prereleases;
+  final-version tags create drafts without the prerelease marker.
 
 ## Security And Privacy
 

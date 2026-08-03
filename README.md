@@ -14,11 +14,15 @@ Brazilian Portuguese documentation is available in
 
 | Torah | GLPI | PHP |
 |---|---|---|
-| 0.4.x | >= 10.0.20 and < 10.0.99 | >= 8.2 |
+| 0.4.9-rc.1 (pre-release) | >= 10.0.20 and < 10.0.99 | >= 8.2 |
 | 0.1.x | >= 10.0.20 and < 10.0.99 | >= 8.2 |
 
 The initial validation targets GLPI 10.0.20 and 10.0.25. Compatibility outside
 this matrix is not declared.
+
+Version 0.4.9-rc.1 is a development-state public prerelease. Install it only
+from its validated production package when its GitHub draft has been reviewed
+and published.
 
 ## Main Features
 

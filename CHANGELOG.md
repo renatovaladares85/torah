@@ -5,10 +5,12 @@ based on Keep a Changelog and the project follows Semantic Versioning.
 
 ## [Unreleased]
 
-## [0.4.9] - 2026-08-03
+## [0.4.9-rc.1] - 2026-08-03
 
 ### Added
 
+- Added the 40×40 PNG catalog logo and its public raw repository URL to the
+  plugin metadata and validated production package.
 - Added deterministic release notes generated from the matching changelog
   section and validated production package assets.
 - Added regression coverage for release-note extraction and catalog package URL
@@ -19,8 +21,11 @@ based on Keep a Changelog and the project follows Semantic Versioning.
 
 - Kept the English README focused on Torah usage, installation, configuration,
   security, compatibility, and official production packages.
-- Preserved 0.4.8 as the initial public-release milestone and identified older
-  changelog entries as development milestones rather than published releases.
+- Preserved 0.4.8 as an immutable internal development milestone, without a
+  GitHub release, and identified older changelog entries as development
+  milestones rather than published releases.
+- Prepared 0.4.9-rc.1 as the first public prerelease. Its draft release will
+  contain only validated production package assets and checksums.
 
 ### Fixed
 

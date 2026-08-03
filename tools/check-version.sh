@@ -13,6 +13,12 @@ if [[ -z "$setup_version" || "$setup_version" != "$xml_version" ]]; then
     exit 1
 fi
 
+semver_pattern='^(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)(-[0-9A-Za-z-]+(\.[0-9A-Za-z-]+)*)?(\+[0-9A-Za-z-]+(\.[0-9A-Za-z-]+)*)?$'
+if [[ ! "$setup_version" =~ $semver_pattern ]]; then
+    printf 'Version must use Semantic Versioning: %s\n' "$setup_version" >&2
+    exit 1
+fi
+
 if ! rg -q "^## \[$setup_version\]" CHANGELOG.md; then
     printf 'Version %s is missing from CHANGELOG.md\n' "$setup_version" >&2
     exit 1

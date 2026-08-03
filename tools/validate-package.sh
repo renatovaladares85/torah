@@ -122,7 +122,7 @@ if find "$work/extracted" -mindepth 1 -maxdepth 1 -not -name torah -print -quit 
 fi
 
 package="$work/extracted/torah"
-required_files=(setup.php hook.php plugin.xml LICENSE locales/pt_BR.mo)
+required_files=(setup.php hook.php plugin.xml LICENSE locales/pt_BR.mo torah.png)
 required_directories=(src front ajax templates js)
 
 for path in "${required_files[@]}"; do

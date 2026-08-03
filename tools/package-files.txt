@@ -10,6 +10,7 @@ js/ticket-policy.js
 locales/pt_BR.mo
 plugin.xml
 setup.php
+torah.png
 src/Application/ActorMutationDetector.php
 src/Application/ActorPayloadInspector.php
 src/Application/Admin/DeletePolicySet.php

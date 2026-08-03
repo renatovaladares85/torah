@@ -66,11 +66,16 @@ jobs:
           RELEASE_TAG: ${{ github.ref_name }}
         run: |
           version="${RELEASE_TAG#v}"
+          prerelease_args=()
+          if [[ "$version" == *-* ]]; then
+            prerelease_args+=(--prerelease)
+          fi
           gh release create "$RELEASE_TAG" \
             "dist/torah-${version}.zip" \
             "dist/torah-${version}.tar.gz" \
             dist/SHA256SUMS.txt \
             --verify-tag \
             --draft \
+            "${prerelease_args[@]}" \
             --title "Torah ${version}" \
             --notes-file "$RUNNER_TEMP/release-notes.md"
