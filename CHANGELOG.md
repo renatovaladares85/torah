@@ -5,6 +5,29 @@ based on Keep a Changelog and the project follows Semantic Versioning.
 
 ## [Unreleased]
 
+## [0.4.9] - 2026-08-03
+
+### Added
+
+- Added deterministic release notes generated from the matching changelog
+  section and validated production package assets.
+- Added regression coverage for release-note extraction and catalog package URL
+  validation cases.
+- Added a Brazilian Portuguese user-facing README equivalent.
+
+### Changed
+
+- Kept the English README focused on Torah usage, installation, configuration,
+  security, compatibility, and official production packages.
+- Preserved 0.4.8 as the initial public-release milestone and identified older
+  changelog entries as development milestones rather than published releases.
+
+### Fixed
+
+- Prevented draft releases from being created with static notes unrelated to
+  the matching changelog section.
+- Removed changelog links to releases and tags that do not exist.
+
 ## [0.4.8] - 2026-08-01
 
 ### Added
@@ -212,20 +235,5 @@ based on Keep a Changelog and the project follows Semantic Versioning.
 - Backend hooks reject manual bypass attempts independently of JavaScript.
 - Repository and package validation reject common secrets and private artifacts.
 
-[0.4.7]: https://github.com/renatovaladares85/torah/releases/tag/0.4.7
-[0.4.8]: https://github.com/renatovaladares85/torah/releases/tag/v0.4.8
-[0.4.6]: https://github.com/renatovaladares85/torah/releases/tag/0.4.6
-[0.4.5]: https://github.com/renatovaladares85/torah/releases/tag/0.4.5
-[0.4.4]: https://github.com/renatovaladares85/torah/releases/tag/0.4.4
-[0.4.3]: https://github.com/renatovaladares85/torah/releases/tag/0.4.3
-[0.4.2]: https://github.com/renatovaladares85/torah/releases/tag/0.4.2
-[0.4.1]: https://github.com/renatovaladares85/torah/releases/tag/0.4.1
-[0.4.0]: https://github.com/renatovaladares85/torah/releases/tag/0.4.0
-[0.3.1]: https://github.com/renatovaladares85/torah/releases/tag/0.3.1
-[0.3.2]: https://github.com/renatovaladares85/torah/releases/tag/0.3.2
-[0.3.0]: https://github.com/renatovaladares85/torah/releases/tag/0.3.0
-[0.2.2]: https://github.com/renatovaladares85/torah/releases/tag/0.2.2
-[0.2.1]: https://github.com/renatovaladares85/torah/releases/tag/0.2.1
-[0.2.0]: https://github.com/renatovaladares85/torah/releases/tag/0.2.0
-[0.1.1]: https://github.com/renatovaladares85/torah/releases/tag/0.1.1
-[0.1.0]: https://github.com/renatovaladares85/torah/releases/tag/0.1.0
+[Unreleased]: https://github.com/renatovaladares85/torah/compare/v0.4.8...HEAD
+[0.4.8]: https://github.com/renatovaladares85/torah/blob/v0.4.8/CHANGELOG.md#048---2026-08-01

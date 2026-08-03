@@ -15,6 +15,11 @@ These instructions apply to the entire repository.
 - English is the original and authoritative language for code, comments,
   documentation, UI strings, identifiers, and gettext `msgid` values.
 - Portuguese is provided only through the `pt_BR` translation catalog.
+- When user-facing plugin documentation or catalog metadata is created or
+  materially revised, provide an equivalent `pt_BR` text while keeping English
+  authoritative. Keep runtime translations in the gettext catalog.
+- Keep `README.md` limited to user-facing Torah information. Development,
+  build, CI, and release-maintenance instructions belong outside the README.
 
 ## Change Control
 

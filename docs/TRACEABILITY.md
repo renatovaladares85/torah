@@ -29,6 +29,9 @@
 | CI validation tool provisioning | `ci.yml` installs ripgrep in each isolated runner | CI quality and GLPI artifact smoke jobs |
 | Minimal production distribution | Allowlisted reproducible archives, package validator, and artifact-based GLPI matrix | Packaging regression test, manifest/security checks, and GLPI artifact smoke jobs |
 | Human-reviewed production release | Tag/version-validated draft release workflow with ZIP, TAR.GZ, and SHA-256 assets | Reusable CI workflow, package validation, checksum verification, and GitHub draft release creation |
+| Curated release notes | Deterministic generator extracts the matching changelog section and appends validated package guidance | Release-notes regression tests and draft release workflow |
+| User-facing bilingual documentation | English-authoritative README with equivalent Brazilian Portuguese documentation | README review and privacy validation |
+| Catalog package integrity | Per-version production package URLs are accepted only after public asset, checksum, tag, and archive-root validation | Catalog metadata regression cases and package validator |
 | No core modifications | Repository scope and CI checks | Package manifest review |
 
 Update this matrix whenever a requirement or implementation boundary changes.

@@ -39,10 +39,12 @@
         "validate:privacy": "bash tools/check-public-repo.sh",
         "validate:translations": "python3 tools/check-translations.py",
         "validate:version": "bash tools/check-version.sh",
+        "test:release-notes": "bash tests/Packaging/release-notes.sh",
         "qa": [
             "@validate:privacy",
             "@validate:translations",
             "@validate:version",
+            "@test:release-notes",
             "@cs",
             "@analyse",
             "@test"

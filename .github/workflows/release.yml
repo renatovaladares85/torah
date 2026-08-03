@@ -52,30 +52,13 @@ jobs:
           RELEASE_TAG: ${{ github.ref_name }}
         run: |
           version="${RELEASE_TAG#v}"
-          cat > "$RUNNER_TEMP/release-notes.md" <<EOF
-          ## Production installation packages
-
-          - `torah-${version}.zip`
-          - `torah-${version}.tar.gz`
-          - `SHA256SUMS.txt`
-
-          Compatibility: GLPI >= 10.0.20 and < 10.0.99; PHP >= 8.2.
-
-          Checksums:
-
-          ```text
-          $(cat dist/SHA256SUMS.txt)
-          ```
-
-          Extract one of the package assets into `<GLPI_ROOT>/plugins`; the
-          resulting directory must be `<GLPI_ROOT>/plugins/torah`. Verify the
-          attached checksums before installation. See [CHANGELOG.md](https://github.com/${{ github.repository }}/blob/${RELEASE_TAG}/CHANGELOG.md) for the changes in this version.
-
-          Do not use the automatically generated **Source code (zip)** or
-          **Source code (tar.gz)** archives as installation packages. They are
-          raw repository snapshots and did not pass the production packaging
-          process.
-          EOF
+          tools/generate-release-notes.sh \
+            --tag "$RELEASE_TAG" \
+            --version "$version" \
+            --repository "${{ github.repository }}" \
+            --checksums dist/SHA256SUMS.txt \
+            --changelog-pt-br CHANGELOG.pt_BR.md \
+            --output "$RUNNER_TEMP/release-notes.md"
 
       - name: Create GitHub draft release
         env:

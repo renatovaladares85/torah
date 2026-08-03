@@ -8,5 +8,12 @@ development dependencies, caches, local files, logs, dumps, and credentials.
 Use a `v<SemVer>` tag only when it matches the declared plugin version. The
 release workflow may create a draft with the validated ZIP, TAR.GZ, and
 `SHA256SUMS.txt` assets; a human must review those assets and publish the
-release explicitly. Do not push, tag, or publish without a separate explicit
+release explicitly. Generate future release notes from the matching, non-empty
+English changelog section; do not use commit-generated notes as the source of
+truth. Include only validated production-package instructions, checksums, and
+the warning that GitHub source archives are not production packages. Keep
+user-facing release communication available in English and `pt_BR`, with
+English authoritative. Add a per-version `download_url` to catalog metadata
+only after its public production asset, tag, checksum, and archive root have
+been verified. Do not push, tag, or publish without a separate explicit
 approval.

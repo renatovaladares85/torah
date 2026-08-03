@@ -3,10 +3,12 @@
 Torah is a community plugin for GLPI 10 that adds configurable, complementary
 restrictions to ticket fields and actions.
 
-The plugin never grants permissions. Native GLPI authorization remains the
-first and authoritative decision. Torah only rejects a mutation when GLPI
-allows it and an applicable Torah policy marks the corresponding rule as
-blocked.
+Torah never grants permissions. Native GLPI authorization remains the first
+and authoritative decision. Torah only rejects a mutation when GLPI allows it
+and an applicable Torah policy blocks the corresponding rule.
+
+Brazilian Portuguese documentation is available in
+[README.pt_BR.md](README.pt_BR.md).
 
 ## Compatibility
 
@@ -21,77 +23,45 @@ this matrix is not declared.
 ## Main Features
 
 - Policy sets scoped by active GLPI profile and ticket entity.
-- Exact-entity policy precedence, followed by the nearest recursive ancestor.
-- Ticket rules grouped under assistance settings.
-- Opening and Update interface restrictions for 19 ticket controls.
+- Exact-entity precedence, followed by the nearest recursive ancestor policy.
+- Opening and update restrictions for 19 supported ticket controls.
 - Global control over user, group, and supplier actor types for each role.
-- Optional Backend enforcement for selected opening/update restrictions.
-- Optional external capabilities without mandatory plugin dependencies.
-- Safe audit logging without ticket content or personal data.
-- English source strings and a complete Brazilian Portuguese translation.
+- Optional backend enforcement for selected opening and update restrictions.
+- Support for GLPI ticket Select2 controls, Flatpickr date fields, and approval
+  request controls.
+- Audit events designed not to contain ticket content or personal data.
+- English source strings and Brazilian Portuguese runtime translation.
 
 Opening and Update make a selected control read-only in the relevant GLPI
 ticket form. Backend makes the same selected action restrictive in server-side
 hooks, including API and automatic processes. JavaScript is presentation only;
 GLPI ACLs remain authoritative and Torah never grants an access right.
 
-Policies saved before 0.3.0 keep their former backend enforcement until saved
-again. New policies start with no restrictions or Backend selections.
-
 ## Installation
 
-1. Download the `torah-<version>.tar.gz` or `torah-<version>.zip` production
-   asset from the GitHub release.
-2. Extract it directly into `<GLPI_ROOT>/plugins`. The resulting directory must
+1. Download a production `torah-<version>.tar.gz` or `torah-<version>.zip`
+   asset from the corresponding published GitHub release.
+2. Verify it with the attached `SHA256SUMS.txt` file.
+3. Extract it directly into `<GLPI_ROOT>/plugins`. The resulting directory must
    be `<GLPI_ROOT>/plugins/torah`.
-3. Open **Setup > Plugins**.
-4. Install and activate **Torah**.
+4. Open **Setup > Plugins**, then install and activate **Torah**.
 5. Open the plugin configuration page and create policy sets.
 
-Do not rename the `torah` directory. GitHub's automatically generated source
-archives contain the development repository and are not production packages.
-
-## Release Packages
-
-Production packages are built from the explicit runtime allowlist in
-`tools/package-files.txt`. It excludes tests, development dependencies, CI,
-internal documentation, local configuration, caches, logs, dumps, and other
-non-runtime files.
-
-From a clean checkout, validate and build the current commit locally with:
-
-```bash
-composer qa
-tests/Packaging/package.sh
-(cd dist && sha256sum --check SHA256SUMS.txt)
-```
-
-The build creates `torah-<version>.tar.gz`, `torah-<version>.zip`, and
-`SHA256SUMS.txt` in `dist/`. Both archives contain one root directory named
-`torah/`. To prepare a release after approval, create an annotated tag that
-matches the declared version:
-
-```bash
-git tag -a v<version> -m "Release v<version>"
-git push origin v<version>
-```
-
-The tag starts the release workflow. It validates the complete CI workflow and
-creates a GitHub **draft** release containing only the production packages and
-checksums. Review the draft assets and notes in GitHub, verify checksums with
-`sha256sum --check SHA256SUMS.txt`, then publish manually. Never install the
-automatically generated GitHub source archives.
+Do not rename the `torah` directory. Use only the validated production package
+assets. GitHub's automatically generated “Source code (zip)” and “Source code
+(tar.gz)” archives are repository snapshots, not production packages.
 
 ## Configuration
 
-Actor types are a global configuration, independent of profiles, entities and
-policies. They determine which new requesters, observers and assignees can be
-added in the UI and backend. Existing actors are never removed automatically;
-they remain visible and can be removed while the actor field is editable.
+Actor types are global configuration, independent of profiles, entities, and
+policies. They determine which new requesters, observers, and assignees can be
+added in the interface and backend. Existing actors are never removed
+automatically; they remain visible and can be removed while their field is
+editable.
 
-Each policy set selects one profile, one entity, a recursive flag and the rules
-to block. Built-in rules currently affect tickets only.
-For a ticket, Torah uses exactly one policy set:
+Each policy set selects one profile, one entity, a recursive flag, and the
+rules to block. Built-in rules affect tickets only. For a ticket, Torah uses
+exactly one policy set:
 
 1. The policy set for the exact ticket entity.
 2. Otherwise, the nearest recursive policy set on an ancestor entity.
@@ -99,24 +69,8 @@ For a ticket, Torah uses exactly one policy set:
 
 Rules from multiple policy sets are never merged. A policy set with no checked
 rules intentionally stops inheritance and applies no property restrictions.
-Global actor types default to users, groups, and suppliers when no global
-configuration exists. During the 0.4.0 upgrade, legacy per-policy actor options
-are backed up in GLPI configuration key
-`plugin:torah/legacy_actor_itemtypes_backup_v1`, then removed from active
-policy options. The backup is technical-only and never affects runtime.
-
-Opening, Update and Backend block the entire field according to a policy.
-Global actor types only constrain the kinds of actors that can be added while
-the field is otherwise editable. Matrix row and column All checkboxes are UI
-helpers and are not persisted.
-
-For GLPI 10.0.20, Torah applies visual restrictions to the native Ticket form
+For GLPI 10.0.20, Torah applies visual restrictions to the native ticket form
 identified by `#itil-form`.
-
-Torah evaluates backend restrictions only when the current execution has an
-active GLPI profile. Cron, CLI and other profileless processes remain outside
-Torah restrictions; an effective human or API session profile is never
-replaced by a global fallback.
 
 ## Upgrade And Uninstall
 
@@ -129,24 +83,6 @@ own tables and does not modify GLPI core data.
 See [SECURITY.md](SECURITY.md) and [docs/PRIVACY.md](docs/PRIVACY.md). Do not
 open public issues containing real GLPI data, credentials, logs, or screenshots
 with personal information.
-
-## Development
-
-```bash
-composer install
-composer validate
-composer validate:privacy
-composer cs
-composer analyse
-composer test
-composer qa
-```
-
-The repository contains plugin code only. GLPI core is an external test
-dependency and must never be patched by this project.
-
-Optional integrations are documented in
-[docs/EXTERNAL_CAPABILITIES.md](docs/EXTERNAL_CAPABILITIES.md).
 
 ## License
 
