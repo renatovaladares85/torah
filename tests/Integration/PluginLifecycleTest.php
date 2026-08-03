@@ -43,16 +43,19 @@ final class PluginLifecycleTest extends TestCase
    private function uniqueIndexColumns(string $table, string $index): array {
        global $DB;
 
+       /** @var array<int, string> $columns */
        $columns = [];
        $iterator = $DB->request(sprintf(
-           'SHOW INDEX FROM `%s` WHERE `Key_name` = %s AND `Non_unique` = 0 ORDER BY `Seq_in_index` ASC',
+           'SHOW INDEX FROM `%s` WHERE `Key_name` = %s AND `Non_unique` = 0',
            $table,
            $DB->quoteValue($index),
        ));
       foreach ($iterator as $row) {
-          $columns[] = (string) $row['Column_name'];
+          $columns[(int) $row['Seq_in_index']] = (string) $row['Column_name'];
       }
 
-       return $columns;
+       ksort($columns, SORT_NUMERIC);
+
+       return array_values($columns);
    }
 }
