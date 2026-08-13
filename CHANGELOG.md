@@ -5,7 +5,7 @@ based on Keep a Changelog and the project follows Semantic Versioning.
 
 ## [Unreleased]
 
-## [0.4.9-rc.1] - 2026-08-03
+## [0.4.9] - 2026-08-13
 
 ### Added
 
@@ -24,14 +24,15 @@ based on Keep a Changelog and the project follows Semantic Versioning.
 - Preserved 0.4.8 as an immutable internal development milestone, without a
   GitHub release, and identified older changelog entries as development
   milestones rather than published releases.
-- Prepared 0.4.9-rc.1 as the first public prerelease. Its draft release will
-  contain only validated production package assets and checksums.
+- Prepared 0.4.9 as the first stable public release, with only validated
+  production package assets and checksums.
 
 ### Fixed
 
 - Prevented draft releases from being created with static notes unrelated to
   the matching changelog section.
 - Removed changelog links to releases and tags that do not exist.
+- Cleaned up Torah-owned global configuration when uninstalling the plugin.
 
 ## [0.4.8] - 2026-08-01
 
@@ -240,5 +241,6 @@ based on Keep a Changelog and the project follows Semantic Versioning.
 - Backend hooks reject manual bypass attempts independently of JavaScript.
 - Repository and package validation reject common secrets and private artifacts.
 
-[Unreleased]: https://github.com/renatovaladares85/torah/compare/v0.4.8...HEAD
+[Unreleased]: https://github.com/renatovaladares85/torah/compare/v0.4.9...HEAD
+[0.4.9]: https://github.com/renatovaladares85/torah/blob/v0.4.9/CHANGELOG.md#049---2026-08-13
 [0.4.8]: https://github.com/renatovaladares85/torah/blob/v0.4.8/CHANGELOG.md#048---2026-08-01

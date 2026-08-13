@@ -6,11 +6,12 @@ root="${TORAH_RELEASE_NOTES_ROOT:-$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pw
 cd "$root"
 
 usage() {
-    printf 'Usage: %s --tag v<SemVer> --version <SemVer> --repository <owner/repository> --checksums <SHA256SUMS.txt> --changelog-pt-br <file> --output <file>\n' "${0##*/}" >&2
+    printf 'Usage: %s --tag v<SemVer> --version <SemVer> --date YYYY-MM-DD --repository <owner/repository> --checksums <SHA256SUMS.txt> --changelog-pt-br <file> --output <file>\n' "${0##*/}" >&2
 }
 
 tag=""
 version=""
+release_date=""
 repository=""
 checksums=""
 changelog_pt_br=""
@@ -18,7 +19,7 @@ output=""
 
 while [[ "$#" -gt 0 ]]; do
     case "$1" in
-        --tag|--version|--repository|--checksums|--changelog-pt-br|--output)
+        --tag|--version|--date|--repository|--checksums|--changelog-pt-br|--output)
             option="$1"
             shift
             if [[ "$#" -eq 0 ]]; then
@@ -28,6 +29,7 @@ while [[ "$#" -gt 0 ]]; do
             case "$option" in
                 --tag) tag="$1" ;;
                 --version) version="$1" ;;
+                --date) release_date="$1" ;;
                 --repository) repository="$1" ;;
                 --checksums) checksums="$1" ;;
                 --changelog-pt-br) changelog_pt_br="$1" ;;
@@ -55,6 +57,11 @@ fi
 tag_version="${tag#v}"
 if [[ -z "$version" || "$version" != "$tag_version" ]]; then
     printf 'Version mismatch: tag=%s version=%s\n' "$tag" "$version" >&2
+    exit 1
+fi
+
+if [[ ! "$release_date" =~ ^[0-9]{4}-[0-9]{2}-[0-9]{2}$ ]] || ! date --date="$release_date" +%F >/dev/null 2>&1; then
+    printf 'Release date must use a valid YYYY-MM-DD value: %s\n' "$release_date" >&2
     exit 1
 fi
 
@@ -148,6 +155,12 @@ extract_section "$changelog_pt_br" "$section_pt_br" 'Brazilian Portuguese'
 mkdir -p "$(dirname "$output")"
 temporary_output="$(mktemp "${output}.XXXXXX")"
 cat > "$temporary_output" <<EOF
+## [${version}] - ${release_date}
+
+**GLPI validated:** 10.0.20<br>
+**PHP:** >= $(sed -n "s/^define('PLUGIN_TORAH_MIN_PHP_VERSION', '\([^']*\)');$/\1/p" setup.php)<br>
+**State:** Stable
+
 ## Changes
 
 $(cat "$section_en")
@@ -159,10 +172,10 @@ $(cat "$section_pt_br")
 ## Compatibility / Compatibilidade
 
 - Declared GLPI compatibility: >= $(sed -n "s/^define('PLUGIN_TORAH_MIN_GLPI_VERSION', '\([^']*\)');$/\1/p" setup.php) and < $(sed -n "s/^define('PLUGIN_TORAH_MAX_GLPI_VERSION', '\([^']*\)');$/\1/p" setup.php).
-- Validated GLPI versions: 10.0.20 and 10.0.25.
+- Validated with: GLPI 10.0.20.
 - Minimum PHP version: >= $(sed -n "s/^define('PLUGIN_TORAH_MIN_PHP_VERSION', '\([^']*\)');$/\1/p" setup.php).
 - Compatibilidade GLPI declarada: >= $(sed -n "s/^define('PLUGIN_TORAH_MIN_GLPI_VERSION', '\([^']*\)');$/\1/p" setup.php) e < $(sed -n "s/^define('PLUGIN_TORAH_MAX_GLPI_VERSION', '\([^']*\)');$/\1/p" setup.php).
-- Versões GLPI validadas: 10.0.20 e 10.0.25.
+- Validado com: GLPI 10.0.20.
 - Versão mínima do PHP: >= $(sed -n "s/^define('PLUGIN_TORAH_MIN_PHP_VERSION', '\([^']*\)');$/\1/p" setup.php).
 
 ## Production installation packages / Pacotes de instalação de produção

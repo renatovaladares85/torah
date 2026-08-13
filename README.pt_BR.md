@@ -13,15 +13,14 @@ A documentação fonte e autoritativa em inglês está em [README.md](README.md)
 
 | Torah | GLPI | PHP |
 |---|---|---|
-| 0.4.9-rc.1 (pré-release) | >= 10.0.20 e < 10.0.99 | >= 8.2 |
+| 0.4.9 | >= 10.0.20 e < 10.0.99 | >= 8.2 |
 | 0.1.x | >= 10.0.20 e < 10.0.99 | >= 8.2 |
 
-A validação inicial abrange GLPI 10.0.20 e 10.0.25. Não há compatibilidade
+A versão 0.4.9 do Torah foi validada com GLPI 10.0.20. Não há compatibilidade
 declarada fora desta matriz.
 
-A versão 0.4.9-rc.1 é uma pré-release pública em estado de desenvolvimento.
-Instale-a somente a partir do pacote de produção validado depois que a draft
-no GitHub for revisada e publicada.
+A versão 0.4.9 é uma release estável. Instale-a somente a partir do pacote de
+produção validado na release publicada correspondente no GitHub.
 
 ## Recursos principais
 

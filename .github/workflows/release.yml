@@ -55,6 +55,7 @@ jobs:
           tools/generate-release-notes.sh \
             --tag "$RELEASE_TAG" \
             --version "$version" \
+            --date "$(date +%F)" \
             --repository "${{ github.repository }}" \
             --checksums dist/SHA256SUMS.txt \
             --changelog-pt-br CHANGELOG.pt_BR.md \
@@ -77,5 +78,5 @@ jobs:
             --verify-tag \
             --draft \
             "${prerelease_args[@]}" \
-            --title "Torah ${version}" \
+            --title "Torah ${version} [GLPI 10.0.20]" \
             --notes-file "$RUNNER_TEMP/release-notes.md"

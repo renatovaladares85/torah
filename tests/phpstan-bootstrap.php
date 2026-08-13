@@ -7,7 +7,7 @@ if (!function_exists('__')) {
 }
 
 if (!defined('PLUGIN_TORAH_VERSION')) {
-   define('PLUGIN_TORAH_VERSION', '0.4.9-rc.1');
+   define('PLUGIN_TORAH_VERSION', '0.4.9');
 }
 
 class Config
@@ -17,6 +17,9 @@ class Config
    }
 
    public static function setConfigurationValues(string $context, array $values): void {
+   }
+
+   public static function deleteConfigurationValues(string $context, array $values = []): void {
    }
 }
 

@@ -49,4 +49,11 @@ final class GlpiGlobalActorSettingsStore
    public function saveRaw(array $values): void {
        Config::setConfigurationValues(GlobalActorItemtypePolicy::CONTEXT, $values);
    }
+
+   public function clear(): void {
+      $keys = array_keys($this->raw());
+      if ($keys !== []) {
+         Config::deleteConfigurationValues(GlobalActorItemtypePolicy::CONTEXT, $keys);
+      }
+   }
 }

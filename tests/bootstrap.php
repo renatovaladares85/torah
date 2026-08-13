@@ -35,5 +35,12 @@ if (!class_exists('Config')) {
       public static function setTestConfigurationValues(string $context, array $values): void {
          self::$values[$context] = $values;
       }
+
+      /** @param list<string> $values */
+      public static function deleteConfigurationValues(string $context, array $values = []): void {
+         foreach ($values as $key) {
+            unset(self::$values[$context][$key]);
+         }
+      }
    }
 }

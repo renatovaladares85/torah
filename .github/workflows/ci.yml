@@ -142,6 +142,8 @@ jobs:
           php "$RUNNER_TEMP/glpi/bin/console" plugin:deactivate --no-interaction torah
           php "$RUNNER_TEMP/glpi/bin/console" plugin:activate --no-interaction torah
           php "$RUNNER_TEMP/glpi/bin/console" plugin:uninstall --no-interaction torah
+          php "$RUNNER_TEMP/glpi/bin/console" plugin:install --no-interaction --username=glpi torah
+          php "$RUNNER_TEMP/glpi/bin/console" plugin:activate --no-interaction torah
 
       - name: Run GLPI integration tests
         env:

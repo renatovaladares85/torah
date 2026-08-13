@@ -17,7 +17,7 @@ final class PluginLifecycleTest extends TestCase
       }
    }
 
-   public function testInstallStartsEmptyAndUninstallRemovesOnlyPluginTables(): void {
+   public function testInstallStartsEmptyAndUninstallRemovesOnlyTorahData(): void {
        global $DB;
 
        self::assertTrue(DatabaseInstaller::install('0.2.0'));
@@ -32,11 +32,32 @@ final class PluginLifecycleTest extends TestCase
        self::assertSame(0, countElementsInTable(DatabaseInstaller::BLOCKED_RULE_TABLE));
        self::assertSame(0, countElementsInTable(DatabaseInstaller::POLICY_OPTION_TABLE));
 
-       self::assertTrue(DatabaseInstaller::install('0.2.0'));
+       Config::setConfigurationValues('plugin:torah', [
+           'release_test_key' => 'release-test-value',
+       ]);
+       Config::setConfigurationValues('plugin:release-test-control', [
+           'control_key' => 'control-value',
+       ]);
+       self::assertSame(
+           'release-test-value',
+           Config::getConfigurationValues('plugin:torah')['release_test_key'] ?? null,
+       );
+
        self::assertTrue(DatabaseInstaller::uninstall());
        self::assertFalse($DB->tableExists(DatabaseInstaller::POLICY_SET_TABLE, false));
        self::assertFalse($DB->tableExists(DatabaseInstaller::BLOCKED_RULE_TABLE, false));
        self::assertFalse($DB->tableExists(DatabaseInstaller::POLICY_OPTION_TABLE, false));
+       self::assertSame([], Config::getConfigurationValues('plugin:torah'));
+       self::assertSame(
+           ['control_key' => 'control-value'],
+           Config::getConfigurationValues('plugin:release-test-control'),
+       );
+
+       self::assertTrue(DatabaseInstaller::install('0.4.9'));
+       self::assertSame(0, countElementsInTable(DatabaseInstaller::POLICY_SET_TABLE));
+       self::assertSame(0, countElementsInTable(DatabaseInstaller::BLOCKED_RULE_TABLE));
+       self::assertSame(0, countElementsInTable(DatabaseInstaller::POLICY_OPTION_TABLE));
+       Config::deleteConfigurationValues('plugin:release-test-control', ['control_key']);
    }
 
    /** @return list<string> */

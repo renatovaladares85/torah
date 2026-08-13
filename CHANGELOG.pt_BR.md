@@ -5,7 +5,7 @@ O [CHANGELOG.md](CHANGELOG.md) em inglês é a fonte autoritativa.
 
 ## [Unreleased]
 
-## [0.4.9-rc.1] - 2026-08-03
+## [0.4.9] - 2026-08-13
 
 ### Adicionado
 
@@ -24,11 +24,13 @@ O [CHANGELOG.md](CHANGELOG.md) em inglês é a fonte autoritativa.
 - Preservado 0.4.8 como marco interno e imutável de desenvolvimento, sem
   release no GitHub, e identificadas as entradas anteriores do changelog como
   marcos de desenvolvimento, não como releases publicadas.
-- Preparado 0.4.9-rc.1 como a primeira pré-release pública. Sua draft release
-  conterá somente assets de pacote de produção validados e checksums.
+- Preparado o 0.4.9 como a primeira release pública estável, com somente assets
+  de pacote de produção validados e checksums.
 
 ### Corrigido
 
 - Impedida a criação de draft releases com notas estáticas não relacionadas à
   seção correspondente do changelog.
 - Removidos links do changelog para releases e tags inexistentes.
+- Removidas as configurações globais pertencentes ao Torah durante a
+  desinstalação do plugin.

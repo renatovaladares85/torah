@@ -17,6 +17,7 @@
 | Backend property enforcement | `FieldMutationDetector`, ticket update hook | Property catalog tests |
 | External capability support | `CapabilityRegistry`, `PolicyApi` | Capability tests |
 | Plugin-owned persistence | `DatabaseInstaller`, `GlpiPolicyStore` | GLPI lifecycle matrix |
+| Torah-owned global configuration cleanup | `GlpiGlobalActorSettingsStore::clear` called by `DatabaseInstaller::uninstall` | GLPI lifecycle test verifies the exact `plugin:torah` context is removed while an external context is preserved |
 | Secure administration | GLPI HTTP CSRF pipeline and admin endpoints | Endpoint and form CSRF regression tests |
 | Profile-grouped administrative policy matrix UI | `AdminPage`, admin Twig templates, scoped JavaScript | Administrative view-model and matrix action tests |
 | Reversible ticket field locks | `TicketControlCatalog`, `TicketPolicyPayload`, Select2/Flatpickr-aware ticket JavaScript scoped to GLPI `#itil-form` | Catalog, payload and JavaScript regression tests |

@@ -86,6 +86,8 @@ final class DatabaseInstaller
    public static function uninstall(): bool {
        global $DB;
 
+      (new GlpiGlobalActorSettingsStore())->clear();
+
       foreach ([self::POLICY_OPTION_TABLE, self::BLOCKED_RULE_TABLE, self::POLICY_SET_TABLE] as $table) {
          if ($DB->tableExists($table)) {
             $DB->queryOrDie("DROP TABLE `$table`", sprintf('Unable to remove %s.', $table));

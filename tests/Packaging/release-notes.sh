@@ -9,8 +9,9 @@ trap 'rm -rf "$work"' EXIT
 
 fixture="$work/fixture"
 mkdir -p "$fixture/dist"
-version='0.4.9-rc.1'
+version='0.4.9'
 tag="v${version}"
+release_date='2026-08-13'
 
 write_fixture() {
     local changelog="$1"
@@ -29,7 +30,7 @@ write_fixture() {
 run_generator() {
     (
         cd "$fixture"
-        TORAH_RELEASE_NOTES_ROOT="$fixture" "$generator" --tag "$1" --version "$2" --repository renatovaladares85/torah --checksums dist/SHA256SUMS.txt --changelog-pt-br CHANGELOG.pt_BR.md --output "$fixture/release-notes.md"
+        TORAH_RELEASE_NOTES_ROOT="$fixture" "$generator" --tag "$1" --version "$2" --date "$release_date" --repository renatovaladares85/torah --checksums dist/SHA256SUMS.txt --changelog-pt-br CHANGELOG.pt_BR.md --output "$fixture/release-notes.md"
     )
 }
 
@@ -40,9 +41,12 @@ expect_failure() {
     fi
 }
 
-valid_changelog=$'# Changelog\n\n## [Unreleased]\n\n## [0.4.9-rc.1] - 2026-08-03\n\n### Added\n\n- Keeps **Markdown** and special characters: & < >.\n\n## [0.4.8] - 2026-08-01\n\n### Fixed\n\n- Previous development milestone.\n'
+valid_changelog=$'# Changelog\n\n## [Unreleased]\n\n## [0.4.9] - 2026-08-03\n\n### Added\n\n- Keeps **Markdown** and special characters: & < >.\n\n## [0.4.8] - 2026-08-01\n\n### Fixed\n\n- Previous development milestone.\n'
 write_fixture "$valid_changelog"
 run_generator "$tag" "$version"
+rg -q "^## \[${version}\] - ${release_date}$" "$fixture/release-notes.md"
+rg -q '^\*\*GLPI validated:\*\* 10.0.20<br>$' "$fixture/release-notes.md"
+rg -q '^\*\*State:\*\* Stable$' "$fixture/release-notes.md"
 rg -q '^### Added$' "$fixture/release-notes.md"
 rg -q '^## Alterações$' "$fixture/release-notes.md"
 rg -q 'Keeps \*\*Markdown\*\* and special characters: & < >.' "$fixture/release-notes.md"
@@ -54,9 +58,12 @@ fi
 
 expect_failure run_generator "$version" "$version"
 expect_failure run_generator "$tag" 0.4.8
+release_date='2026-02-30'
+expect_failure run_generator "$tag" "$version"
+release_date='2026-08-13'
 write_fixture $'# Changelog\n\n## [Unreleased]\n'
 expect_failure run_generator "$tag" "$version"
-write_fixture $'# Changelog\n\n## [Unreleased]\n\n## [0.4.9-rc.1] - 2026-08-03\n\n## [0.4.8] - 2026-08-01\n'
+write_fixture $'# Changelog\n\n## [Unreleased]\n\n## [0.4.9] - 2026-08-03\n\n## [0.4.8] - 2026-08-01\n'
 expect_failure run_generator "$tag" "$version"
 write_fixture "$valid_changelog" 0.4.8 "$version"
 expect_failure run_generator "$tag" "$version"
