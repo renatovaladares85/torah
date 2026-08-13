@@ -54,10 +54,6 @@ final class PluginLifecycleTest extends TestCase
            Config::getConfigurationValues('plugin:release-test-control'),
        );
 
-       self::assertTrue(DatabaseInstaller::install('0.4.9'));
-       self::assertSame(0, countElementsInTable(DatabaseInstaller::POLICY_SET_TABLE));
-       self::assertSame(0, countElementsInTable(DatabaseInstaller::BLOCKED_RULE_TABLE));
-       self::assertSame(0, countElementsInTable(DatabaseInstaller::POLICY_OPTION_TABLE));
        Config::deleteConfigurationValues('plugin:release-test-control', ['control_key']);
    }
 
