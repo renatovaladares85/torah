@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace GlpiPlugin\Torah\Tests\Integration;
 
+use Config;
 use GlpiPlugin\Torah\Infrastructure\Glpi\DatabaseInstaller;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\TestCase;
