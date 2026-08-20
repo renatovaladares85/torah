@@ -17,6 +17,9 @@ final class PolicyCatalogTest extends TestCase
        self::assertTrue($catalog->has('ticket.field.time_to_own.add'));
        self::assertTrue($catalog->has('ticket.field.time_to_own.update'));
        self::assertFalse($catalog->has('ticket.field.time_to_own'));
+       self::assertFalse($catalog->has('ticket.field.users_id_recipient.add'));
+       self::assertFalse($catalog->has('ticket.field.users_id_recipient.update'));
+       self::assertNull($catalog->findControlByRuleKey('ticket.field.users_id_recipient.update'));
    }
 
    public function testExternalCapabilityAppearsInSeparateGroup(): void {

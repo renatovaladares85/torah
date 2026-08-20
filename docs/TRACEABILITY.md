@@ -38,5 +38,6 @@
 | Capability-based Ticket control catalog | Static `TicketControlCatalog` definitions for GLPI 10.0.20 capabilities | Catalog and administrative model regression tests |
 | Complete dynamic logical-control UI locks | Composite SLA/OLA, associated-item and linked-ticket selectors with reversible action/rich-text locks | Catalog and ticket-policy JavaScript regression tests |
 | Interface versus explicit backend mutation enforcement | `TicketMutationGuard` interactive request classification and `PolicyResolver::decide` for known UI mutations | Guard and backend-policy regression tests |
+| Removed native By field support | `TicketFieldCatalog` exclusion and `DatabaseInstaller` recipient-rule cleanup | Catalog, backend-policy, and lifecycle migration tests |
 
 Update this matrix whenever a requirement or implementation boundary changes.

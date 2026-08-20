@@ -28,6 +28,15 @@ final class BackendRulePolicyTest extends TestCase
       self::assertFalse(BackendRulePolicy::enforces($set, 'ticket.field.type.update', $this->catalog()));
    }
 
+   public function testRemainingBackendRulesDecodeAfterRecipientRuleRemoval(): void {
+      $catalog = $this->catalog();
+
+      self::assertSame(
+         ['ticket.field.location.update', 'ticket.field.contract.update'],
+         BackendRulePolicy::decode('["ticket.field.location.update","ticket.field.contract.update"]', $catalog),
+      );
+   }
+
    private function catalog(): PolicyCatalog {
       return new PolicyCatalog(new CapabilityRegistry());
    }

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace GlpiPlugin\Torah\Tests\Integration;
 
 use Config;
+use GlpiPlugin\Torah\Application\BackendRulePolicy;
 use GlpiPlugin\Torah\Infrastructure\Glpi\DatabaseInstaller;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\TestCase;
@@ -55,6 +56,62 @@ final class PluginLifecycleTest extends TestCase
        );
 
        Config::deleteConfigurationValues('plugin:release-test-control', ['control_key']);
+   }
+
+   public function testInstallRemovesDeprecatedRecipientRulesWithoutChangingOtherRules(): void {
+      global $DB;
+
+      self::assertTrue(DatabaseInstaller::install('0.4.10'));
+      self::assertTrue($DB->insert(DatabaseInstaller::POLICY_SET_TABLE, [
+          'profiles_id' => 999991,
+          'entities_id' => 0,
+          'is_recursive' => 0,
+      ]));
+      $policySetId = (int) $DB->insertId();
+      foreach ([
+          'ticket.field.location.update',
+          'ticket.field.users_id_recipient',
+          'ticket.field.users_id_recipient.add',
+          'ticket.field.users_id_recipient.update',
+          'ticket.field.contract.update',
+      ] as $rule) {
+         self::assertTrue($DB->insert(DatabaseInstaller::BLOCKED_RULE_TABLE, [
+             'plugin_torah_policysets_id' => $policySetId,
+             'rule_key' => $rule,
+         ]));
+      }
+      self::assertTrue($DB->insert(DatabaseInstaller::POLICY_OPTION_TABLE, [
+          'plugin_torah_policysets_id' => $policySetId,
+          'option_key' => BackendRulePolicy::OPTION_KEY,
+          'option_value' => '["ticket.field.location.update","ticket.field.users_id_recipient.update","ticket.field.contract.update"]',
+      ]));
+
+      self::assertTrue(DatabaseInstaller::install('0.4.11'));
+      $rules = [];
+      foreach ($DB->request([
+          'SELECT' => ['rule_key'],
+          'FROM' => DatabaseInstaller::BLOCKED_RULE_TABLE,
+          'WHERE' => ['plugin_torah_policysets_id' => $policySetId],
+          'ORDER' => ['rule_key ASC'],
+      ]) as $row) {
+         $rules[] = (string) $row['rule_key'];
+      }
+      self::assertSame(['ticket.field.contract.update', 'ticket.field.location.update'], $rules);
+
+      $options = $DB->request([
+          'SELECT' => ['option_value'],
+          'FROM' => DatabaseInstaller::POLICY_OPTION_TABLE,
+          'WHERE' => [
+              'plugin_torah_policysets_id' => $policySetId,
+              'option_key' => BackendRulePolicy::OPTION_KEY,
+          ],
+          'LIMIT' => 1,
+      ]);
+      self::assertSame(
+         ['ticket.field.location.update', 'ticket.field.contract.update'],
+         json_decode((string) $options->current()['option_value'], true, 32, JSON_THROW_ON_ERROR),
+      );
+      self::assertTrue(DatabaseInstaller::install('0.4.11'));
    }
 
    /** @return list<string> */

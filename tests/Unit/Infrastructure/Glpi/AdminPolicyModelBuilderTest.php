@@ -15,7 +15,7 @@ final class AdminPolicyModelBuilderTest extends TestCase
       $controls = $model['field_rules'];
 
       self::assertSame([
-          'title', 'description', 'entity', 'opening_date', 'type', 'category', 'status', 'request_source', 'urgency', 'impact', 'priority', 'location', 'contract', 'total_duration', 'recipient',
+          'title', 'description', 'entity', 'opening_date', 'type', 'category', 'status', 'request_source', 'urgency', 'impact', 'priority', 'location', 'contract', 'total_duration',
           'approval_request', 'requester', 'observer', 'assignee', 'associated_items', 'tto', 'ttr', 'internal_tto', 'internal_ttr', 'linked_tickets', 'solution_date', 'closing_date',
       ], array_column($controls, 'key'));
       foreach ($controls as $control) {
@@ -30,6 +30,7 @@ final class AdminPolicyModelBuilderTest extends TestCase
          self::assertIsBool($control['sensitive']);
          self::assertNotInstanceOf(TicketControlDefinition::class, $control);
       }
+      self::assertNotContains('recipient', array_column($controls, 'key'));
       $resolution = $controls[array_search('solution_date', array_column($controls, 'key'), true)];
       self::assertFalse($resolution['opening_applicable']);
       self::assertTrue($resolution['update_applicable']);

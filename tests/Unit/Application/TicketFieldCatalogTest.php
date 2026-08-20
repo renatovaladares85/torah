@@ -30,6 +30,7 @@ final class TicketFieldCatalogTest extends TestCase
        self::assertContains('category', $keys);
        self::assertContains('sla_tto', $keys);
        self::assertContains('ola_ttr', $keys);
+       self::assertNotContains('users_id_recipient', array_map(static fn ($field): string => $field->inputKey, $fields));
    }
 
    public function testConditionalDatesRetainTheirExistingRuleKeysAndFriendlyLabels(): void {

@@ -13,7 +13,7 @@ final class TicketControlCatalogTest extends TestCase
       $catalog = new TicketControlCatalog();
       $keys = array_map(static fn ($control) => $control->key, $catalog->all());
 
-      foreach (['title', 'description', 'entity', 'location', 'contract', 'recipient', 'tto', 'ttr', 'internal_tto', 'internal_ttr', 'associated_items', 'linked_tickets'] as $key) {
+      foreach (['title', 'description', 'entity', 'location', 'contract', 'tto', 'ttr', 'internal_tto', 'internal_ttr', 'associated_items', 'linked_tickets'] as $key) {
          self::assertContains($key, $keys);
          self::assertNotNull($catalog->get($key));
       }
@@ -60,7 +60,7 @@ final class TicketControlCatalogTest extends TestCase
    public function testGlpiTenDropdownControlsUseTheirSelect2WidgetStrategy(): void {
       $catalog = new TicketControlCatalog();
 
-      foreach (['entity', 'type', 'category', 'status', 'request_source', 'urgency', 'impact', 'priority', 'location', 'total_duration', 'recipient'] as $key) {
+      foreach (['entity', 'type', 'category', 'status', 'request_source', 'urgency', 'impact', 'priority', 'location', 'total_duration'] as $key) {
          self::assertSame('select2', $catalog->get($key)?->lockStrategy, $key);
       }
    }
@@ -116,8 +116,10 @@ final class TicketControlCatalogTest extends TestCase
       self::assertSame([], $catalog->get('entity')?->updateRuleKeys);
       self::assertSame(['ticket.field.contract.add'], $catalog->get('contract')?->addRuleKeys);
       self::assertSame(['ticket.field.contract.update'], $catalog->get('contract')?->updateRuleKeys);
-      self::assertSame([], $catalog->get('recipient')?->addRuleKeys);
-      self::assertSame(['ticket.field.users_id_recipient.update'], $catalog->get('recipient')?->updateRuleKeys);
+      self::assertNull($catalog->get('recipient'));
+      foreach ($catalog->all() as $control) {
+         self::assertNotContains('[name="users_id_recipient"]', $control->selectors);
+      }
       self::assertSame('richtext', $catalog->get('description')?->lockStrategy);
    }
 }

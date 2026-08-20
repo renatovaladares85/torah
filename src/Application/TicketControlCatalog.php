@@ -23,7 +23,6 @@ final class TicketControlCatalog
          $this->field('location', __('Location', 'torah'), 'location', 'locations_id', false, 'select2'),
          new TicketControlDefinition('contract', __('Contract', 'torah'), ['ticket.field.contract.add'], ['ticket.field.contract.update'], ['[name="_contracts_id"]'], false, 'select2'),
          $this->field('total_duration', __('Total duration', 'torah'), 'total_duration', 'actiontime', false, 'select2'),
-         new TicketControlDefinition('recipient', __('By', 'torah'), [], ['ticket.field.users_id_recipient.update'], ['[name="users_id_recipient"]'], false, 'select2'),
          new TicketControlDefinition(
             'approval_request',
             __('Approval request', 'torah'),

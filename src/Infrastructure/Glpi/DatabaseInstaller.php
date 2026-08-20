@@ -3,6 +3,7 @@
 namespace GlpiPlugin\Torah\Infrastructure\Glpi;
 
 use DBConnection;
+use GlpiPlugin\Torah\Application\BackendRulePolicy;
 use GlpiPlugin\Torah\Application\GlobalActorItemtypePolicy;
 use Migration;
 
@@ -11,6 +12,13 @@ final class DatabaseInstaller
    public const POLICY_SET_TABLE = 'glpi_plugin_torah_policysets';
    public const BLOCKED_RULE_TABLE = 'glpi_plugin_torah_blockedrules';
    public const POLICY_OPTION_TABLE = 'glpi_plugin_torah_policyoptions';
+
+   /** @var list<string> */
+   private const REMOVED_RECIPIENT_RULE_KEYS = [
+       'ticket.field.users_id_recipient',
+       'ticket.field.users_id_recipient.add',
+       'ticket.field.users_id_recipient.update',
+   ];
 
    public static function install(string $version): bool {
        global $DB;
@@ -77,6 +85,7 @@ final class DatabaseInstaller
        self::migrateLegacyFieldRules();
        self::migrateLegacyActorRules();
        self::migrateLegacyActorItemtypes();
+       self::removeDeprecatedRecipientRules();
 
        $migration->executeMigration();
 
@@ -161,6 +170,40 @@ final class DatabaseInstaller
             }
          }
          $DB->delete(self::BLOCKED_RULE_TABLE, ['id' => (int) $row['id']]);
+      }
+   }
+
+   private static function removeDeprecatedRecipientRules(): void {
+       global $DB;
+
+       $DB->delete(self::BLOCKED_RULE_TABLE, ['rule_key' => self::REMOVED_RECIPIENT_RULE_KEYS]);
+
+       $now = $_SESSION['glpi_currenttime'] ?? date('Y-m-d H:i:s');
+      foreach ($DB->request([
+           'SELECT' => ['id', 'option_value'],
+           'FROM'   => self::POLICY_OPTION_TABLE,
+           'WHERE'  => ['option_key' => BackendRulePolicy::OPTION_KEY],
+       ]) as $option) {
+         try {
+            $keys = json_decode((string) $option['option_value'], true, 32, JSON_THROW_ON_ERROR);
+         } catch (\JsonException) {
+            continue;
+         }
+         if (!is_array($keys)) {
+            continue;
+         }
+
+         $filtered = array_values(array_filter(
+             $keys,
+             static fn (mixed $key): bool => !is_string($key) || !in_array($key, self::REMOVED_RECIPIENT_RULE_KEYS, true),
+         ));
+         if ($filtered === $keys) {
+            continue;
+         }
+         $DB->update(self::POLICY_OPTION_TABLE, [
+             'option_value' => json_encode($filtered, JSON_THROW_ON_ERROR),
+             'date_mod'     => $now,
+         ], ['id' => (int) $option['id']]);
       }
    }
 

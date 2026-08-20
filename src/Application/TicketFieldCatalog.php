@@ -23,7 +23,6 @@ final class TicketFieldCatalog
        'itemtype'                 => 'associated_item_type',
        'items_id'                 => 'associated_item',
        'entities_id'              => 'entity',
-       'users_id_recipient'       => 'users_id_recipient',
        'global_validation'        => 'approval_status',
    ];
 
@@ -122,7 +121,6 @@ final class TicketFieldCatalog
            'itemtype'                 => __('Associated item type', 'torah'),
            'items_id'                 => __('Associated item', 'torah'),
            'entities_id'              => __('Entity', 'torah'),
-           'users_id_recipient'       => __('By', 'torah'),
            'global_validation'        => __('Approval status', 'torah'),
        ];
    }
