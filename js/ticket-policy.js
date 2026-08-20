@@ -132,6 +132,9 @@
       }
       state.nativeSelectLocked = true;
       addClasses(state, element, ['pe-none', 'opacity-75']);
+      if (element.matches('button, input')) {
+         element.disabled = true;
+      }
       element.setAttribute('aria-disabled', 'true');
       element.setAttribute('title', message);
       element.setAttribute('tabindex', '-1');
@@ -223,6 +226,29 @@
    }
       addClasses(state, wrapper, ['opacity-75']);
    };
+   const lockAction = (element, message) => {
+      const state = stateFor(element);
+      if (!state) {
+         return;
+      }
+      addClasses(state, element, ['pe-none', 'opacity-75']);
+      element.setAttribute('aria-disabled', 'true');
+      element.setAttribute('title', message);
+      element.setAttribute('tabindex', '-1');
+      addPreventers(element, state);
+   };
+   const lockRichtext = (element, message) => {
+      lockSimpleInput(element, message);
+      const state = element._torahLockState;
+      const editor = window.tinymce?.get(element.id);
+      if (!state || state.richtextLocked || !editor || typeof editor.mode?.set !== 'function') {
+         return;
+      }
+      state.richtextLocked = true;
+      const mode = editor.mode.get?.();
+      editor.mode.set('readonly');
+      state.cleanup.push(() => editor.mode.set(mode || 'design'));
+   };
    const lockCompositeControl = (form, rule, message) => {
       if ((rule.controls || []).length === 0) {
          applyRule(form, { ...rule, strategy: 'text' }, message);
@@ -264,6 +290,10 @@
                   lockNativeSelect(element, message);
                } else if (rule.strategy === 'actor' || rule.strategy === 'relation') {
                   lockActor(element, message);
+               } else if (rule.strategy === 'action') {
+                  lockAction(element, message);
+               } else if (rule.strategy === 'richtext') {
+                  lockRichtext(element, message);
                } else {
                   lockSimpleInput(element, message);
                }

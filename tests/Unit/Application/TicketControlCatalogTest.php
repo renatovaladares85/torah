@@ -9,13 +9,22 @@ use PHPUnit\Framework\TestCase;
 
 final class TicketControlCatalogTest extends TestCase
 {
-   public function testMatrixContainsTheTwentyOneSupportedControls(): void {
-      self::assertCount(21, (new TicketControlCatalog())->all());
+   public function testMatrixContainsEverySupportedLogicalControl(): void {
+      $catalog = new TicketControlCatalog();
+      $keys = array_map(static fn ($control) => $control->key, $catalog->all());
+
+      foreach (['title', 'description', 'entity', 'location', 'contract', 'recipient', 'tto', 'ttr', 'internal_tto', 'internal_ttr', 'associated_items', 'linked_tickets'] as $key) {
+         self::assertContains($key, $keys);
+         self::assertNotNull($catalog->get($key));
+      }
    }
 
    public function testLogicalControlKeysMapToTheRealGlpiInputNames(): void {
       $catalog = new TicketControlCatalog();
       $expected = [
+          'title' => 'name',
+          'description' => 'content',
+          'location' => 'locations_id',
           'opening_date' => 'date',
           'category' => 'itilcategories_id',
           'request_source' => 'requesttypes_id',
@@ -39,6 +48,10 @@ final class TicketControlCatalogTest extends TestCase
       self::assertSame([
           ['strategy' => 'flatpickr', 'selectors' => ['[name="time_to_own"]']],
           ['strategy' => 'select2', 'selectors' => ['[name="slas_id_tto"]']],
+          ['strategy' => 'action', 'selectors' => [
+             'label[for^="slas_id_tto_"] + .field-container button[id^="button_assign_la_"]',
+             'label[for^="slas_id_tto_"] + .field-container i[onclick^="delete_date_"]',
+          ]],
       ], $catalog->get('tto')?->controls);
       self::assertSame([], $catalog->get('solution_date')?->addRuleKeys);
       self::assertSame(['ticket.field.solution_date.update'], $catalog->get('solution_date')?->updateRuleKeys);
@@ -47,7 +60,7 @@ final class TicketControlCatalogTest extends TestCase
    public function testGlpiTenDropdownControlsUseTheirSelect2WidgetStrategy(): void {
       $catalog = new TicketControlCatalog();
 
-      foreach (['type', 'category', 'status', 'request_source', 'urgency', 'impact', 'priority', 'total_duration'] as $key) {
+      foreach (['entity', 'type', 'category', 'status', 'request_source', 'urgency', 'impact', 'priority', 'location', 'total_duration', 'recipient'] as $key) {
          self::assertSame('select2', $catalog->get($key)?->lockStrategy, $key);
       }
    }
@@ -92,5 +105,19 @@ final class TicketControlCatalogTest extends TestCase
 
       self::assertSame('tto', $control?->key);
       self::assertSame('TTO', $control?->label);
+   }
+
+   public function testNewControlsReuseStableRulesAndApplicableActions(): void {
+      $catalog = new TicketControlCatalog();
+
+      self::assertSame(['ticket.field.name.add'], $catalog->get('title')?->addRuleKeys);
+      self::assertSame(['ticket.field.content.add'], $catalog->get('description')?->addRuleKeys);
+      self::assertSame(['ticket.field.entity.add'], $catalog->get('entity')?->addRuleKeys);
+      self::assertSame([], $catalog->get('entity')?->updateRuleKeys);
+      self::assertSame(['ticket.field.contract.add'], $catalog->get('contract')?->addRuleKeys);
+      self::assertSame(['ticket.field.contract.update'], $catalog->get('contract')?->updateRuleKeys);
+      self::assertSame([], $catalog->get('recipient')?->addRuleKeys);
+      self::assertSame(['ticket.field.users_id_recipient.update'], $catalog->get('recipient')?->updateRuleKeys);
+      self::assertSame('richtext', $catalog->get('description')?->lockStrategy);
    }
 }

@@ -35,5 +35,10 @@ final class TicketPolicyJavascriptTest extends TestCase
       self::assertStringContainsString('lockSelect2(element, message)', $script);
       self::assertStringContainsString('applyContainer(container, false)', $script);
       self::assertStringContainsString('state.cleanup.forEach', $script);
+      self::assertStringContainsString('const lockAction', $script);
+      self::assertStringContainsString('const lockRichtext', $script);
+      self::assertStringContainsString("rule.strategy === 'action'", $script);
+      self::assertStringContainsString("rule.strategy === 'richtext'", $script);
+      self::assertStringContainsString("editor.mode.set('readonly')", $script);
    }
 }

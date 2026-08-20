@@ -85,3 +85,8 @@ These instructions apply to the entire repository.
   migrations.
 - Built-in policy rules currently target GLPI tickets only. Expanding built-in
   rules to other GLPI objects requires explicit approval and documentation.
+- The administrative Ticket control catalog represents capabilities supported by
+  the target GLPI version; it must not depend on available data or the current DOM.
+- An Opening or Update UI restriction covers every user-initiated mutation path
+  for that logical control. Backend remains the explicit extension to
+  non-interactive operations.

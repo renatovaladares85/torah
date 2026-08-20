@@ -8,6 +8,9 @@ final class TicketControlCatalog
    /** @return list<TicketControlDefinition> */
    public function all(): array {
       return [
+         $this->field('title', __('Title', 'torah'), 'name', 'name'),
+         $this->field('description', __('Description', 'torah'), 'content', 'content', false, 'richtext'),
+         new TicketControlDefinition('entity', __('Entity', 'torah'), ['ticket.field.entity.add'], [], ['[name="entities_id"]'], false, 'select2'),
          $this->field('opening_date', __('Opening date', 'torah'), 'opening_date', 'date', false, 'flatpickr'),
          // GLPI 10.0.20 adapts these dropdown helpers with Select2.
          $this->field('type', __('Type', 'torah'), 'type', 'type', false, 'select2'),
@@ -17,7 +20,10 @@ final class TicketControlCatalog
          $this->field('urgency', __('Urgency', 'torah'), 'urgency', 'urgency', false, 'select2'),
          $this->field('impact', __('Impact', 'torah'), 'impact', 'impact', false, 'select2'),
          $this->field('priority', __('Priority', 'torah'), 'priority', 'priority', true, 'select2'),
+         $this->field('location', __('Location', 'torah'), 'location', 'locations_id', false, 'select2'),
+         new TicketControlDefinition('contract', __('Contract', 'torah'), ['ticket.field.contract.add'], ['ticket.field.contract.update'], ['[name="_contracts_id"]'], false, 'select2'),
          $this->field('total_duration', __('Total duration', 'torah'), 'total_duration', 'actiontime', false, 'select2'),
+         new TicketControlDefinition('recipient', __('By', 'torah'), [], ['ticket.field.users_id_recipient.update'], ['[name="users_id_recipient"]'], false, 'select2'),
          new TicketControlDefinition(
             'approval_request',
             __('Approval request', 'torah'),
@@ -33,12 +39,18 @@ final class TicketControlCatalog
          $this->actor('requester', __('Requester', 'torah'), 'requester'),
          $this->actor('observer', __('Observer', 'torah'), 'observer'),
          $this->actor('assignee', __('Assigned to', 'torah'), 'assign'),
-         new TicketControlDefinition('associated_items', __('Associated items', 'torah'), ['ticket.control.associated_items.add'], ['ticket.control.associated_items.update'], ['[name="itemtype"]', '[name="items_id"]'], false, 'composite'),
-         $this->composite('tto', __('TTO', 'torah'), ['ticket.field.time_to_own.add', 'ticket.field.sla_tto.add'], ['ticket.field.time_to_own.update', 'ticket.field.sla_tto.update'], '[name="time_to_own"]', '[name="slas_id_tto"]'),
-         $this->composite('ttr', __('TTR', 'torah'), ['ticket.field.solution_deadline.add', 'ticket.field.sla_ttr.add'], ['ticket.field.solution_deadline.update', 'ticket.field.sla_ttr.update'], '[name="time_to_resolve"]', '[name="slas_id_ttr"]'),
-         $this->composite('internal_tto', __('Internal TTO', 'torah'), ['ticket.field.internal_time_to_own.add', 'ticket.field.ola_tto.add'], ['ticket.field.internal_time_to_own.update', 'ticket.field.ola_tto.update'], '[name="internal_time_to_own"]', '[name="olas_id_tto"]'),
-         $this->composite('internal_ttr', __('Internal TTR', 'torah'), ['ticket.field.internal_solution_deadline.add', 'ticket.field.ola_ttr.add'], ['ticket.field.internal_solution_deadline.update', 'ticket.field.ola_ttr.update'], '[name="internal_time_to_resolve"]', '[name="olas_id_ttr"]'),
-         new TicketControlDefinition('linked_tickets', __('Linked tickets', 'torah'), ['ticket.control.linked_tickets.add'], ['ticket.control.linked_tickets.update'], ['[name="_link"]', '[name="_linkedto"]'], false, 'relation'),
+         new TicketControlDefinition('associated_items', __('Associated items', 'torah'), ['ticket.control.associated_items.add'], ['ticket.control.associated_items.update'], ['[name="itemtype"]', '[name="items_id"]', '[name^="items_id["]', '[id^="dropdown_my_items"]', 'a[href^="javascript:itemAction"]'], false, 'composite', [
+            ['strategy' => 'select2', 'selectors' => ['[name="itemtype"]', '[name="items_id"]', '[id^="dropdown_my_items"]']],
+            ['strategy' => 'action', 'selectors' => ['a[href^="javascript:itemAction"]']],
+         ]),
+         $this->composite('tto', __('TTO', 'torah'), ['ticket.field.time_to_own.add', 'ticket.field.sla_tto.add'], ['ticket.field.time_to_own.update', 'ticket.field.sla_tto.update'], '[name="time_to_own"]', '[name="slas_id_tto"]', 'slas_id_tto'),
+         $this->composite('ttr', __('TTR', 'torah'), ['ticket.field.solution_deadline.add', 'ticket.field.sla_ttr.add'], ['ticket.field.solution_deadline.update', 'ticket.field.sla_ttr.update'], '[name="time_to_resolve"]', '[name="slas_id_ttr"]', 'slas_id_ttr'),
+         $this->composite('internal_tto', __('Internal TTO', 'torah'), ['ticket.field.internal_time_to_own.add', 'ticket.field.ola_tto.add'], ['ticket.field.internal_time_to_own.update', 'ticket.field.ola_tto.update'], '[name="internal_time_to_own"]', '[name="olas_id_tto"]', 'olas_id_tto'),
+         $this->composite('internal_ttr', __('Internal TTR', 'torah'), ['ticket.field.internal_solution_deadline.add', 'ticket.field.ola_ttr.add'], ['ticket.field.internal_solution_deadline.update', 'ticket.field.ola_ttr.update'], '[name="internal_time_to_resolve"]', '[name="olas_id_ttr"]', 'olas_id_ttr'),
+         new TicketControlDefinition('linked_tickets', __('Linked tickets', 'torah'), ['ticket.control.linked_tickets.add'], ['ticket.control.linked_tickets.update'], ['[name="_link[link]"]', '[name="_link[tickets_id_2]"]', '[name="_link[tickets_id_1]"]', '#link_ticket_dropdowns', 'button[form^="linked_tickets_"]'], false, 'composite', [
+            ['strategy' => 'select2', 'selectors' => ['[name="_link[link]"]', '[name="_link[tickets_id_2]"]']],
+            ['strategy' => 'action', 'selectors' => ['button[data-bs-target="#link_ticket_dropdowns"]', 'button[form^="linked_tickets_"]']],
+         ]),
          new TicketControlDefinition('solution_date', __('Resolution date', 'torah'), [], ['ticket.field.solution_date.update'], ['[name="solvedate"]'], true, 'flatpickr'),
          new TicketControlDefinition('closing_date', __('Close date', 'torah'), [], ['ticket.field.closing_date.update'], ['[name="closedate"]'], true, 'flatpickr'),
       ];
@@ -92,7 +104,7 @@ final class TicketControlCatalog
     * @param list<string> $addRuleKeys
     * @param list<string> $updateRuleKeys
     */
-   private function composite(string $key, string $label, array $addRuleKeys, array $updateRuleKeys, string $dateSelector, string $selectSelector): TicketControlDefinition {
+   private function composite(string $key, string $label, array $addRuleKeys, array $updateRuleKeys, string $dateSelector, string $selectSelector, string $fieldName): TicketControlDefinition {
       return new TicketControlDefinition(
          $key,
          $label,
@@ -104,6 +116,10 @@ final class TicketControlCatalog
          [
             ['strategy' => 'flatpickr', 'selectors' => [$dateSelector]],
             ['strategy' => 'select2', 'selectors' => [$selectSelector]],
+            ['strategy' => 'action', 'selectors' => [
+               'label[for^="' . $fieldName . '_"] + .field-container button[id^="button_assign_la_"]',
+               'label[for^="' . $fieldName . '_"] + .field-container i[onclick^="delete_date_"]',
+            ]],
          ],
       );
    }

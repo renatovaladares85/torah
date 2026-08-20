@@ -14,9 +14,8 @@ final class AdminPolicyModelBuilderTest extends TestCase
       $model = (new AdminPolicyModelBuilder())->build();
       $controls = $model['field_rules'];
 
-      self::assertCount(21, $controls);
       self::assertSame([
-          'opening_date', 'type', 'category', 'status', 'request_source', 'urgency', 'impact', 'priority', 'total_duration',
+          'title', 'description', 'entity', 'opening_date', 'type', 'category', 'status', 'request_source', 'urgency', 'impact', 'priority', 'location', 'contract', 'total_duration', 'recipient',
           'approval_request', 'requester', 'observer', 'assignee', 'associated_items', 'tto', 'ttr', 'internal_tto', 'internal_ttr', 'linked_tickets', 'solution_date', 'closing_date',
       ], array_column($controls, 'key'));
       foreach ($controls as $control) {

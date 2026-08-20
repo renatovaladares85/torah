@@ -5,6 +5,18 @@ based on Keep a Changelog and the project follows Semantic Versioning.
 
 ## [Unreleased]
 
+## [0.4.10] - 2026-08-20
+
+### Fixed
+
+- Completed the static GLPI 10.0.20 Ticket control matrix with title, description,
+  entity, location, contract, and recipient controls.
+- Locked rich-text editing and dynamic SLA/OLA, associated-item, and linked-ticket
+  actions while preserving reversible UI policy behavior.
+- Applied UI-only policy decisions to explicit interactive SLA/OLA and relation
+  mutations without extending frontend-only restrictions to backend operations.
+
+
 ## [0.4.9] - 2026-08-13
 
 ### Added
@@ -241,6 +253,7 @@ based on Keep a Changelog and the project follows Semantic Versioning.
 - Backend hooks reject manual bypass attempts independently of JavaScript.
 - Repository and package validation reject common secrets and private artifacts.
 
-[Unreleased]: https://github.com/renatovaladares85/torah/compare/v0.4.9...HEAD
+[Unreleased]: https://github.com/renatovaladares85/torah/compare/v0.4.10...HEAD
+[0.4.10]: https://github.com/renatovaladares85/torah/compare/v0.4.9...v0.4.10
 [0.4.9]: https://github.com/renatovaladares85/torah/blob/v0.4.9/CHANGELOG.md#049---2026-08-13
 [0.4.8]: https://github.com/renatovaladares85/torah/blob/v0.4.8/CHANGELOG.md#048---2026-08-01

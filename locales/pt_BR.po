@@ -47,6 +47,9 @@ msgstr "Backend"
 msgid "Actor"
 msgstr "Ator"
 
+msgid "By"
+msgstr "Por"
+
 msgid "Category"
 msgstr "Categoria"
 

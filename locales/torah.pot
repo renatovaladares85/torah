@@ -43,6 +43,9 @@ msgstr ""
 msgid "Actor"
 msgstr ""
 
+msgid "By"
+msgstr ""
+
 msgid "Category"
 msgstr ""
 

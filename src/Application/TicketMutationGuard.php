@@ -127,7 +127,7 @@ final class TicketMutationGuard
             $this->allowsActorItemtypes($context, $role, [$this->relationItemtype($item)], $source, $denials);
          }
          $ruleKey = $this->relationRuleKey($item, $action);
-         if ($ruleKey !== null && ($denial = $this->denial($context, $ruleKey, $source)) !== null) {
+         if ($ruleKey !== null && ($denial = $this->denial($context, $ruleKey, $source, $this->isInteractiveRelationMutation($item))) !== null) {
             $denials[$denial['key']] = $denial['label'];
          }
          if ($denials !== []) {
@@ -168,7 +168,7 @@ final class TicketMutationGuard
 
       $denials = [];
       foreach ($ruleKeys as $ruleKey) {
-         $denial = $this->denial($context, $ruleKey, 'level_agreement_delete');
+         $denial = $this->denial($context, $ruleKey, 'level_agreement_delete', $this->isInteractiveLevelAgreementDeletion());
          if ($denial !== null) {
             $denials[$denial['key']] = $denial['label'];
          }
@@ -177,9 +177,11 @@ final class TicketMutationGuard
    }
 
    /** @return array{key: string, label: string}|null */
-   private function denial(AuthorizationContext $context, string $ruleKey, string $source): ?array {
+   private function denial(AuthorizationContext $context, string $ruleKey, string $source, bool $interactive = false): ?array {
       try {
-         $decision = $this->resolver->decideBackend($context, $ruleKey, $this->catalog);
+         $decision = $interactive
+            ? $this->resolver->decide($context, $ruleKey)
+            : $this->resolver->decideBackend($context, $ruleKey, $this->catalog);
       } catch (\Throwable) {
          $this->auditLogger->evaluationError($context, $source);
          return null;
@@ -316,6 +318,45 @@ final class TicketMutationGuard
       }
 
        return 'User';
+   }
+
+   private function isInteractiveLevelAgreementDeletion(): bool {
+      return $this->isInteractiveRequest()
+         && (isset($_POST['sla_delete']) || isset($_POST['ola_delete']))
+         && isset($_POST['_glpi_simple_form']);
+   }
+
+   private function isInteractiveRelationMutation(CommonDBTM $item): bool {
+      if (!$this->isInteractiveRequest()) {
+         return false;
+      }
+
+      $script = (string) ($_SERVER['SCRIPT_NAME'] ?? '');
+      if ($item instanceof Item_Ticket) {
+         return str_ends_with($script, '/ajax/itemTicket.php');
+      }
+      if ($item instanceof Ticket_Ticket) {
+         return isset($_POST['_link']) || str_ends_with($script, '/front/ticket.form.php');
+      }
+      if ($item instanceof Ticket_Contract) {
+         return isset($_POST['_contracts_id']);
+      }
+
+      return false;
+   }
+
+   private function isInteractiveRequest(): bool {
+      if (($_SERVER['REQUEST_METHOD'] ?? '') !== 'POST' || Session::isCron()) {
+         return false;
+      }
+      if (!method_exists(Session::class, 'isAPI')) {
+         return true;
+      }
+      try {
+         return !Session::isAPI();
+      } catch (\Throwable) {
+         return false;
+      }
    }
 
    /** @param array<string, string> $denials */

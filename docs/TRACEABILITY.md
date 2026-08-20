@@ -35,5 +35,8 @@
 | Catalog package integrity | Per-version production package URLs are accepted only after public asset, checksum, tag, and archive-root validation | Catalog metadata regression cases and package validator |
 | Catalog visual identity | A 40×40 PNG logo is published through `plugin.xml` using its public raw repository URL and is a required allowlisted production asset | PNG signature and dimensions checks, XML validation, URL/path verification, and package validation |
 | No core modifications | Repository scope and CI checks | Package manifest review |
+| Capability-based Ticket control catalog | Static `TicketControlCatalog` definitions for GLPI 10.0.20 capabilities | Catalog and administrative model regression tests |
+| Complete dynamic logical-control UI locks | Composite SLA/OLA, associated-item and linked-ticket selectors with reversible action/rich-text locks | Catalog and ticket-policy JavaScript regression tests |
+| Interface versus explicit backend mutation enforcement | `TicketMutationGuard` interactive request classification and `PolicyResolver::decide` for known UI mutations | Guard and backend-policy regression tests |
 
 Update this matrix whenever a requirement or implementation boundary changes.
