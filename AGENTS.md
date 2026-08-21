@@ -15,6 +15,9 @@ These instructions apply to the entire repository.
 - English is the original and authoritative language for code, comments,
   documentation, UI strings, identifiers, and gettext `msgid` values.
 - Portuguese is provided only through the `pt_BR` translation catalog.
+- Portuguese translations of native GLPI concepts must reuse the official `pt_BR`
+  terminology of the supported GLPI version. Torah-specific wording is limited to
+  exclusive concepts or compositions without a direct native equivalent.
 - When user-facing plugin documentation or catalog metadata is created or
   materially revised, provide an equivalent `pt_BR` text while keeping English
   authoritative. Keep runtime translations in the gettext catalog.

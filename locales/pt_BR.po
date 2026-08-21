@@ -18,7 +18,7 @@ msgid "Allowed actor types — global configuration"
 msgstr "Tipos de atores permitidos — configuração global"
 
 msgid "Approval request"
-msgstr "Solicitação de aprovação"
+msgstr "Requisição de aprovação"
 
 msgid "Approval status"
 msgstr "Status de aprovação"
@@ -27,7 +27,7 @@ msgid "Assigned technician, group, or supplier"
 msgstr "Técnico, grupo ou fornecedor atribuído"
 
 msgid "Assigned to"
-msgstr "Atribuído a"
+msgstr "Atribuído"
 
 msgid "Assistance"
 msgstr "Assistência"
@@ -78,19 +78,19 @@ msgid "Impact"
 msgstr "Impacto"
 
 msgid "Internal TTO"
-msgstr "TTO interno"
+msgstr "Tempo interno para atendimento"
 
 msgid "Internal TTR"
-msgstr "TTR interno"
+msgstr "Tempo interno para solução"
 
 msgid "Internal time to own"
 msgstr "Tempo interno para atendimento"
 
 msgid "Internal time to resolve"
-msgstr "Prazo interno para solução"
+msgstr "Tempo interno para solução"
 
 msgid "Linked tickets"
-msgstr "Chamados vinculados"
+msgstr "Chamados relacionados"
 
 msgid "Location"
 msgstr "Localização"
@@ -99,10 +99,10 @@ msgid "No policy set is configured."
 msgstr "Nenhum conjunto de políticas está configurado."
 
 msgid "OLA for time to own"
-msgstr "OLA para atendimento"
+msgstr "OLA — Tempo interno para atendimento"
 
 msgid "OLA for time to resolve"
-msgstr "OLA para solução"
+msgstr "OLA — Tempo interno para solução"
 
 msgid "Observer"
 msgstr "Observador"
@@ -141,13 +141,13 @@ msgid "Request source"
 msgstr "Origem da requisição"
 
 msgid "Requester"
-msgstr "Solicitante"
+msgstr "Requerente"
 
 msgid "SLA for time to own"
-msgstr "SLA para atendimento"
+msgstr "SLA — Tempo para atendimento"
 
 msgid "SLA for time to resolve"
-msgstr "SLA para solução"
+msgstr "SLA — Tempo para solução"
 
 msgid "Save global configuration"
 msgstr "Salvar configuração global"
@@ -162,10 +162,10 @@ msgid "Suppliers"
 msgstr "Fornecedores"
 
 msgid "TTO"
-msgstr "TTO"
+msgstr "Tempo para atendimento"
 
 msgid "TTR"
-msgstr "TTR"
+msgstr "Tempo para solução"
 
 msgid "Not recursive"
 msgstr "Não recursivo"
@@ -180,7 +180,7 @@ msgid "Time to own"
 msgstr "Tempo para atendimento"
 
 msgid "Time to resolve"
-msgstr "Prazo para solução"
+msgstr "Tempo para solução"
 
 msgid "Title"
 msgstr "Título"

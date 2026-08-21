@@ -5,6 +5,14 @@ based on Keep a Changelog and the project follows Semantic Versioning.
 
 ## [Unreleased]
 
+## [0.4.12] - 2026-08-20
+
+### Changed
+
+- Aligned Brazilian Portuguese translations of native Ticket concepts with the
+  official GLPI 10.0.20 terminology.
+
+
 ## [0.4.11] - 2026-08-20
 
 ### Removed
@@ -260,7 +268,8 @@ based on Keep a Changelog and the project follows Semantic Versioning.
 - Backend hooks reject manual bypass attempts independently of JavaScript.
 - Repository and package validation reject common secrets and private artifacts.
 
-[Unreleased]: https://github.com/renatovaladares85/torah/compare/v0.4.11...HEAD
+[Unreleased]: https://github.com/renatovaladares85/torah/compare/v0.4.12...HEAD
+[0.4.12]: https://github.com/renatovaladares85/torah/compare/v0.4.11...v0.4.12
 [0.4.11]: https://github.com/renatovaladares85/torah/compare/v0.4.10...v0.4.11
 [0.4.10]: https://github.com/renatovaladares85/torah/compare/v0.4.9...v0.4.10
 [0.4.9]: https://github.com/renatovaladares85/torah/blob/v0.4.9/CHANGELOG.md#049---2026-08-13
