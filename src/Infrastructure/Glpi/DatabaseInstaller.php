@@ -28,7 +28,7 @@ final class DatabaseInstaller
        $collation = DBConnection::getDefaultCollation();
        $keySign = DBConnection::getDefaultPrimaryKeySignOption();
 
-      if (!$DB->tableExists(self::POLICY_SET_TABLE)) {
+      if (!$DB->tableExists(self::POLICY_SET_TABLE, false)) {
           $table = self::POLICY_SET_TABLE;
           $query = "CREATE TABLE `$table` (
                 `id` INT {$keySign} NOT NULL AUTO_INCREMENT,
@@ -51,7 +51,7 @@ final class DatabaseInstaller
           $DB->queryOrDie($query, 'Unable to align Torah policy set uniqueness.');
       }
 
-      if (!$DB->tableExists(self::BLOCKED_RULE_TABLE)) {
+      if (!$DB->tableExists(self::BLOCKED_RULE_TABLE, false)) {
           $table = self::BLOCKED_RULE_TABLE;
           $query = "CREATE TABLE `$table` (
                 `id` INT {$keySign} NOT NULL AUTO_INCREMENT,
@@ -66,7 +66,7 @@ final class DatabaseInstaller
           $DB->queryOrDie($query, 'Unable to create Torah blocked rules table.');
       }
 
-      if (!$DB->tableExists(self::POLICY_OPTION_TABLE)) {
+      if (!$DB->tableExists(self::POLICY_OPTION_TABLE, false)) {
           $table = self::POLICY_OPTION_TABLE;
           $query = "CREATE TABLE `$table` (
                 `id` INT {$keySign} NOT NULL AUTO_INCREMENT,
@@ -98,7 +98,7 @@ final class DatabaseInstaller
       (new GlpiGlobalActorSettingsStore())->clear();
 
       foreach ([self::POLICY_OPTION_TABLE, self::BLOCKED_RULE_TABLE, self::POLICY_SET_TABLE] as $table) {
-         if ($DB->tableExists($table)) {
+         if ($DB->tableExists($table, false)) {
             $DB->queryOrDie("DROP TABLE `$table`", sprintf('Unable to remove %s.', $table));
          }
       }

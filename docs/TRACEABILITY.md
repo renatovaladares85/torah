@@ -41,5 +41,6 @@
 | Removed native By field support | `TicketFieldCatalog` exclusion and `DatabaseInstaller` recipient-rule cleanup | Catalog, backend-policy, and lifecycle migration tests |
 | Official GLPI pt_BR terminology | `pt_BR` catalog follows GLPI 10.0.20 native Ticket terminology | Gettext catalog regression and validation |
 | GLPI core runtime references in packages | `validate-package.sh` explicitly distinguishes Item_Ticket core endpoints from Torah resources | Production package regression test |
+| Cache-safe plugin lifecycle | `DatabaseInstaller` schema checks bypass GLPI table cache | Same-process integration install/uninstall/reinstall regression |
 
 Update this matrix whenever a requirement or implementation boundary changes.
