@@ -23,12 +23,9 @@
    <logo>https://raw.githubusercontent.com/renatovaladares85/torah/main/torah.png</logo>
    <versions>
       <version>
-         <num>0.4.14</num>
+         <num>0.4.15</num>
          <compatibility>~10.0.20</compatibility>
-      </version>
-      <version>
-         <num>0.4.8</num>
-         <compatibility>~10.0.20</compatibility>
+         <download_url>https://github.com/renatovaladares85/torah/releases/download/v0.4.15/torah-0.4.15.tar.gz</download_url>
       </version>
    </versions>
    <langs>

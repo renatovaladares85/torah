@@ -5,6 +5,16 @@ based on Keep a Changelog and the project follows Semantic Versioning.
 
 ## [Unreleased]
 
+## [0.4.15] - 2026-08-21
+
+### Changed
+
+- Prepared the first public stable release metadata with its deterministic
+  production package URL, current compatibility documentation, and the actual
+  26 supported Ticket controls.
+- Removed unpublished historical catalog metadata that has no publicly
+  verifiable production asset.
+
 ## [0.4.14] - 2026-08-21
 
 ### Fixed
@@ -284,11 +294,5 @@ based on Keep a Changelog and the project follows Semantic Versioning.
 - Backend hooks reject manual bypass attempts independently of JavaScript.
 - Repository and package validation reject common secrets and private artifacts.
 
-[Unreleased]: https://github.com/renatovaladares85/torah/compare/v0.4.14...HEAD
-[0.4.14]: https://github.com/renatovaladares85/torah/compare/v0.4.13...v0.4.14
-[0.4.13]: https://github.com/renatovaladares85/torah/compare/v0.4.12...v0.4.13
-[0.4.12]: https://github.com/renatovaladares85/torah/compare/v0.4.11...v0.4.12
-[0.4.11]: https://github.com/renatovaladares85/torah/compare/v0.4.10...v0.4.11
-[0.4.10]: https://github.com/renatovaladares85/torah/compare/v0.4.9...v0.4.10
-[0.4.9]: https://github.com/renatovaladares85/torah/blob/v0.4.9/CHANGELOG.md#049---2026-08-13
-[0.4.8]: https://github.com/renatovaladares85/torah/blob/v0.4.8/CHANGELOG.md#048---2026-08-01
+[Unreleased]: https://github.com/renatovaladares85/torah/compare/v0.4.15...HEAD
+[0.4.15]: https://github.com/renatovaladares85/torah/releases/tag/v0.4.15

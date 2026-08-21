@@ -56,6 +56,9 @@ These instructions apply to the entire repository.
   publish the release explicitly.
 - Tags with a SemVer prerelease suffix create drafts marked as prereleases;
   final-version tags create drafts without the prerelease marker.
+- Catalog metadata may declare the deterministic production `download_url` for
+  the version being prepared before its tag exists. It becomes catalog-ready
+  only after the public asset, tag, checksum, and archive root are verified.
 
 ## Security And Privacy
 

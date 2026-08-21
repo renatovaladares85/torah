@@ -33,6 +33,7 @@
 | Curated release notes | Deterministic generator extracts the matching changelog section and appends validated package guidance | Release-notes regression tests and draft release workflow |
 | User-facing bilingual documentation | English-authoritative README with equivalent Brazilian Portuguese documentation | README review and privacy validation |
 | Catalog package integrity | Per-version production package URLs are accepted only after public asset, checksum, tag, and archive-root validation | Catalog metadata regression cases and package validator |
+| Catalog-ready release metadata | The prepared version declares its deterministic production TAR.GZ URL before tagging; catalog submission remains gated on public asset validation | Version consistency, package, checksum, and public-asset validation |
 | Catalog visual identity | A 40×40 PNG logo is published through `plugin.xml` using its public raw repository URL and is a required allowlisted production asset | PNG signature and dimensions checks, XML validation, URL/path verification, and package validation |
 | No core modifications | Repository scope and CI checks | Package manifest review |
 | Capability-based Ticket control catalog | Static `TicketControlCatalog` definitions for GLPI 10.0.20 capabilities | Catalog and administrative model regression tests |

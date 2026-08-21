@@ -13,14 +13,14 @@ A documentação fonte e autoritativa em inglês está em [README.md](README.md)
 
 | Torah | GLPI | PHP |
 |---|---|---|
-| 0.4.9 | >= 10.0.20 e < 10.0.99 | >= 8.2 |
+| 0.4.15 | >= 10.0.20 e < 10.0.99 | >= 8.2 |
 | 0.1.x | >= 10.0.20 e < 10.0.99 | >= 8.2 |
 
-A versão 0.4.9 do Torah foi validada com GLPI 10.0.20. Não há compatibilidade
-declarada fora desta matriz.
+A versão 0.4.15 do Torah foi validada com GLPI 10.0.20 e 10.0.25. Não há
+compatibilidade declarada fora desta matriz.
 
-A versão 0.4.9 é uma release estável. Instale-a somente a partir do pacote de
-produção validado na release publicada correspondente no GitHub.
+A versão 0.4.15 é a release estável planejada. Instale-a somente após o pacote
+de produção estar disponível na release publicada correspondente no GitHub.
 
 ## Recursos principais
 
@@ -28,7 +28,7 @@ produção validado na release publicada correspondente no GitHub.
   chamado no GLPI.
 - Precedência da entidade exata, seguida pela política recursiva do ancestral
   mais próximo.
-- Restrições de abertura e atualização para 19 controles de chamado suportados.
+- Restrições de abertura e atualização para 26 controles de chamado suportados.
 - Controle global de tipos de ator usuário, grupo e fornecedor para cada papel.
 - Aplicação opcional no backend para restrições selecionadas de abertura e
   atualização.
