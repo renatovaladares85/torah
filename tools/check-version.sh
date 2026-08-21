@@ -13,6 +13,12 @@ if [[ -z "$setup_version" || "$setup_version" != "$xml_version" ]]; then
     exit 1
 fi
 
+expected_download_url="https://github.com/renatovaladares85/torah/releases/download/v${setup_version}/torah-${setup_version}.tar.gz"
+if ! rg -qF "<download_url>${expected_download_url}</download_url>" plugin.xml; then
+    printf 'Catalog download URL mismatch for version %s.\n' "$setup_version" >&2
+    exit 1
+fi
+
 semver_pattern='^(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)(-[0-9A-Za-z-]+(\.[0-9A-Za-z-]+)*)?(\+[0-9A-Za-z-]+(\.[0-9A-Za-z-]+)*)?$'
 if [[ ! "$setup_version" =~ $semver_pattern ]]; then
     printf 'Version must use Semantic Versioning: %s\n' "$setup_version" >&2

@@ -5,6 +5,16 @@ O [CHANGELOG.md](CHANGELOG.md) em inglês é a fonte autoritativa.
 
 ## [Unreleased]
 
+## [0.4.15] - 2026-08-21
+
+### Alterado
+
+- Preparados os metadados da primeira release pública estável com sua URL
+  determinística do pacote de produção, documentação de compatibilidade atual e
+  os 26 controles de chamado efetivamente suportados.
+- Removidos metadados históricos não publicados que não possuem asset de
+  produção publicamente verificável.
+
 ## [0.4.9] - 2026-08-13
 
 ### Adicionado

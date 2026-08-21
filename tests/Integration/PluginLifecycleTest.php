@@ -55,11 +55,11 @@ final class PluginLifecycleTest extends TestCase
            Config::getConfigurationValues('plugin:release-test-control'),
        );
 
-       self::assertTrue(DatabaseInstaller::install('0.4.14'));
+       self::assertTrue(DatabaseInstaller::install('0.4.15'));
        self::assertTrue($DB->tableExists(DatabaseInstaller::POLICY_SET_TABLE, false));
        self::assertTrue($DB->tableExists(DatabaseInstaller::BLOCKED_RULE_TABLE, false));
        self::assertTrue($DB->tableExists(DatabaseInstaller::POLICY_OPTION_TABLE, false));
-       self::assertTrue(DatabaseInstaller::install('0.4.14'));
+       self::assertTrue(DatabaseInstaller::install('0.4.15'));
        self::assertTrue(DatabaseInstaller::uninstall());
        self::assertFalse($DB->tableExists(DatabaseInstaller::POLICY_SET_TABLE, false));
        self::assertFalse($DB->tableExists(DatabaseInstaller::BLOCKED_RULE_TABLE, false));

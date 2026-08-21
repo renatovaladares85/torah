@@ -15,7 +15,8 @@ English changelog section; do not use commit-generated notes as the source of
 truth. Include only validated production-package instructions, checksums, and
 the warning that GitHub source archives are not production packages. Keep
 user-facing release communication available in English and `pt_BR`, with
-English authoritative. Add a per-version `download_url` to catalog metadata
-only after its public production asset, tag, checksum, and archive root have
-been verified. Do not push, tag, or publish without a separate explicit
-approval.
+English authoritative. Add the deterministic per-version `download_url` to
+catalog metadata before the release tag so the tagged XML is catalog-ready.
+Treat that URL as eligible for catalog submission only after its public
+production asset, tag, checksum, and archive root have been verified. Do not
+push, tag, or publish without a separate explicit approval.

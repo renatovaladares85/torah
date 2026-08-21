@@ -14,20 +14,20 @@ Brazilian Portuguese documentation is available in
 
 | Torah | GLPI | PHP |
 |---|---|---|
-| 0.4.9 | >= 10.0.20 and < 10.0.99 | >= 8.2 |
+| 0.4.15 | >= 10.0.20 and < 10.0.99 | >= 8.2 |
 | 0.1.x | >= 10.0.20 and < 10.0.99 | >= 8.2 |
 
-Torah 0.4.9 is validated with GLPI 10.0.20. Compatibility outside this matrix
-is not declared.
+Torah 0.4.15 is validated with GLPI 10.0.20 and 10.0.25. Compatibility outside
+this matrix is not declared.
 
-Version 0.4.9 is a stable release. Install it only from its validated
-production package on the corresponding published GitHub release.
+Version 0.4.15 is the stable release target. Install it only after its
+production package is available on the corresponding published GitHub release.
 
 ## Main Features
 
 - Policy sets scoped by active GLPI profile and ticket entity.
 - Exact-entity precedence, followed by the nearest recursive ancestor policy.
-- Opening and update restrictions for 19 supported ticket controls.
+- Opening and update restrictions for 26 supported ticket controls.
 - Global control over user, group, and supplier actor types for each role.
 - Optional backend enforcement for selected opening and update restrictions.
 - Support for GLPI ticket Select2 controls, Flatpickr date fields, and approval
