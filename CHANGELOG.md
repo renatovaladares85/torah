@@ -5,6 +5,14 @@ based on Keep a Changelog and the project follows Semantic Versioning.
 
 ## [Unreleased]
 
+## [0.4.13] - 2026-08-20
+
+### Fixed
+
+- Kept the production package validator strict for Torah resources while
+  recognizing the GLPI core Item_Ticket endpoints as external.
+
+
 ## [0.4.12] - 2026-08-20
 
 ### Changed
@@ -268,7 +276,8 @@ based on Keep a Changelog and the project follows Semantic Versioning.
 - Backend hooks reject manual bypass attempts independently of JavaScript.
 - Repository and package validation reject common secrets and private artifacts.
 
-[Unreleased]: https://github.com/renatovaladares85/torah/compare/v0.4.12...HEAD
+[Unreleased]: https://github.com/renatovaladares85/torah/compare/v0.4.13...HEAD
+[0.4.13]: https://github.com/renatovaladares85/torah/compare/v0.4.12...v0.4.13
 [0.4.12]: https://github.com/renatovaladares85/torah/compare/v0.4.11...v0.4.12
 [0.4.11]: https://github.com/renatovaladares85/torah/compare/v0.4.10...v0.4.11
 [0.4.10]: https://github.com/renatovaladares85/torah/compare/v0.4.9...v0.4.10
