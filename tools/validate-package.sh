@@ -201,6 +201,13 @@ check_reference() {
     fi
 }
 
+is_glpi_core_reference() {
+    case "$1" in
+        ajax/itemTicket.php|front/ticket.form.php) return 0 ;;
+        *) return 1 ;;
+    esac
+}
+
 while IFS= read -r reference; do
     [[ -n "$reference" ]] && check_reference "${reference#plugins/torah/}"
 done < <(rg --no-filename -o 'plugins/torah/[A-Za-z0-9_./-]+' "$package/src" | sort -u)
@@ -210,7 +217,8 @@ while IFS= read -r reference; do
 done < <(rg --no-filename -o '@torah/[A-Za-z0-9_./-]+' "$package/src" "$package/templates" | sort -u)
 
 while IFS= read -r reference; do
-    [[ -n "$reference" ]] && check_reference "${reference#/}"
+    reference="${reference#/}"
+    [[ -n "$reference" ]] && ! is_glpi_core_reference "$reference" && check_reference "$reference"
 done < <(rg --no-filename -o '/(ajax|front)/[A-Za-z0-9_.-]+' "$package/src" | sort -u)
 
 printf 'Validated %s production files in %s.\n' "$file_count" "$archive"
